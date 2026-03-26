@@ -13,9 +13,9 @@ import type { InstitutionResponse } from "@/lib/types";
 
 // Inner component that uses FormContext
 function EditFormContent({ id }: { id: string }) {
-  const { initializeForm, setEditMode, resetForm } = useFormContext();
+  const { initializeForm, setEditMode } = useFormContext();
   const fetcher = useAuthFetcher();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const loadedRef = useRef(false);
 
@@ -26,10 +26,7 @@ function EditFormContent({ id }: { id: string }) {
     async function loadInstitution() {
       try {
         loadedRef.current = true;
-        setIsLoading(true);
         const data: InstitutionResponse = await fetcher(`/api/institutions/${id}`);
-        
-        console.log("[v0] Loaded institution data:", data);
         
         // Transform response data to form data structure
         const formDataToInit = {
@@ -44,6 +41,7 @@ function EditFormContent({ id }: { id: string }) {
           creationYear: data.creationYear,
           legalStatus: data.legalStatus,
           licenseNumber: data.licenseNumber,
+          unlicensedReason: data.unlicensedReason ?? "",
           serviceStartDate: data.serviceStartDate,
           housing: data.housing,
           meals: data.meals,
@@ -59,6 +57,7 @@ function EditFormContent({ id }: { id: string }) {
           middleSchool: data.middleSchool,
           highSchool: data.highSchool,
           other: data.other,
+          targetOtherDetail: data.targetOtherDetail ?? "",
           distanceToSchool: data.distanceToSchool,
           distanceToNationalBoardingSchool: data.distanceToNationalBoardingSchool,
           building: data.building || {},
@@ -72,16 +71,13 @@ function EditFormContent({ id }: { id: string }) {
           staffMembers: data.staffMembers || [],
         };
         
-        console.log("[v0] Form data to initialize:", formDataToInit);
         initializeForm(formDataToInit);
         setEditMode(parseInt(id));
-        console.log("[v0] Form initialized successfully");
+        setIsReady(true);
         setError(null);
       } catch (err) {
         console.error("Error loading institution:", err);
         setError("حدث خطأ أثناء تحميل بيانات المؤسسة");
-      } finally {
-        setIsLoading(false);
       }
     }
 
@@ -89,7 +85,7 @@ function EditFormContent({ id }: { id: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  if (isLoading) {
+  if (!isReady && !error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
