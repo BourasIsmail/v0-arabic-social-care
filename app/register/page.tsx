@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/lib/auth-context";
@@ -25,8 +24,7 @@ interface RegisterFormData extends RegisterRequest {
 }
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const { register: registerUser, isAuthenticated } = useAuth();
+  const { register: registerUser, isAuthenticated, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -39,8 +37,14 @@ export default function RegisterPage() {
   const password = watch("password");
 
   // Redirect if already authenticated
-  if (isAuthenticated) {
-    router.push("/");
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      window.location.href = "/";
+    }
+  }, [isAuthenticated, authLoading]);
+
+  // Show nothing while checking auth or redirecting
+  if (authLoading || isAuthenticated) {
     return null;
   }
 
@@ -53,7 +57,7 @@ export default function RegisterPage() {
         password: data.password,
       });
       toast.success("تم إنشاء الحساب بنجاح");
-      router.push("/");
+      window.location.href = "/";
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "فشل إنشاء الحساب"

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/lib/auth-context";
@@ -21,8 +20,7 @@ import { Loader2, Building2, Mail, Lock } from "lucide-react";
 import type { LoginRequest } from "@/lib/auth-types";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -32,8 +30,14 @@ export default function LoginPage() {
   } = useForm<LoginRequest>();
 
   // Redirect if already authenticated
-  if (isAuthenticated) {
-    router.push("/");
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      window.location.href = "/";
+    }
+  }, [isAuthenticated, authLoading]);
+
+  // Show nothing while checking auth or redirecting
+  if (authLoading || isAuthenticated) {
     return null;
   }
 
@@ -42,7 +46,7 @@ export default function LoginPage() {
     try {
       await login(data);
       toast.success("تم تسجيل الدخول بنجاح");
-      router.push("/");
+      window.location.href = "/";
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "فشل تسجيل الدخول"
