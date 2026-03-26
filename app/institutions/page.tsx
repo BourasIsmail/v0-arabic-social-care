@@ -72,13 +72,15 @@ export default function InstitutionsPage() {
         method: "DELETE",
       });
 
-      if (!response.ok) {
+      // 204 No Content or 200 OK are both success
+      if (!response.ok && response.status !== 204) {
         throw new Error("Failed to delete");
       }
 
       toast.success("تم حذف المؤسسة بنجاح");
       mutate();
     } catch (error) {
+      console.error("Delete error:", error);
       toast.error("حدث خطأ أثناء الحذف");
     }
   };

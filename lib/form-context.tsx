@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useCallback } from "react";
 import type { InstitutionRequest, FormStep } from "./types";
 
 interface FormContextType {
@@ -9,6 +9,10 @@ interface FormContextType {
   currentStep: FormStep;
   setCurrentStep: (step: FormStep) => void;
   resetForm: () => void;
+  initializeForm: (data: Partial<InstitutionRequest>) => void;
+  isEditMode: boolean;
+  editId: number | null;
+  setEditMode: (id: number | null) => void;
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
@@ -42,15 +46,26 @@ const initialFormData: Partial<InstitutionRequest> = {
 export function FormProvider({ children }: { children: ReactNode }) {
   const [formData, setFormData] = useState<Partial<InstitutionRequest>>(initialFormData);
   const [currentStep, setCurrentStep] = useState<FormStep>("institution");
+  const [editId, setEditId] = useState<number | null>(null);
 
-  const updateFormData = (data: Partial<InstitutionRequest>) => {
+  const updateFormData = useCallback((data: Partial<InstitutionRequest>) => {
     setFormData((prev) => ({ ...prev, ...data }));
-  };
+  }, []);
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData(initialFormData);
     setCurrentStep("institution");
-  };
+    setEditId(null);
+  }, []);
+
+  const initializeForm = useCallback((data: Partial<InstitutionRequest>) => {
+    setFormData({ ...initialFormData, ...data });
+    setCurrentStep("institution");
+  }, []);
+
+  const setEditMode = useCallback((id: number | null) => {
+    setEditId(id);
+  }, []);
 
   return (
     <FormContext.Provider
@@ -60,6 +75,10 @@ export function FormProvider({ children }: { children: ReactNode }) {
         currentStep,
         setCurrentStep,
         resetForm,
+        initializeForm,
+        isEditMode: editId !== null,
+        editId,
+        setEditMode,
       }}
     >
       {children}
