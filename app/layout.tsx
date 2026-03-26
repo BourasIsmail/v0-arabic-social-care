@@ -1,22 +1,8 @@
-import type { Metadata, Viewport } from 'next'
-import dynamic from 'next/dynamic'
-import { Geist, Geist_Mono, IBM_Plex_Sans_Arabic } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import { Toaster } from '@/components/ui/sonner'
-import './globals.css'
-
-// Dynamically import AuthProvider with SSR disabled to avoid router initialization issues
-const AuthProvider = dynamic(
-  () => import('@/lib/auth-context').then((mod) => mod.AuthProvider),
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-muted-foreground">جاري التحميل...</div>
-      </div>
-    )
-  }
-)
+import type { Metadata, Viewport } from "next"
+import { Geist, Geist_Mono, IBM_Plex_Sans_Arabic } from "next/font/google"
+import { Analytics } from "@vercel/analytics/next"
+import { Providers } from "@/components/providers"
+import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
@@ -62,10 +48,9 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body className="font-sans antialiased min-h-screen bg-background">
-        <AuthProvider>
+        <Providers>
           {children}
-          <Toaster position="top-center" richColors />
-        </AuthProvider>
+        </Providers>
         <Analytics />
       </body>
     </html>
