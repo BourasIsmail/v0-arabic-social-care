@@ -40,9 +40,11 @@ export function InstitutionStep() {
 
   // Reset form when formVersion changes (for edit mode - ensures we only reset when new data is loaded)
   useEffect(() => {
-    console.log("[v0] InstitutionStep reset triggered, formVersion:", formVersion, "formData:", formData);
-    reset(formData);
-  }, [formVersion, reset]);
+    if (formVersion > 0) {
+      console.log("[v0] InstitutionStep reset triggered, formVersion:", formVersion, "formData:", formData);
+      reset(formData);
+    }
+  }, [formVersion, reset, formData]);
 
   const legalStatus = watch("legalStatus");
 

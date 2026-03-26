@@ -33,8 +33,10 @@ export function StaffStep() {
 
   // Sync staffMembers when formVersion changes (for edit mode)
   useEffect(() => {
-    setStaffMembers(formData.staffMembers || []);
-  }, [formVersion]);
+    if (formVersion > 0) {
+      setStaffMembers(formData.staffMembers || []);
+    }
+  }, [formVersion, formData.staffMembers]);
 
   const [newMember, setNewMember] = useState<Partial<StaffMemberDTO>>({
     staffType: undefined,

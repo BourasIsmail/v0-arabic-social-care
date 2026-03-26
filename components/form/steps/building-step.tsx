@@ -36,8 +36,10 @@ export function BuildingStep() {
 
   // Reset form when formVersion changes (for edit mode)
   useEffect(() => {
-    reset(formData.building || {});
-  }, [formVersion, reset]);
+    if (formVersion > 0) {
+      reset(formData.building || {});
+    }
+  }, [formVersion, reset, formData.building]);
 
   const onSubmit = (data: BuildingDTO) => {
     updateFormData({ building: data });

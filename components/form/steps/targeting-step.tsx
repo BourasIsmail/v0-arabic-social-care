@@ -35,8 +35,10 @@ export function TargetingStep() {
 
   // Reset form when formVersion changes (for edit mode)
   useEffect(() => {
-    reset(formData.targeting || {});
-  }, [formVersion, reset]);
+    if (formVersion > 0) {
+      reset(formData.targeting || {});
+    }
+  }, [formVersion, reset, formData.targeting]);
 
   const onSubmit = (data: TargetingDTO) => {
     updateFormData({ targeting: data });

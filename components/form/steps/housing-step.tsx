@@ -127,12 +127,14 @@ export function HousingStep() {
 
   // Reset form when formVersion changes (for edit mode)
   useEffect(() => {
-    reset(formData.housingMeals || {
-      season2324: {},
-      season2425: {},
-      season2526: {},
-    });
-  }, [formVersion, reset]);
+    if (formVersion > 0) {
+      reset(formData.housingMeals || {
+        season2324: {},
+        season2425: {},
+        season2526: {},
+      });
+    }
+  }, [formVersion, reset, formData.housingMeals]);
 
   const onSubmit = (data: HousingMealsDTO) => {
     updateFormData({ housingMeals: data });
