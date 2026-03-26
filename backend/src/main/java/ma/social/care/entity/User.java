@@ -24,7 +24,7 @@ public class User extends BaseEntity {
     private String fullName;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Column(name = "role", nullable = false, columnDefinition = "VARCHAR(20)")
     @Builder.Default
     private Role role = Role.USER;
 
