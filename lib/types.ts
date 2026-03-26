@@ -1,4 +1,4 @@
-// Enums matching backend
+// Enums matching backend EXACTLY
 export enum InstitutionType {
   DAR_TALIB = "DAR_TALIB",
   DAR_TALIBA = "DAR_TALIBA",
@@ -15,75 +15,86 @@ export enum LegalStatus {
   UNLICENSED = "UNLICENSED",
 }
 
+// Backend: INSIDE, LT_1KM, BETWEEN_1_5KM, GT_5KM
 export enum Distance {
-  LESS_THAN_1KM = "LESS_THAN_1KM",
-  FROM_1_TO_3KM = "FROM_1_TO_3KM",
-  FROM_3_TO_5KM = "FROM_3_TO_5KM",
-  MORE_THAN_5KM = "MORE_THAN_5KM",
+  INSIDE = "INSIDE",
+  LT_1KM = "LT_1KM",
+  BETWEEN_1_5KM = "BETWEEN_1_5KM",
+  GT_5KM = "GT_5KM",
 }
 
+// Backend: RENTAL, OWNED, AT_DISPOSAL, OTHER
 export enum BuildingStatus {
-  BUILT_FOR_PURPOSE = "BUILT_FOR_PURPOSE",
-  RENTED = "RENTED",
-  BORROWED = "BORROWED",
-  MIXED = "MIXED",
-}
-
-export enum BuildingCondition {
-  GOOD = "GOOD",
-  AVERAGE = "AVERAGE",
-  POOR = "POOR",
-}
-
-export enum RenovationCapacity {
-  FULL = "FULL",
-  PARTIAL = "PARTIAL",
-  NONE = "NONE",
-}
-
-export enum OwnerType {
-  STATE = "STATE",
-  COMMUNE = "COMMUNE",
-  ASSOCIATION = "ASSOCIATION",
+  RENTAL = "RENTAL",
+  OWNED = "OWNED",
+  AT_DISPOSAL = "AT_DISPOSAL",
   OTHER = "OTHER",
 }
 
-export enum SelectionBody {
-  ASSOCIATION = "ASSOCIATION",
-  COMMITTEE = "COMMITTEE",
+// Backend: GOOD, SOME_DEGRADATION, BAD
+export enum BuildingCondition {
+  GOOD = "GOOD",
+  SOME_DEGRADATION = "SOME_DEGRADATION",
+  BAD = "BAD",
 }
 
+// Backend: EASY, DIFFICULT, NEEDS_RECONSTRUCTION
+export enum RenovationCapacity {
+  EASY = "EASY",
+  DIFFICULT = "DIFFICULT",
+  NEEDS_RECONSTRUCTION = "NEEDS_RECONSTRUCTION",
+}
+
+// Backend: STATE_DOMAIN, COMMUNAL, PRIVATE, OTHER
+export enum OwnerType {
+  STATE_DOMAIN = "STATE_DOMAIN",
+  COMMUNAL = "COMMUNAL",
+  PRIVATE = "PRIVATE",
+  OTHER = "OTHER",
+}
+
+// Backend: ASSOCIATION_ALONE, MIXED_COMMITTEE
+export enum SelectionBody {
+  ASSOCIATION_ALONE = "ASSOCIATION_ALONE",
+  MIXED_COMMITTEE = "MIXED_COMMITTEE",
+}
+
+// Backend: UNIFORM, NON_UNIFORM
 export enum TariffType {
   UNIFORM = "UNIFORM",
-  BRACKETED = "BRACKETED",
+  NON_UNIFORM = "NON_UNIFORM",
 }
 
+// Backend: LT_50, BETWEEN_50_100, BETWEEN_100_200, GT_200
 export enum TariffBracket {
-  LESS_THAN_50 = "LESS_THAN_50",
-  FROM_50_TO_100 = "FROM_50_TO_100",
-  FROM_100_TO_150 = "FROM_100_TO_150",
-  MORE_THAN_150 = "MORE_THAN_150",
+  LT_50 = "LT_50",
+  BETWEEN_50_100 = "BETWEEN_50_100",
+  BETWEEN_100_200 = "BETWEEN_100_200",
+  GT_200 = "GT_200",
 }
 
+// Backend: INSTITUTION_KITCHEN, READY_MEALS, OTHER
 export enum MealServiceType {
-  OWN_KITCHEN = "OWN_KITCHEN",
-  EXTERNAL_CATERER = "EXTERNAL_CATERER",
-  MIXED = "MIXED",
+  INSTITUTION_KITCHEN = "INSTITUTION_KITCHEN",
+  READY_MEALS = "READY_MEALS",
+  OTHER = "OTHER",
 }
 
+// Backend: DIRECTOR, FINANCIAL_MANAGER, GENERAL_GUARD, SOCIAL_WORKER, DOCTOR, NURSE, PSYCHOLOGIST, EDUCATORS, KITCHEN_MANAGER, KITCHEN_AGENTS, STORAGE_MANAGER, SECURITY, SERVICE_AGENTS, OTHER
 export enum StaffType {
   DIRECTOR = "DIRECTOR",
-  EDUCATOR = "EDUCATOR",
+  FINANCIAL_MANAGER = "FINANCIAL_MANAGER",
+  GENERAL_GUARD = "GENERAL_GUARD",
   SOCIAL_WORKER = "SOCIAL_WORKER",
-  GUARD_NIGHT = "GUARD_NIGHT",
-  GUARD_DAY = "GUARD_DAY",
-  COOK = "COOK",
-  COOK_HELPER = "COOK_HELPER",
-  CLEANING_STAFF = "CLEANING_STAFF",
-  DRIVER = "DRIVER",
-  ACCOUNTANT = "ACCOUNTANT",
-  SECRETARY = "SECRETARY",
+  DOCTOR = "DOCTOR",
+  NURSE = "NURSE",
   PSYCHOLOGIST = "PSYCHOLOGIST",
+  EDUCATORS = "EDUCATORS",
+  KITCHEN_MANAGER = "KITCHEN_MANAGER",
+  KITCHEN_AGENTS = "KITCHEN_AGENTS",
+  STORAGE_MANAGER = "STORAGE_MANAGER",
+  SECURITY = "SECURITY",
+  SERVICE_AGENTS = "SERVICE_AGENTS",
   OTHER = "OTHER",
 }
 
@@ -109,121 +120,89 @@ export interface BuildingDTO {
 
 export interface FinancingDTO {
   // Construction Funding Sources
-  solidarityMinistry?: boolean;
-  nationalEntraide?: boolean;
-  indh?: boolean;
-  commune?: boolean;
-  fondationMohammed5?: boolean;
-  nationalRevival?: boolean;
-  association?: boolean;
-  otherConstruction?: boolean;
-  otherConstructionDetail?: string;
+  constructionByAssociation?: boolean;
+  constructionByMinistry?: boolean;
+  constructionByINDH?: boolean;
+  constructionByCouncil?: boolean;
+  constructionByDonors?: boolean;
+  constructionByOther?: boolean;
 
   // Equipment Funding Sources
-  equipmentSolidarityMinistry?: boolean;
-  equipmentNationalEntraide?: boolean;
-  equipmentIndh?: boolean;
-  equipmentCommune?: boolean;
-  equipmentFondationMohammed5?: boolean;
-  equipmentAssociation?: boolean;
-  equipmentOther?: boolean;
-  equipmentOtherDetail?: string;
-
-  // Costs
-  totalConstructionCost?: number;
-  annualManagementCost?: number;
+  equipmentByAssociation?: boolean;
+  equipmentByMinistry?: boolean;
+  equipmentByINDH?: boolean;
+  equipmentByCouncil?: boolean;
+  equipmentByDonors?: boolean;
+  equipmentByOther?: boolean;
 
   // Operating Funding Sources
-  operatingIndh?: boolean;
-  operatingNationalEntraide?: boolean;
-  operatingNationalEducation?: boolean;
-  operatingCommune?: boolean;
-  operatingParentContributions?: boolean;
-  operatingDonors?: boolean;
-  operatingAssociationOwnSources?: boolean;
-  operatingOther?: boolean;
+  operatingByAssociation?: boolean;
+  operatingByMinistry?: boolean;
+  operatingByINDH?: boolean;
+  operatingByCouncil?: boolean;
+  operatingByDonors?: boolean;
+  operatingByOther?: boolean;
 
-  // Additional Costs
-  annualHRCost?: number;
-  annualMealsCost?: number;
-  totalMealsAmount?: number;
-
-  // Shares (percentages)
-  associationShare?: number;
-  educationShare?: number;
-  otherShare?: number;
-
-  // Other Expenses
-  annualOtherExpenses?: number;
-  individualAnnualCost?: number;
+  // Budget
+  annualBudget?: number;
+  ministryContribution?: number;
+  associationContribution?: number;
+  councilContribution?: number;
+  otherContribution?: number;
 }
 
 export interface TargetingDTO {
   // Selection Criteria
-  socialSituation?: boolean;
-  distance?: boolean;
-  schoolResults?: boolean;
-  scholarship?: boolean;
+  povertyBased?: boolean;
+  distanceBased?: boolean;
+  orphansBased?: boolean;
+  disabilityBased?: boolean;
   otherCriteria?: boolean;
-  otherCriteriaDetail?: string;
-
-  // Priorities
-  priority1?: string;
-  priority2?: string;
-  priority3?: string;
-  priority4?: string;
-  priority5?: string;
 
   // Selection Body
   selectionBody?: SelectionBody;
 
   // Committee Members
-  committeeAssociation?: boolean;
-  committeeNationalEntraide?: boolean;
-  committeeNationalEducation?: boolean;
-  committeeCommune?: boolean;
-  committeeLocalAuthorities?: boolean;
-  otherMember?: boolean;
-  otherMemberDetail?: string;
+  committeeHasAssociation?: boolean;
+  committeeHasAuthority?: boolean;
+  committeeHasEducation?: boolean;
+  committeeHasSocial?: boolean;
+  committeeHasOther?: boolean;
 
-  // Additional Info
-  unsatisfiedRequestsCount?: number;
+  // Tariff
   servicesAreFree?: boolean;
   tariffType?: TariffType;
-  uniformAmount?: number;
+  fixedTariffAmount?: number;
   tariffBracket?: TariffBracket;
 }
 
 export interface HousingMealsDTO {
-  season2324?: SeasonBeneficiaries;
-  season2425?: SeasonBeneficiaries;
-  season2526?: SeasonBeneficiaries;
-
-  capacityRemarks?: string;
-  totalMealBeneficiaries2526?: number;
-  associationMealBeneficiaries?: number;
-  educationMealBeneficiaries?: number;
-  fullGrantCount?: number;
-  halfGrantCount?: number;
+  totalRooms?: number;
+  totalBeds?: number;
+  bedsPerRoom?: number;
+  hasRefectory?: boolean;
+  refectoryCapacity?: number;
   mealServiceType?: MealServiceType;
 
   // Improvement Suggestions
-  increaseProducts?: boolean;
-  externalCaterer?: boolean;
-  otherSuggestion?: boolean;
-  otherSuggestionDetail?: string;
+  suggestBuildingRenovation?: boolean;
+  suggestNewBuilding?: boolean;
+  suggestEquipment?: boolean;
+  suggestCapacityIncrease?: boolean;
+  suggestStaffTraining?: boolean;
+
+  // Season Data
+  season2324?: SeasonBeneficiaries;
+  season2425?: SeasonBeneficiaries;
+  season2526?: SeasonBeneficiaries;
 }
 
 export interface StaffMemberDTO {
   id?: number;
   staffType: StaffType;
-  nbAssociation?: number;
-  nbDeployed?: number;
-  nbVolunteers?: number;
-  nbCNSS?: number;
-  nbSMIG?: number;
-  monthlyCost?: number;
-  annualCost?: number;
+  count?: number;
+  isCertified?: boolean;
+  monthlySalary?: number;
 }
 
 // Geo DTOs
@@ -376,73 +355,74 @@ export const legalStatusLabels: Record<LegalStatus, string> = {
 };
 
 export const distanceLabels: Record<Distance, string> = {
-  [Distance.LESS_THAN_1KM]: "أقل من 1 كم",
-  [Distance.FROM_1_TO_3KM]: "من 1 إلى 3 كم",
-  [Distance.FROM_3_TO_5KM]: "من 3 إلى 5 كم",
-  [Distance.MORE_THAN_5KM]: "أكثر من 5 كم",
+  [Distance.INSIDE]: "داخل المؤسسة",
+  [Distance.LT_1KM]: "أقل من 1 كم",
+  [Distance.BETWEEN_1_5KM]: "بين 1 و 5 كم",
+  [Distance.GT_5KM]: "أكثر من 5 كم",
 };
 
 export const buildingStatusLabels: Record<BuildingStatus, string> = {
-  [BuildingStatus.BUILT_FOR_PURPOSE]: "مبني للغرض",
-  [BuildingStatus.RENTED]: "مكترى",
-  [BuildingStatus.BORROWED]: "معار",
-  [BuildingStatus.MIXED]: "مختلط",
+  [BuildingStatus.RENTAL]: "مكترى",
+  [BuildingStatus.OWNED]: "ملك",
+  [BuildingStatus.AT_DISPOSAL]: "رهن الإشارة",
+  [BuildingStatus.OTHER]: "أخرى",
 };
 
 export const buildingConditionLabels: Record<BuildingCondition, string> = {
   [BuildingCondition.GOOD]: "جيدة",
-  [BuildingCondition.AVERAGE]: "متوسطة",
-  [BuildingCondition.POOR]: "سيئة",
+  [BuildingCondition.SOME_DEGRADATION]: "متوسطة",
+  [BuildingCondition.BAD]: "سيئة",
 };
 
 export const renovationCapacityLabels: Record<RenovationCapacity, string> = {
-  [RenovationCapacity.FULL]: "كاملة",
-  [RenovationCapacity.PARTIAL]: "جزئية",
-  [RenovationCapacity.NONE]: "لا توجد",
+  [RenovationCapacity.EASY]: "سهلة",
+  [RenovationCapacity.DIFFICULT]: "صعبة",
+  [RenovationCapacity.NEEDS_RECONSTRUCTION]: "تحتاج إعادة بناء",
 };
 
 export const ownerTypeLabels: Record<OwnerType, string> = {
-  [OwnerType.STATE]: "الدولة",
-  [OwnerType.COMMUNE]: "الجماعة",
-  [OwnerType.ASSOCIATION]: "الجمعية",
+  [OwnerType.STATE_DOMAIN]: "ملك الدولة",
+  [OwnerType.COMMUNAL]: "جماعي",
+  [OwnerType.PRIVATE]: "خاص",
   [OwnerType.OTHER]: "أخرى",
 };
 
 export const selectionBodyLabels: Record<SelectionBody, string> = {
-  [SelectionBody.ASSOCIATION]: "الجمعية",
-  [SelectionBody.COMMITTEE]: "لجنة",
+  [SelectionBody.ASSOCIATION_ALONE]: "الجمعية لوحدها",
+  [SelectionBody.MIXED_COMMITTEE]: "لجنة مختلطة",
 };
 
 export const tariffTypeLabels: Record<TariffType, string> = {
   [TariffType.UNIFORM]: "موحد",
-  [TariffType.BRACKETED]: "حسب الشرائح",
+  [TariffType.NON_UNIFORM]: "غير موحد",
 };
 
 export const tariffBracketLabels: Record<TariffBracket, string> = {
-  [TariffBracket.LESS_THAN_50]: "أقل من 50 درهم",
-  [TariffBracket.FROM_50_TO_100]: "من 50 إلى 100 درهم",
-  [TariffBracket.FROM_100_TO_150]: "من 100 إلى 150 درهم",
-  [TariffBracket.MORE_THAN_150]: "أكثر من 150 درهم",
+  [TariffBracket.LT_50]: "أقل من 50 درهم",
+  [TariffBracket.BETWEEN_50_100]: "بين 50 و 100 درهم",
+  [TariffBracket.BETWEEN_100_200]: "بين 100 و 200 درهم",
+  [TariffBracket.GT_200]: "أكثر من 200 درهم",
 };
 
 export const mealServiceTypeLabels: Record<MealServiceType, string> = {
-  [MealServiceType.OWN_KITCHEN]: "مطبخ خاص",
-  [MealServiceType.EXTERNAL_CATERER]: "متعهد خارجي",
-  [MealServiceType.MIXED]: "مختلط",
+  [MealServiceType.INSTITUTION_KITCHEN]: "مطبخ المؤسسة",
+  [MealServiceType.READY_MEALS]: "وجبات جاهزة",
+  [MealServiceType.OTHER]: "أخرى",
 };
 
 export const staffTypeLabels: Record<StaffType, string> = {
   [StaffType.DIRECTOR]: "مدير",
-  [StaffType.EDUCATOR]: "مربي",
+  [StaffType.FINANCIAL_MANAGER]: "مسؤول مالي",
+  [StaffType.GENERAL_GUARD]: "حارس عام",
   [StaffType.SOCIAL_WORKER]: "مساعد اجتماعي",
-  [StaffType.GUARD_NIGHT]: "حارس ليلي",
-  [StaffType.GUARD_DAY]: "حارس نهاري",
-  [StaffType.COOK]: "طباخ",
-  [StaffType.COOK_HELPER]: "مساعد طباخ",
-  [StaffType.CLEANING_STAFF]: "عامل نظافة",
-  [StaffType.DRIVER]: "سائق",
-  [StaffType.ACCOUNTANT]: "محاسب",
-  [StaffType.SECRETARY]: "كاتب",
+  [StaffType.DOCTOR]: "طبيب",
+  [StaffType.NURSE]: "ممرض",
   [StaffType.PSYCHOLOGIST]: "أخصائي نفسي",
+  [StaffType.EDUCATORS]: "مربين",
+  [StaffType.KITCHEN_MANAGER]: "مسؤول المطبخ",
+  [StaffType.KITCHEN_AGENTS]: "عمال المطبخ",
+  [StaffType.STORAGE_MANAGER]: "مسؤول المخزن",
+  [StaffType.SECURITY]: "الأمن",
+  [StaffType.SERVICE_AGENTS]: "عمال الخدمة",
   [StaffType.OTHER]: "أخرى",
 };
