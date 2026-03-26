@@ -68,6 +68,9 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Partner Logos */}
+        <PartnerLogos />
+
         {/* Features */}
         <section className="py-16">
           <div className="container mx-auto px-4">
@@ -111,9 +114,6 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-
-        {/* Partner Logos */}
-        <PartnerLogos />
 
         {/* Footer */}
         <footer className="border-t border-border bg-muted/30 py-8">
