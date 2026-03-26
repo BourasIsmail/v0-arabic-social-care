@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormContext } from "@/lib/form-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import type { GeoDTO } from "@/lib/types";
 import {
   institutionTypeLabels,
   milieuLabels,
@@ -26,6 +27,61 @@ import { toast } from "sonner";
 export function ReviewStep() {
   const { formData, setCurrentStep, resetForm } = useFormContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [geoNames, setGeoNames] = useState<{
+    region?: string;
+    prefecture?: string;
+    commune?: string;
+  }>({});
+
+  // Fetch geo names for display
+  useEffect(() => {
+    async function fetchGeoNames() {
+      const names: typeof geoNames = {};
+
+      if (formData.regionId) {
+        try {
+          const res = await fetch("/api/geo/regions");
+          if (res.ok) {
+            const regions: GeoDTO[] = await res.json();
+            const region = regions.find((r) => r.id === formData.regionId);
+            if (region) names.region = region.name;
+          }
+        } catch (e) {
+          console.error("Failed to fetch region name", e);
+        }
+      }
+
+      if (formData.regionId && formData.prefectureId) {
+        try {
+          const res = await fetch(`/api/geo/regions/${formData.regionId}/prefectures`);
+          if (res.ok) {
+            const prefectures: GeoDTO[] = await res.json();
+            const prefecture = prefectures.find((p) => p.id === formData.prefectureId);
+            if (prefecture) names.prefecture = prefecture.name;
+          }
+        } catch (e) {
+          console.error("Failed to fetch prefecture name", e);
+        }
+      }
+
+      if (formData.prefectureId && formData.communeId) {
+        try {
+          const res = await fetch(`/api/geo/prefectures/${formData.prefectureId}/communes`);
+          if (res.ok) {
+            const communes: GeoDTO[] = await res.json();
+            const commune = communes.find((c) => c.id === formData.communeId);
+            if (commune) names.commune = commune.name;
+          }
+        } catch (e) {
+          console.error("Failed to fetch commune name", e);
+        }
+      }
+
+      setGeoNames(names);
+    }
+
+    fetchGeoNames();
+  }, [formData.regionId, formData.prefectureId, formData.communeId]);
 
   const goBack = () => {
     setCurrentStep("staff");
@@ -84,9 +140,9 @@ export function ReviewStep() {
           <InfoRow label="اسم الجمعية" value={formData.associationName} />
           <InfoRow label="اسم المؤسسة" value={formData.institutionName} />
           <InfoRow label="العنوان" value={formData.address} />
-          <InfoRow label="الجهة" value={formData.region} />
-          <InfoRow label="العمالة/الإقليم" value={formData.prefectureProvince} />
-          <InfoRow label="الجماعة" value={formData.commune} />
+          <InfoRow label="الجهة" value={geoNames.region} />
+          <InfoRow label="العمالة/الإقليم" value={geoNames.prefecture} />
+          <InfoRow label="الجماعة" value={geoNames.commune} />
           <InfoRow label="الوسط" value={formData.milieu && milieuLabels[formData.milieu]} />
           <InfoRow label="سنة التأسيس" value={formData.creationYear} />
           <InfoRow

@@ -14,6 +14,20 @@ interface FormContextType {
 const FormContext = createContext<FormContextType | undefined>(undefined);
 
 const initialFormData: Partial<InstitutionRequest> = {
+  // Boolean fields for services
+  housing: false,
+  meals: false,
+  educationalSupport: false,
+  culturalActivities: false,
+  healthCare: false,
+  insurance: false,
+  psychologicalSupport: false,
+  // Boolean fields for target levels
+  primary: false,
+  middleSchool: false,
+  highSchool: false,
+  other: false,
+  // Nested objects
   staffMembers: [],
   building: {},
   financing: {},

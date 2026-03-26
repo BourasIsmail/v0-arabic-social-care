@@ -253,7 +253,7 @@ export default function InstitutionsPage() {
                               {institutionTypeLabels[institution.institutionType]}
                             </span>
                           </TableCell>
-                          <TableCell>{institution.region || "-"}</TableCell>
+                          <TableCell>{institution.regionName || "-"}</TableCell>
                           <TableCell>{institution.totalCapacity || "-"}</TableCell>
                           <TableCell>
                             {new Date(institution.createdAt).toLocaleDateString("ar-MA")}

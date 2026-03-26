@@ -30,14 +30,11 @@ public class InstitutionRequestDTO {
     @Size(max = 500, message = "Address cannot exceed 500 characters")
     private String address;
 
-    @Size(max = 100, message = "Region cannot exceed 100 characters")
-    private String region;
+    private Long regionId;
 
-    @Size(max = 100, message = "Prefecture/Province cannot exceed 100 characters")
-    private String prefectureProvince;
+    private Long prefectureId;
 
-    @Size(max = 100, message = "Commune cannot exceed 100 characters")
-    private String commune;
+    private Long communeId;
 
     private Milieu milieu;
 

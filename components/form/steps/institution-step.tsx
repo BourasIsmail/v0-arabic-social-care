@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CascadeGeoSelect } from "@/components/form/cascade-geo-select";
 import {
   InstitutionType,
   Milieu,
@@ -53,7 +54,7 @@ export function InstitutionStep() {
           <div className="space-y-2">
             <Label htmlFor="institutionType">نوع المؤسسة *</Label>
             <Select
-              value={watch("institutionType")}
+              value={watch("institutionType") || ""}
               onValueChange={(value) => setValue("institutionType", value as InstitutionType)}
             >
               <SelectTrigger>
@@ -122,37 +123,19 @@ export function InstitutionStep() {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="region">الجهة</Label>
-            <Input
-              id="region"
-              {...register("region")}
-              placeholder="اختر الجهة"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="prefectureProvince">العمالة / الإقليم</Label>
-            <Input
-              id="prefectureProvince"
-              {...register("prefectureProvince")}
-              placeholder="أدخل العمالة أو الإقليم"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="commune">الجماعة</Label>
-            <Input
-              id="commune"
-              {...register("commune")}
-              placeholder="أدخل الجماعة"
-            />
-          </div>
+          <CascadeGeoSelect
+            regionId={watch("regionId") || ""}
+            prefectureId={watch("prefectureId") || ""}
+            communeId={watch("communeId") || ""}
+            onRegionChange={(value) => setValue("regionId", value)}
+            onPrefectureChange={(value) => setValue("prefectureId", value)}
+            onCommuneChange={(value) => setValue("communeId", value)}
+          />
 
           <div className="space-y-2">
             <Label htmlFor="milieu">الوسط</Label>
             <Select
-              value={watch("milieu")}
+              value={watch("milieu") || ""}
               onValueChange={(value) => setValue("milieu", value as Milieu)}
             >
               <SelectTrigger>
@@ -178,7 +161,7 @@ export function InstitutionStep() {
           <div className="space-y-2">
             <Label htmlFor="legalStatus">الوضعية القانونية</Label>
             <Select
-              value={watch("legalStatus")}
+              value={watch("legalStatus") || ""}
               onValueChange={(value) => setValue("legalStatus", value as LegalStatus)}
             >
               <SelectTrigger>
@@ -244,9 +227,9 @@ export function InstitutionStep() {
             <div key={service.key} className="flex items-center gap-2">
               <Checkbox
                 id={service.key}
-                checked={watch(service.key as keyof InstitutionRequest) as boolean}
+                checked={!!watch(service.key as keyof InstitutionRequest)}
                 onCheckedChange={(checked) =>
-                  setValue(service.key as keyof InstitutionRequest, checked as boolean)
+                  setValue(service.key as keyof InstitutionRequest, !!checked)
                 }
               />
               <Label htmlFor={service.key} className="cursor-pointer">
@@ -309,9 +292,9 @@ export function InstitutionStep() {
               <div key={level.key} className="flex items-center gap-2">
                 <Checkbox
                   id={level.key}
-                  checked={watch(level.key as keyof InstitutionRequest) as boolean}
+                  checked={!!watch(level.key as keyof InstitutionRequest)}
                   onCheckedChange={(checked) =>
-                    setValue(level.key as keyof InstitutionRequest, checked as boolean)
+                    setValue(level.key as keyof InstitutionRequest, !!checked)
                   }
                 />
                 <Label htmlFor={level.key} className="cursor-pointer">
@@ -342,7 +325,7 @@ export function InstitutionStep() {
           <div className="space-y-2">
             <Label htmlFor="distanceToSchool">المسافة إلى أقرب مدرسة</Label>
             <Select
-              value={watch("distanceToSchool")}
+              value={watch("distanceToSchool") || ""}
               onValueChange={(value) => setValue("distanceToSchool", value as Distance)}
             >
               <SelectTrigger>
@@ -363,7 +346,7 @@ export function InstitutionStep() {
               المسافة إلى أقرب داخلية وطنية
             </Label>
             <Select
-              value={watch("distanceToNationalBoardingSchool")}
+              value={watch("distanceToNationalBoardingSchool") || ""}
               onValueChange={(value) =>
                 setValue("distanceToNationalBoardingSchool", value as Distance)
               }

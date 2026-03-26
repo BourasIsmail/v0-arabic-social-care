@@ -35,14 +35,17 @@ public class Institution extends BaseEntity {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "region")
-    private String region;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")
+    private Region region;
 
-    @Column(name = "prefecture_province")
-    private String prefectureProvince;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "prefecture_id")
+    private Prefecture prefecture;
 
-    @Column(name = "commune")
-    private String commune;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "commune_id")
+    private Commune commune;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "milieu")

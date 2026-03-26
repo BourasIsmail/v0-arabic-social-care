@@ -226,15 +226,21 @@ export interface StaffMemberDTO {
   annualCost?: number;
 }
 
+// Geo DTOs
+export interface GeoDTO {
+  id: number;
+  name: string;
+}
+
 export interface InstitutionRequest {
   // Section 1: Institution Info
   institutionType: InstitutionType;
   associationName: string;
   institutionName: string;
   address?: string;
-  region?: string;
-  prefectureProvince?: string;
-  commune?: string;
+  regionId?: number | "";
+  prefectureId?: number | "";
+  communeId?: number | "";
   milieu?: Milieu;
   creationYear?: number;
   legalStatus?: LegalStatus;
@@ -275,8 +281,46 @@ export interface InstitutionRequest {
   staffMembers?: StaffMemberDTO[];
 }
 
-export interface InstitutionResponse extends InstitutionRequest {
+export interface InstitutionResponse {
   id: number;
+  institutionType: InstitutionType;
+  associationName: string;
+  institutionName: string;
+  address?: string;
+  regionId?: number;
+  regionName?: string;
+  prefectureId?: number;
+  prefectureName?: string;
+  communeId?: number;
+  communeName?: string;
+  milieu?: Milieu;
+  creationYear?: number;
+  legalStatus?: LegalStatus;
+  unlicensedReason?: string;
+  licenseNumber?: string;
+  serviceStartDate?: string;
+  housing?: boolean;
+  meals?: boolean;
+  educationalSupport?: boolean;
+  culturalActivities?: boolean;
+  healthCare?: boolean;
+  insurance?: boolean;
+  psychologicalSupport?: boolean;
+  totalCapacity?: number;
+  maleCapacity?: number;
+  femaleCapacity?: number;
+  primary?: boolean;
+  middleSchool?: boolean;
+  highSchool?: boolean;
+  other?: boolean;
+  otherDetail?: string;
+  distanceToSchool?: Distance;
+  distanceToNationalBoardingSchool?: Distance;
+  building?: BuildingDTO;
+  financing?: FinancingDTO;
+  targeting?: TargetingDTO;
+  housingMeals?: HousingMealsDTO;
+  staffMembers?: StaffMemberDTO[];
   createdAt: string;
   updatedAt: string;
 }
@@ -286,8 +330,10 @@ export interface InstitutionSummary {
   institutionType: InstitutionType;
   institutionName: string;
   associationName: string;
-  region?: string;
-  commune?: string;
+  regionId?: number;
+  regionName?: string;
+  communeId?: number;
+  communeName?: string;
   totalCapacity?: number;
   createdAt: string;
 }
