@@ -596,70 +596,72 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
         <CardHeader>
           <CardTitle>الإيواء والإطعام</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label>عدد الغرف</Label>
-              <Input
-                type="number"
-                {...register("housingMeals.totalRooms", { valueAsNumber: true })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>عدد الأسرة</Label>
-              <Input
-                type="number"
-                {...register("housingMeals.totalBeds", { valueAsNumber: true })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>عدد الأسرة في الغرفة</Label>
-              <Input
-                type="number"
-                {...register("housingMeals.bedsPerRoom", { valueAsNumber: true })}
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id="hasRefectory"
-                checked={watch("housingMeals.hasRefectory") || false}
-                onCheckedChange={(checked) =>
-                  setValue("housingMeals.hasRefectory", checked as boolean)
-                }
-              />
-              <Label htmlFor="hasRefectory">يوجد مطعم</Label>
-            </div>
-
-            <div className="space-y-2">
-              <Label>سعة المطعم</Label>
-              <Input
-                type="number"
-                {...register("housingMeals.refectoryCapacity", { valueAsNumber: true })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>نوع خدمة الوجبات</Label>
-              <Select
-                value={watch("housingMeals.mealServiceType") || ""}
-                onValueChange={(v) =>
-                  setValue("housingMeals.mealServiceType", v as MealServiceType)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر نوع الخدمة" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(mealServiceTypeLabels).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label>نوع خدمة الوجبات</Label>
+            <Select
+              value={watch("housingMeals.mealServiceType") || ""}
+              onValueChange={(v) =>
+                setValue("housingMeals.mealServiceType", v as MealServiceType)
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="اختر نوع الخدمة" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(mealServiceTypeLabels).map(([value, label]) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
+          <div className="space-y-2">
+            <Label>ملاحظات حول الطاقة الاستيعابية</Label>
+            <Input {...register("housingMeals.capacityRemarks")} />
+          </div>
+
+          {/* Season data */}
+          {["season2324", "season2425", "season2526"].map((season) => {
+            const seasonLabel = season === "season2324" ? "2023-2024" : season === "season2425" ? "2024-2025" : "2025-2026";
+            return (
+              <div key={season} className="border rounded-lg p-4 space-y-4">
+                <h4 className="font-medium">موسم {seasonLabel}</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>المستفيدون من الإيواء (ذكور)</Label>
+                    <Input
+                      type="number"
+                      {...register(`housingMeals.${season}.housingBeneficiariesMale` as keyof InstitutionRequest, { valueAsNumber: true })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>المستفيدون من الإيواء (إناث)</Label>
+                    <Input
+                      type="number"
+                      {...register(`housingMeals.${season}.housingBeneficiariesFemale` as keyof InstitutionRequest, { valueAsNumber: true })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>المستفيدون من الوجبات (ذكور)</Label>
+                    <Input
+                      type="number"
+                      {...register(`housingMeals.${season}.mealBeneficiariesMale` as keyof InstitutionRequest, { valueAsNumber: true })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>المستفيدون من الوجبات (إناث)</Label>
+                    <Input
+                      type="number"
+                      {...register(`housingMeals.${season}.mealBeneficiariesFemale` as keyof InstitutionRequest, { valueAsNumber: true })}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </CardContent>
       </Card>
 
