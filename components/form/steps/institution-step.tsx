@@ -30,7 +30,7 @@ import type { InstitutionRequest } from "@/lib/types";
 import { ArrowLeft } from "lucide-react";
 
 export function InstitutionStep() {
-  const { formData, updateFormData, setCurrentStep } = useFormContext();
+  const { formData, updateFormData, setCurrentStep, formVersion } = useFormContext();
 
   const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<
     Partial<InstitutionRequest>
@@ -38,10 +38,11 @@ export function InstitutionStep() {
     defaultValues: formData,
   });
 
-  // Reset form when formData changes (for edit mode)
+  // Reset form when formVersion changes (for edit mode - ensures we only reset when new data is loaded)
   useEffect(() => {
+    console.log("[v0] InstitutionStep reset triggered, formVersion:", formVersion, "formData:", formData);
     reset(formData);
-  }, [formData, reset]);
+  }, [formVersion, reset]);
 
   const legalStatus = watch("legalStatus");
 

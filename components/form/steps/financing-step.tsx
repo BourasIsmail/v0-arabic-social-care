@@ -12,16 +12,16 @@ import type { FinancingDTO } from "@/lib/types";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export function FinancingStep() {
-  const { formData, updateFormData, setCurrentStep } = useFormContext();
+  const { formData, updateFormData, setCurrentStep, formVersion } = useFormContext();
 
   const { register, watch, setValue, handleSubmit, reset } = useForm<FinancingDTO>({
     defaultValues: formData.financing || {},
   });
 
-  // Reset form when formData changes (for edit mode)
+  // Reset form when formVersion changes (for edit mode)
   useEffect(() => {
     reset(formData.financing || {});
-  }, [formData.financing, reset]);
+  }, [formVersion, reset]);
 
   const onSubmit = (data: FinancingDTO) => {
     updateFormData({ financing: data });

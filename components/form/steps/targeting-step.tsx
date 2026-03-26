@@ -27,16 +27,16 @@ import type { TargetingDTO } from "@/lib/types";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export function TargetingStep() {
-  const { formData, updateFormData, setCurrentStep } = useFormContext();
+  const { formData, updateFormData, setCurrentStep, formVersion } = useFormContext();
 
   const { register, watch, setValue, handleSubmit, reset } = useForm<TargetingDTO>({
     defaultValues: formData.targeting || {},
   });
 
-  // Reset form when formData changes (for edit mode)
+  // Reset form when formVersion changes (for edit mode)
   useEffect(() => {
     reset(formData.targeting || {});
-  }, [formData.targeting, reset]);
+  }, [formVersion, reset]);
 
   const onSubmit = (data: TargetingDTO) => {
     updateFormData({ targeting: data });

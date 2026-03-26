@@ -115,7 +115,7 @@ function SeasonFields({
 }
 
 export function HousingStep() {
-  const { formData, updateFormData, setCurrentStep } = useFormContext();
+  const { formData, updateFormData, setCurrentStep, formVersion } = useFormContext();
 
   const { register, watch, setValue, handleSubmit, reset } = useForm<HousingMealsDTO>({
     defaultValues: formData.housingMeals || {
@@ -125,14 +125,14 @@ export function HousingStep() {
     },
   });
 
-  // Reset form when formData changes (for edit mode)
+  // Reset form when formVersion changes (for edit mode)
   useEffect(() => {
     reset(formData.housingMeals || {
       season2324: {},
       season2425: {},
       season2526: {},
     });
-  }, [formData.housingMeals, reset]);
+  }, [formVersion, reset]);
 
   const onSubmit = (data: HousingMealsDTO) => {
     updateFormData({ housingMeals: data });
