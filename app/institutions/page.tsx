@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import useSWR from "swr";
 import { Building2, Plus, Search, Filter, Eye, Pencil, Trash2, Download } from "lucide-react";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
+import { useAuthSWR, useAuthMutate } from "@/lib/use-auth-swr";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,13 +43,12 @@ import {
 import type { InstitutionSummary, PageResponse } from "@/lib/types";
 import { toast } from "sonner";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 export default function InstitutionsPage() {
   const [search, setSearch] = useState("");
   const [institutionType, setInstitutionType] = useState<string>("all");
   const [page, setPage] = useState(0);
   const pageSize = 10;
+  const authFetch = useAuthMutate();
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
@@ -63,14 +62,13 @@ export default function InstitutionsPage() {
     queryParams.set("institutionType", institutionType);
   }
 
-  const { data, error, isLoading, mutate } = useSWR<PageResponse<InstitutionSummary>>(
-    `/api/institutions?${queryParams.toString()}`,
-    fetcher
+  const { data, error, isLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
+    `/api/institutions?${queryParams.toString()}`
   );
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`/api/institutions/${id}`, {
+      const response = await authFetch(`/api/institutions/${id}`, {
         method: "DELETE",
       });
 
@@ -87,7 +85,7 @@ export default function InstitutionsPage() {
 
   const handleExport = async () => {
     try {
-      const response = await fetch("/api/institutions/export");
+      const response = await authFetch("/api/institutions/export");
       if (!response.ok) throw new Error("Export failed");
 
       const blob = await response.blob();

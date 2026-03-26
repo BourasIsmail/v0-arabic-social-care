@@ -1,45 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { InstitutionRequest } from "@/lib/types";
-
-// Reference to the same in-memory storage
-// In production, this would be a database
-let institutions: (InstitutionRequest & { id: number; createdAt: string; updatedAt: string })[] = [];
-
-// This is a workaround for in-memory storage across routes
-// In production, use a proper database
-const getInstitutions = () => {
-  // @ts-ignore - accessing global storage
-  if (!global.institutions) {
-    // @ts-ignore
-    global.institutions = [];
-  }
-  // @ts-ignore
-  return global.institutions as (InstitutionRequest & { id: number; createdAt: string; updatedAt: string })[];
-};
-
-const setInstitutions = (data: (InstitutionRequest & { id: number; createdAt: string; updatedAt: string })[]) => {
-  // @ts-ignore
-  global.institutions = data;
-};
+import { backendFetch, getTokenFromRequest } from "@/lib/backend-api";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const institutionId = parseInt(id);
-  const institutions = getInstitutions();
-  
-  const institution = institutions.find((inst) => inst.id === institutionId);
+  const token = getTokenFromRequest(request);
 
-  if (!institution) {
+  try {
+    const response = await backendFetch(
+      `/api/v1/institutions/${id}`,
+      { method: "GET" },
+      token
+    );
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        error,
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Error fetching institution:", error);
     return NextResponse.json(
-      { error: "Institution not found" },
-      { status: 404 }
+      { error: "Failed to fetch institution" },
+      { status: 500 }
     );
   }
-
-  return NextResponse.json(institution);
 }
 
 export async function PUT(
@@ -47,36 +39,35 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const institutionId = parseInt(id);
-  const institutions = getInstitutions();
-  
-  const index = institutions.findIndex((inst) => inst.id === institutionId);
-
-  if (index === -1) {
-    return NextResponse.json(
-      { error: "Institution not found" },
-      { status: 404 }
-    );
-  }
+  const token = getTokenFromRequest(request);
 
   try {
-    const body: InstitutionRequest = await request.json();
+    const body = await request.json();
 
-    const updatedInstitution = {
-      ...institutions[index],
-      ...body,
-      id: institutionId,
-      updatedAt: new Date().toISOString(),
-    };
+    const response = await backendFetch(
+      `/api/v1/institutions/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(body),
+      },
+      token
+    );
 
-    institutions[index] = updatedInstitution;
-    setInstitutions(institutions);
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        error,
+        { status: response.status }
+      );
+    }
 
-    return NextResponse.json(updatedInstitution);
+    const data = await response.json();
+    return NextResponse.json(data);
   } catch (error) {
+    console.error("Error updating institution:", error);
     return NextResponse.json(
-      { error: "Invalid request body" },
-      { status: 400 }
+      { error: "Failed to update institution" },
+      { status: 500 }
     );
   }
 }
@@ -86,20 +77,29 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const institutionId = parseInt(id);
-  const institutions = getInstitutions();
-  
-  const index = institutions.findIndex((inst) => inst.id === institutionId);
+  const token = getTokenFromRequest(request);
 
-  if (index === -1) {
+  try {
+    const response = await backendFetch(
+      `/api/v1/institutions/${id}`,
+      { method: "DELETE" },
+      token
+    );
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        error,
+        { status: response.status }
+      );
+    }
+
+    return new NextResponse(null, { status: 204 });
+  } catch (error) {
+    console.error("Error deleting institution:", error);
     return NextResponse.json(
-      { error: "Institution not found" },
-      { status: 404 }
+      { error: "Failed to delete institution" },
+      { status: 500 }
     );
   }
-
-  institutions.splice(index, 1);
-  setInstitutions(institutions);
-
-  return new NextResponse(null, { status: 204 });
 }

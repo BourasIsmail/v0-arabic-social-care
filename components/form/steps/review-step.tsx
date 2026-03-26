@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useFormContext } from "@/lib/form-context";
+import { useAuthMutate, useAuthFetcher } from "@/lib/use-auth-swr";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import type { GeoDTO } from "@/lib/types";
@@ -27,6 +28,8 @@ import { toast } from "sonner";
 export function ReviewStep() {
   const { formData, setCurrentStep, resetForm } = useFormContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const authFetch = useAuthMutate();
+  const fetcher = useAuthFetcher();
   const [geoNames, setGeoNames] = useState<{
     region?: string;
     prefecture?: string;
@@ -40,12 +43,9 @@ export function ReviewStep() {
 
       if (formData.regionId) {
         try {
-          const res = await fetch("/api/geo/regions");
-          if (res.ok) {
-            const regions: GeoDTO[] = await res.json();
-            const region = regions.find((r) => r.id === formData.regionId);
-            if (region) names.region = region.name;
-          }
+          const regions: GeoDTO[] = await fetcher("/api/geo/regions");
+          const region = regions.find((r) => r.id === formData.regionId);
+          if (region) names.region = region.name;
         } catch (e) {
           console.error("Failed to fetch region name", e);
         }
@@ -53,12 +53,9 @@ export function ReviewStep() {
 
       if (formData.regionId && formData.prefectureId) {
         try {
-          const res = await fetch(`/api/geo/regions/${formData.regionId}/prefectures`);
-          if (res.ok) {
-            const prefectures: GeoDTO[] = await res.json();
-            const prefecture = prefectures.find((p) => p.id === formData.prefectureId);
-            if (prefecture) names.prefecture = prefecture.name;
-          }
+          const prefectures: GeoDTO[] = await fetcher(`/api/geo/regions/${formData.regionId}/prefectures`);
+          const prefecture = prefectures.find((p) => p.id === formData.prefectureId);
+          if (prefecture) names.prefecture = prefecture.name;
         } catch (e) {
           console.error("Failed to fetch prefecture name", e);
         }
@@ -66,12 +63,9 @@ export function ReviewStep() {
 
       if (formData.prefectureId && formData.communeId) {
         try {
-          const res = await fetch(`/api/geo/prefectures/${formData.prefectureId}/communes`);
-          if (res.ok) {
-            const communes: GeoDTO[] = await res.json();
-            const commune = communes.find((c) => c.id === formData.communeId);
-            if (commune) names.commune = commune.name;
-          }
+          const communes: GeoDTO[] = await fetcher(`/api/geo/prefectures/${formData.prefectureId}/communes`);
+          const commune = communes.find((c) => c.id === formData.communeId);
+          if (commune) names.commune = commune.name;
         } catch (e) {
           console.error("Failed to fetch commune name", e);
         }
@@ -81,7 +75,7 @@ export function ReviewStep() {
     }
 
     fetchGeoNames();
-  }, [formData.regionId, formData.prefectureId, formData.communeId]);
+  }, [formData.regionId, formData.prefectureId, formData.communeId, fetcher]);
 
   const goBack = () => {
     setCurrentStep("staff");
@@ -90,11 +84,8 @@ export function ReviewStep() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/institutions", {
+      const response = await authFetch("/api/institutions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(formData),
       });
 
