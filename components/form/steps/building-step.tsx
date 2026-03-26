@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useFormContext } from "@/lib/form-context";
 import { Button } from "@/components/ui/button";
@@ -29,9 +30,14 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 export function BuildingStep() {
   const { formData, updateFormData, setCurrentStep } = useFormContext();
 
-  const { watch, setValue, handleSubmit } = useForm<BuildingDTO>({
+  const { watch, setValue, handleSubmit, reset } = useForm<BuildingDTO>({
     defaultValues: formData.building || {},
   });
+
+  // Reset form when formData changes (for edit mode)
+  useEffect(() => {
+    reset(formData.building || {});
+  }, [formData.building, reset]);
 
   const onSubmit = (data: BuildingDTO) => {
     updateFormData({ building: data });

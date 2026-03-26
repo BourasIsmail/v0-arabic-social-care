@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useFormContext } from "@/lib/form-context";
 import { Button } from "@/components/ui/button";
@@ -28,9 +29,14 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 export function TargetingStep() {
   const { formData, updateFormData, setCurrentStep } = useFormContext();
 
-  const { register, watch, setValue, handleSubmit } = useForm<TargetingDTO>({
+  const { register, watch, setValue, handleSubmit, reset } = useForm<TargetingDTO>({
     defaultValues: formData.targeting || {},
   });
+
+  // Reset form when formData changes (for edit mode)
+  useEffect(() => {
+    reset(formData.targeting || {});
+  }, [formData.targeting, reset]);
 
   const onSubmit = (data: TargetingDTO) => {
     updateFormData({ targeting: data });

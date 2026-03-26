@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useFormContext } from "@/lib/form-context";
 import { Button } from "@/components/ui/button";
@@ -13,9 +14,14 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 export function FinancingStep() {
   const { formData, updateFormData, setCurrentStep } = useFormContext();
 
-  const { register, watch, setValue, handleSubmit } = useForm<FinancingDTO>({
+  const { register, watch, setValue, handleSubmit, reset } = useForm<FinancingDTO>({
     defaultValues: formData.financing || {},
   });
+
+  // Reset form when formData changes (for edit mode)
+  useEffect(() => {
+    reset(formData.financing || {});
+  }, [formData.financing, reset]);
 
   const onSubmit = (data: FinancingDTO) => {
     updateFormData({ financing: data });

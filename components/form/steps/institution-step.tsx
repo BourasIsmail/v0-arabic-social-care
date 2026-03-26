@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useFormContext } from "@/lib/form-context";
 import { Button } from "@/components/ui/button";
@@ -31,11 +32,16 @@ import { ArrowLeft } from "lucide-react";
 export function InstitutionStep() {
   const { formData, updateFormData, setCurrentStep } = useFormContext();
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<
+  const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<
     Partial<InstitutionRequest>
   >({
     defaultValues: formData,
   });
+
+  // Reset form when formData changes (for edit mode)
+  useEffect(() => {
+    reset(formData);
+  }, [formData, reset]);
 
   const legalStatus = watch("legalStatus");
 
