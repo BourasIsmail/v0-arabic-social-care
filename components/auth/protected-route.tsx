@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Loader2 } from "lucide-react";
 
@@ -11,22 +10,26 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
-  const router = useRouter();
   const { isAuthenticated, isLoading, user } = useAuth();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push("/login");
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !isLoading && !isAuthenticated) {
+      window.location.href = "/login";
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, mounted]);
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated && requiredRole && user) {
+    if (mounted && !isLoading && isAuthenticated && requiredRole && user) {
       if (requiredRole === "ADMIN" && user.role !== "ADMIN") {
-        router.push("/");
+        window.location.href = "/";
       }
     }
-  }, [isAuthenticated, isLoading, requiredRole, user, router]);
+  }, [isAuthenticated, isLoading, requiredRole, user, mounted]);
 
   if (isLoading) {
     return (

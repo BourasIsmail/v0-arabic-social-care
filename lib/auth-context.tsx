@@ -35,7 +35,7 @@ const STORAGE_KEYS = {
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [state, setState] = useState<AuthState>({
     user: null,
     accessToken: null,
@@ -43,6 +43,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated: false,
     isLoading: true,
   });
+
+  // Track mount state
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Initialize auth state from localStorage
   useEffect(() => {
@@ -135,8 +140,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: false,
       isLoading: false,
     });
-    router.push("/login");
-  }, [router]);
+    // Use window.location for navigation to avoid router initialization issues
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+  }, []);
 
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
     const currentRefreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
