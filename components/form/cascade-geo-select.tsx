@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import type { GeoDTO } from "@/lib/types";
+import { useAuthFetcher } from "@/lib/use-auth-swr";
 
 interface CascadeGeoSelectProps {
   regionId: number | "";
@@ -29,6 +30,7 @@ export function CascadeGeoSelect({
   onPrefectureChange,
   onCommuneChange,
 }: CascadeGeoSelectProps) {
+  const fetcher = useAuthFetcher();
   const [regions, setRegions] = useState<GeoDTO[]>([]);
   const [prefectures, setPrefectures] = useState<GeoDTO[]>([]);
   const [communes, setCommunes] = useState<GeoDTO[]>([]);
@@ -42,11 +44,8 @@ export function CascadeGeoSelect({
     async function fetchRegions() {
       setLoadingRegions(true);
       try {
-        const res = await fetch("/api/geo/regions");
-        if (res.ok) {
-          const data = await res.json();
-          setRegions(data);
-        }
+        const data = await fetcher("/api/geo/regions");
+        setRegions(data);
       } catch (error) {
         console.error("Failed to fetch regions:", error);
       } finally {
@@ -54,7 +53,7 @@ export function CascadeGeoSelect({
       }
     }
     fetchRegions();
-  }, []);
+  }, [fetcher]);
 
   // Fetch prefectures when region changes
   useEffect(() => {
@@ -67,11 +66,8 @@ export function CascadeGeoSelect({
     async function fetchPrefectures() {
       setLoadingPrefectures(true);
       try {
-        const res = await fetch(`/api/geo/regions/${regionId}/prefectures`);
-        if (res.ok) {
-          const data = await res.json();
-          setPrefectures(data);
-        }
+        const data = await fetcher(`/api/geo/regions/${regionId}/prefectures`);
+        setPrefectures(data);
       } catch (error) {
         console.error("Failed to fetch prefectures:", error);
       } finally {
@@ -79,7 +75,7 @@ export function CascadeGeoSelect({
       }
     }
     fetchPrefectures();
-  }, [regionId]);
+  }, [regionId, fetcher]);
 
   // Fetch communes when prefecture changes
   useEffect(() => {
@@ -91,11 +87,8 @@ export function CascadeGeoSelect({
     async function fetchCommunes() {
       setLoadingCommunes(true);
       try {
-        const res = await fetch(`/api/geo/prefectures/${prefectureId}/communes`);
-        if (res.ok) {
-          const data = await res.json();
-          setCommunes(data);
-        }
+        const data = await fetcher(`/api/geo/prefectures/${prefectureId}/communes`);
+        setCommunes(data);
       } catch (error) {
         console.error("Failed to fetch communes:", error);
       } finally {
@@ -103,7 +96,7 @@ export function CascadeGeoSelect({
       }
     }
     fetchCommunes();
-  }, [prefectureId]);
+  }, [prefectureId, fetcher]);
 
   const handleRegionChange = (value: string) => {
     const numValue = value ? parseInt(value, 10) : "";

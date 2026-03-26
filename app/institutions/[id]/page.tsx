@@ -2,8 +2,10 @@
 
 import { use } from "react";
 import Link from "next/link";
-import useSWR from "swr";
 import { Building2, ArrowRight, Pencil, Calendar, MapPin, Users } from "lucide-react";
+import { useAuthSWR } from "@/lib/use-auth-swr";
+import { ProtectedRoute } from "@/components/auth/protected-route";
+import { UserMenu } from "@/components/auth/user-menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,17 +25,14 @@ import {
 } from "@/lib/types";
 import type { InstitutionResponse } from "@/lib/types";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 export default function InstitutionDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const { data, error, isLoading } = useSWR<InstitutionResponse>(
-    `/api/institutions/${id}`,
-    fetcher
+  const { data, error, isLoading } = useAuthSWR<InstitutionResponse>(
+    `/api/institutions/${id}`
   );
 
   if (isLoading) {
@@ -84,37 +83,39 @@ export default function InstitutionDetailPage({
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/institutions" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Building2 className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-foreground">تفاصيل المؤسسة</h1>
-                <p className="text-sm text-muted-foreground">{data.institutionName}</p>
-              </div>
-            </Link>
-            <div className="flex items-center gap-2">
-              <Link href="/institutions">
-                <Button variant="ghost" className="gap-2">
-                  <ArrowRight className="h-4 w-4" />
-                  العودة
-                </Button>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="border-b border-border bg-card">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <Link href="/institutions" className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                  <Building2 className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold text-foreground">تفاصيل المؤسسة</h1>
+                  <p className="text-sm text-muted-foreground">{data.institutionName}</p>
+                </div>
               </Link>
-              <Link href={`/institutions/${id}/edit`}>
-                <Button className="gap-2">
-                  <Pencil className="h-4 w-4" />
-                  تعديل
-                </Button>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link href="/institutions">
+                  <Button variant="ghost" className="gap-2">
+                    <ArrowRight className="h-4 w-4" />
+                    العودة
+                  </Button>
+                </Link>
+                <Link href={`/institutions/${id}/edit`}>
+                  <Button className="gap-2">
+                    <Pencil className="h-4 w-4" />
+                    تعديل
+                  </Button>
+                </Link>
+                <UserMenu />
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
@@ -384,6 +385,7 @@ export default function InstitutionDetailPage({
           </div>
         </div>
       </main>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

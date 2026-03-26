@@ -227,7 +227,7 @@ export function InstitutionStep() {
             <div key={service.key} className="flex items-center gap-2">
               <Checkbox
                 id={service.key}
-                checked={!!watch(service.key as keyof InstitutionRequest)}
+                checked={(watch(service.key as keyof InstitutionRequest) as boolean) || false}
                 onCheckedChange={(checked) =>
                   setValue(service.key as keyof InstitutionRequest, !!checked)
                 }
@@ -292,7 +292,7 @@ export function InstitutionStep() {
               <div key={level.key} className="flex items-center gap-2">
                 <Checkbox
                   id={level.key}
-                  checked={!!watch(level.key as keyof InstitutionRequest)}
+                  checked={(watch(level.key as keyof InstitutionRequest) as boolean) || false}
                   onCheckedChange={(checked) =>
                     setValue(level.key as keyof InstitutionRequest, !!checked)
                   }

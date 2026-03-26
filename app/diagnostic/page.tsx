@@ -1,11 +1,16 @@
+"use client";
+
 import Link from "next/link";
 import { Building2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DiagnosticFormWizard } from "@/components/form/diagnostic-form-wizard";
+import { ProtectedRoute } from "@/components/auth/protected-route";
+import { UserMenu } from "@/components/auth/user-menu";
 
 export default function DiagnosticPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
@@ -19,12 +24,15 @@ export default function DiagnosticPage() {
                 <p className="text-sm text-muted-foreground">استمارة تشخيص المؤسسات</p>
               </div>
             </Link>
-            <Link href="/">
-              <Button variant="ghost" className="gap-2">
-                <ArrowRight className="h-4 w-4" />
-                العودة للرئيسية
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link href="/">
+                <Button variant="ghost" className="gap-2">
+                  <ArrowRight className="h-4 w-4" />
+                  العودة للرئيسية
+                </Button>
+              </Link>
+              <UserMenu />
+            </div>
           </div>
         </div>
       </header>
@@ -42,6 +50,7 @@ export default function DiagnosticPage() {
           <DiagnosticFormWizard />
         </div>
       </main>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

@@ -241,7 +241,7 @@ export function HousingStep() {
           <div className="space-y-2">
             <Label htmlFor="mealServiceType">نوع خدمة الإطعام</Label>
             <Select
-              value={watch("mealServiceType")}
+              value={watch("mealServiceType") || ""}
               onValueChange={(value) => setValue("mealServiceType", value as MealServiceType)}
             >
               <SelectTrigger>
@@ -269,7 +269,7 @@ export function HousingStep() {
               <div key={suggestion.key} className="flex items-center gap-2">
                 <Checkbox
                   id={suggestion.key}
-                  checked={watch(suggestion.key as keyof HousingMealsDTO) as boolean}
+                  checked={(watch(suggestion.key as keyof HousingMealsDTO) as boolean) || false}
                   onCheckedChange={(checked) =>
                     setValue(suggestion.key as keyof HousingMealsDTO, checked as boolean)
                   }

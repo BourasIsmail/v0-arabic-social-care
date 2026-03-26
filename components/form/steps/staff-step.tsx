@@ -84,7 +84,7 @@ export function StaffStep() {
             <div className="space-y-2">
               <Label htmlFor="staffType">نوع الموظف *</Label>
               <Select
-                value={newMember.staffType}
+                value={newMember.staffType || ""}
                 onValueChange={(value) =>
                   setNewMember({ ...newMember, staffType: value as StaffType })
                 }

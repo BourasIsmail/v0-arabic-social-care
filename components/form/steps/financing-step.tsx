@@ -71,7 +71,7 @@ export function FinancingStep() {
               <div key={source.key} className="flex items-center gap-2">
                 <Checkbox
                   id={source.key}
-                  checked={watch(source.key as keyof FinancingDTO) as boolean}
+                  checked={(watch(source.key as keyof FinancingDTO) as boolean) || false}
                   onCheckedChange={(checked) =>
                     setValue(source.key as keyof FinancingDTO, checked as boolean)
                   }
@@ -118,7 +118,7 @@ export function FinancingStep() {
               <div key={source.key} className="flex items-center gap-2">
                 <Checkbox
                   id={source.key}
-                  checked={watch(source.key as keyof FinancingDTO) as boolean}
+                  checked={(watch(source.key as keyof FinancingDTO) as boolean) || false}
                   onCheckedChange={(checked) =>
                     setValue(source.key as keyof FinancingDTO, checked as boolean)
                   }
@@ -154,7 +154,7 @@ export function FinancingStep() {
               <div key={source.key} className="flex items-center gap-2">
                 <Checkbox
                   id={source.key}
-                  checked={watch(source.key as keyof FinancingDTO) as boolean}
+                  checked={(watch(source.key as keyof FinancingDTO) as boolean) || false}
                   onCheckedChange={(checked) =>
                     setValue(source.key as keyof FinancingDTO, checked as boolean)
                   }
