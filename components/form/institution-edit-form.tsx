@@ -673,16 +673,16 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
             <Label className="mb-2 block">معايير الاختيار</Label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {[
-                { name: "targeting.povertyBased", label: "الفقر" },
-                { name: "targeting.distanceBased", label: "البعد عن المدرسة" },
-                { name: "targeting.orphansBased", label: "اليتم" },
-                { name: "targeting.disabilityBased", label: "الإعاقة" },
+                { name: "targeting.socialSituation", label: "الفقر" },
+                { name: "targeting.distance", label: "البعد عن المدرسة" },
+                { name: "targeting.scholarship", label: "اليتم" },
+                { name: "targeting.schoolResults", label: "الإعاقة" },
                 { name: "targeting.otherCriteria", label: "أخرى" },
               ].map((criteria) => (
                 <div key={criteria.name} className="flex items-center gap-2">
                   <Checkbox
                     id={criteria.name}
-                    checked={watch(criteria.name as keyof InstitutionRequest) as boolean}
+                    checked={watch(criteria.name as keyof InstitutionRequest) as boolean || false}
                     onCheckedChange={(checked) =>
                       setValue(criteria.name as keyof InstitutionRequest, checked as boolean)
                     }
