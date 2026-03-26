@@ -43,16 +43,14 @@ export const viewport: Viewport = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="ar" dir="rtl">
       <body className="font-sans antialiased min-h-screen bg-background">
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
         <Analytics />
       </body>
     </html>
-  )
+  );
 }
