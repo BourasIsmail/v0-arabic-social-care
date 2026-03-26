@@ -26,7 +26,7 @@ import { ArrowRight, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export function ReviewStep() {
-  const { formData, setCurrentStep, resetForm } = useFormContext();
+  const { formData, setCurrentStep, resetForm, isEditMode, editId } = useFormContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const authFetch = useAuthMutate();
   const fetcher = useAuthFetcher();
@@ -84,8 +84,11 @@ export function ReviewStep() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const response = await authFetch("/api/institutions", {
-        method: "POST",
+      const url = isEditMode ? `/api/institutions/${editId}` : "/api/institutions";
+      const method = isEditMode ? "PUT" : "POST";
+      
+      const response = await authFetch(url, {
+        method,
         body: JSON.stringify(formData),
       });
 
@@ -93,8 +96,15 @@ export function ReviewStep() {
         throw new Error("Failed to submit");
       }
 
-      toast.success("تم حفظ البيانات بنجاح");
+      toast.success(isEditMode ? "تم تحديث البيانات بنجاح" : "تم حفظ البيانات بنجاح");
       resetForm();
+      
+      // Redirect after successful save
+      if (isEditMode) {
+        window.location.href = `/institutions/${editId}`;
+      } else {
+        window.location.href = "/institutions";
+      }
     } catch (error) {
       toast.error("حدث خطأ أثناء حفظ البيانات");
     } finally {
@@ -367,12 +377,12 @@ export function ReviewStep() {
           {isSubmitting ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              جاري الحفظ...
+              {isEditMode ? "جاري التحديث..." : "جاري الحفظ..."}
             </>
           ) : (
             <>
               <Check className="h-4 w-4" />
-              حفظ البيانات
+              {isEditMode ? "تحديث البيانات" : "حفظ البيانات"}
             </>
           )}
         </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/lib/auth-context";
@@ -23,6 +23,7 @@ export default function LoginPage() {
   const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const redirectingRef = useRef(false);
 
   const {
     register,
@@ -36,11 +37,11 @@ export default function LoginPage() {
 
   // Redirect if already authenticated - deferred to avoid hydration issues
   useEffect(() => {
-    if (mounted && isAuthenticated && !authLoading) {
-      const timer = setTimeout(() => {
+    if (mounted && isAuthenticated && !authLoading && !redirectingRef.current) {
+      redirectingRef.current = true;
+      requestAnimationFrame(() => {
         window.location.href = "/";
-      }, 0);
-      return () => clearTimeout(timer);
+      });
     }
   }, [isAuthenticated, authLoading, mounted]);
 

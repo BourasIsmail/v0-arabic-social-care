@@ -48,30 +48,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setMounted(true);
   }, []);
 
-  // Initialize auth state from localStorage
+  // Initialize auth state from localStorage (only on client)
   useEffect(() => {
-    const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-    const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-    const userStr = localStorage.getItem(STORAGE_KEYS.USER);
-
-    if (accessToken && refreshToken && userStr) {
+    if (typeof window === "undefined") return;
+    
+    // Use requestAnimationFrame to defer localStorage access
+    const initAuth = () => {
       try {
-        const user = JSON.parse(userStr) as User;
-        setState({
-          user,
-          accessToken,
-          refreshToken,
-          isAuthenticated: true,
-          isLoading: false,
-        });
+        const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+        const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+        const userStr = localStorage.getItem(STORAGE_KEYS.USER);
+
+        if (accessToken && refreshToken && userStr) {
+          const user = JSON.parse(userStr) as User;
+          setState({
+            user,
+            accessToken,
+            refreshToken,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } else {
+          setState((prev) => ({ ...prev, isLoading: false }));
+        }
       } catch {
         // Invalid stored data, clear it
         clearStorage();
         setState((prev) => ({ ...prev, isLoading: false }));
       }
-    } else {
-      setState((prev) => ({ ...prev, isLoading: false }));
-    }
+    };
+
+    // Defer to next frame to avoid hydration issues
+    requestAnimationFrame(initAuth);
   }, []);
 
   const clearStorage = () => {

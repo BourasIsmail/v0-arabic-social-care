@@ -23,7 +23,13 @@ export function useAuthFetcher() {
         throw error;
       }
       
-      return response.json();
+      // Handle empty responses (204 No Content)
+      const text = await response.text();
+      if (!text) {
+        return null;
+      }
+      
+      return JSON.parse(text);
     },
     [accessToken]
   );

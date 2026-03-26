@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Loader2 } from "lucide-react";
 
@@ -12,39 +12,32 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading, user } = useAuth();
   const [mounted, setMounted] = useState(false);
-  const [shouldRedirect, setShouldRedirect] = useState(false);
+  const redirectingRef = useRef(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Handle redirect after everything is settled
   useEffect(() => {
-    if (mounted && !isLoading && !isAuthenticated) {
-      setShouldRedirect(true);
-    }
-  }, [isAuthenticated, isLoading, mounted]);
+    if (!mounted || isLoading || redirectingRef.current) return;
 
-  useEffect(() => {
-    if (mounted && !isLoading && isAuthenticated && requiredRole && user) {
-      if (requiredRole === "ADMIN" && user.role !== "ADMIN") {
-        setShouldRedirect(true);
-      }
-    }
-  }, [isAuthenticated, isLoading, requiredRole, user, mounted]);
+    // Check if we need to redirect
+    const needsAuthRedirect = !isAuthenticated;
+    const needsRoleRedirect = requiredRole === "ADMIN" && user?.role !== "ADMIN";
 
-  // Perform redirect in a separate effect to avoid hydration issues
-  useEffect(() => {
-    if (shouldRedirect && mounted) {
-      const redirectUrl = !isAuthenticated ? "/login" : "/";
-      // Use setTimeout to ensure this runs after hydration
-      const timer = setTimeout(() => {
+    if (needsAuthRedirect || needsRoleRedirect) {
+      redirectingRef.current = true;
+      const redirectUrl = needsAuthRedirect ? "/login" : "/";
+      
+      // Use requestAnimationFrame to ensure we're past hydration
+      requestAnimationFrame(() => {
         window.location.href = redirectUrl;
-      }, 0);
-      return () => clearTimeout(timer);
+      });
     }
-  }, [shouldRedirect, mounted, isAuthenticated]);
+  }, [mounted, isLoading, isAuthenticated, requiredRole, user]);
 
-  // Show loading state during SSR and initial client render
+  // Show loading state during SSR, initial mount, and auth check
   if (!mounted || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -56,7 +49,8 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
     );
   }
 
-  if (!isAuthenticated || shouldRedirect) {
+  // Show loading while redirecting
+  if (!isAuthenticated || (requiredRole === "ADMIN" && user?.role !== "ADMIN")) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -65,10 +59,6 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
         </div>
       </div>
     );
-  }
-
-  if (requiredRole === "ADMIN" && user?.role !== "ADMIN") {
-    return null;
   }
 
   return <>{children}</>;
