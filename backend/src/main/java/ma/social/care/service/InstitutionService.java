@@ -1,0 +1,40 @@
+package ma.social.care.service;
+
+import ma.social.care.dto.*;
+import ma.social.care.entity.enums.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+
+public interface InstitutionService {
+
+    InstitutionResponseDTO createInstitution(InstitutionRequestDTO request);
+
+    Page<InstitutionSummaryDTO> getAllInstitutions(
+            String region,
+            String commune,
+            InstitutionType institutionType,
+            Milieu milieu,
+            LegalStatus legalStatus,
+            Pageable pageable
+    );
+
+    InstitutionResponseDTO getInstitutionById(Long id);
+
+    InstitutionResponseDTO updateInstitution(Long id, InstitutionRequestDTO request);
+
+    void deleteInstitution(Long id);
+
+    List<StaffMemberDTO> getStaffByInstitutionId(Long institutionId);
+
+    List<StaffMemberDTO> replaceStaff(Long institutionId, List<StaffMemberDTO> staffMembers);
+
+    List<InstitutionResponseDTO> getAllForExport();
+
+    List<String> getAllRegions();
+
+    List<String> getAllCommunes();
+
+    List<String> getCommunesByRegion(String region);
+}

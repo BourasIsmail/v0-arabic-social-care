@@ -1,0 +1,254 @@
+package ma.social.care.service.impl;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import ma.social.care.dto.*;
+import ma.social.care.entity.*;
+import ma.social.care.entity.enums.*;
+import ma.social.care.exception.ResourceNotFoundException;
+import ma.social.care.mapper.InstitutionMapper;
+import ma.social.care.repository.InstitutionRepository;
+import ma.social.care.repository.StaffMemberRepository;
+import ma.social.care.service.InstitutionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class InstitutionServiceImpl implements InstitutionService {
+
+    private final InstitutionRepository institutionRepository;
+    private final StaffMemberRepository staffMemberRepository;
+    private final InstitutionMapper mapper;
+
+    @Override
+    public InstitutionResponseDTO createInstitution(InstitutionRequestDTO request) {
+        log.info("Creating new institution: {}", request.getInstitutionName());
+
+        Institution institution = mapper.toEntity(request);
+
+        // Set nested entities
+        if (request.getBuilding() != null) {
+            Building building = mapper.toBuildingEntity(request.getBuilding());
+            institution.setBuilding(building);
+        }
+
+        if (request.getFinancing() != null) {
+            Financing financing = mapper.toFinancingEntity(request.getFinancing());
+            institution.setFinancing(financing);
+        }
+
+        if (request.getTargeting() != null) {
+            Targeting targeting = mapper.toTargetingEntity(request.getTargeting());
+            institution.setTargeting(targeting);
+        }
+
+        if (request.getHousingMeals() != null) {
+            HousingMeals housingMeals = mapper.toHousingMealsEntity(request.getHousingMeals());
+            institution.setHousingMeals(housingMeals);
+        }
+
+        if (request.getStaffMembers() != null && !request.getStaffMembers().isEmpty()) {
+            for (StaffMemberDTO staffDTO : request.getStaffMembers()) {
+                StaffMember staff = mapper.toStaffMemberEntity(staffDTO);
+                institution.addStaffMember(staff);
+            }
+        }
+
+        Institution saved = institutionRepository.save(institution);
+        log.info("Institution created with ID: {}", saved.getId());
+
+        return mapper.toResponseDTO(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<InstitutionSummaryDTO> getAllInstitutions(
+            String region,
+            String commune,
+            InstitutionType institutionType,
+            Milieu milieu,
+            LegalStatus legalStatus,
+            Pageable pageable
+    ) {
+        log.debug("Fetching institutions with filters - region: {}, commune: {}, type: {}, milieu: {}, status: {}",
+                region, commune, institutionType, milieu, legalStatus);
+
+        Page<Institution> institutions = institutionRepository.findAllWithFilters(
+                region, commune, institutionType, milieu, legalStatus, pageable
+        );
+
+        return institutions.map(mapper::toSummaryDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public InstitutionResponseDTO getInstitutionById(Long id) {
+        log.debug("Fetching institution with ID: {}", id);
+
+        Institution institution = institutionRepository.findByIdWithDetails(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", "id", id));
+
+        // Fetch staff members separately to avoid N+1
+        List<StaffMember> staffMembers = staffMemberRepository.findByInstitutionId(id);
+        institution.setStaffMembers(staffMembers);
+
+        return mapper.toResponseDTO(institution);
+    }
+
+    @Override
+    public InstitutionResponseDTO updateInstitution(Long id, InstitutionRequestDTO request) {
+        log.info("Updating institution with ID: {}", id);
+
+        Institution institution = institutionRepository.findByIdWithDetails(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", "id", id));
+
+        // Update main entity fields
+        mapper.updateEntityFromDTO(request, institution);
+
+        // Update Building
+        if (request.getBuilding() != null) {
+            if (institution.getBuilding() == null) {
+                Building building = mapper.toBuildingEntity(request.getBuilding());
+                institution.setBuilding(building);
+            } else {
+                mapper.updateBuildingFromDTO(request.getBuilding(), institution.getBuilding());
+            }
+        }
+
+        // Update Financing
+        if (request.getFinancing() != null) {
+            if (institution.getFinancing() == null) {
+                Financing financing = mapper.toFinancingEntity(request.getFinancing());
+                institution.setFinancing(financing);
+            } else {
+                mapper.updateFinancingFromDTO(request.getFinancing(), institution.getFinancing());
+            }
+        }
+
+        // Update Targeting
+        if (request.getTargeting() != null) {
+            if (institution.getTargeting() == null) {
+                Targeting targeting = mapper.toTargetingEntity(request.getTargeting());
+                institution.setTargeting(targeting);
+            } else {
+                mapper.updateTargetingFromDTO(request.getTargeting(), institution.getTargeting());
+            }
+        }
+
+        // Update HousingMeals
+        if (request.getHousingMeals() != null) {
+            if (institution.getHousingMeals() == null) {
+                HousingMeals housingMeals = mapper.toHousingMealsEntity(request.getHousingMeals());
+                institution.setHousingMeals(housingMeals);
+            } else {
+                mapper.updateHousingMealsFromDTO(request.getHousingMeals(), institution.getHousingMeals());
+            }
+        }
+
+        // Update Staff Members - replace all
+        if (request.getStaffMembers() != null) {
+            institution.clearStaffMembers();
+            for (StaffMemberDTO staffDTO : request.getStaffMembers()) {
+                StaffMember staff = mapper.toStaffMemberEntity(staffDTO);
+                institution.addStaffMember(staff);
+            }
+        }
+
+        Institution saved = institutionRepository.save(institution);
+        log.info("Institution updated successfully");
+
+        return mapper.toResponseDTO(saved);
+    }
+
+    @Override
+    public void deleteInstitution(Long id) {
+        log.info("Soft deleting institution with ID: {}", id);
+
+        Institution institution = institutionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", "id", id));
+
+        institution.setIsDeleted(true);
+        institution.setDeletedAt(LocalDateTime.now());
+        institutionRepository.save(institution);
+
+        log.info("Institution soft deleted successfully");
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<StaffMemberDTO> getStaffByInstitutionId(Long institutionId) {
+        log.debug("Fetching staff for institution ID: {}", institutionId);
+
+        // Verify institution exists
+        if (!institutionRepository.existsById(institutionId)) {
+            throw new ResourceNotFoundException("Institution", "id", institutionId);
+        }
+
+        List<StaffMember> staffMembers = staffMemberRepository.findByInstitutionId(institutionId);
+        return mapper.toStaffMemberDTOList(staffMembers);
+    }
+
+    @Override
+    public List<StaffMemberDTO> replaceStaff(Long institutionId, List<StaffMemberDTO> staffMembersDTO) {
+        log.info("Replacing staff for institution ID: {}", institutionId);
+
+        Institution institution = institutionRepository.findById(institutionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", "id", institutionId));
+
+        // Remove existing staff
+        staffMemberRepository.deleteByInstitutionId(institutionId);
+        institution.getStaffMembers().clear();
+
+        // Add new staff
+        List<StaffMember> newStaffMembers = new ArrayList<>();
+        for (StaffMemberDTO dto : staffMembersDTO) {
+            StaffMember staff = mapper.toStaffMemberEntity(dto);
+            staff.setInstitution(institution);
+            newStaffMembers.add(staff);
+        }
+
+        List<StaffMember> savedStaff = staffMemberRepository.saveAll(newStaffMembers);
+        log.info("Staff replaced successfully");
+
+        return mapper.toStaffMemberDTOList(savedStaff);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<InstitutionResponseDTO> getAllForExport() {
+        log.info("Exporting all institutions");
+
+        List<Institution> institutions = institutionRepository.findAllActive();
+        return institutions.stream()
+                .map(mapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getAllRegions() {
+        return institutionRepository.findAllRegions();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getAllCommunes() {
+        return institutionRepository.findAllCommunes();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getCommunesByRegion(String region) {
+        return institutionRepository.findCommunesByRegion(region);
+    }
+}
