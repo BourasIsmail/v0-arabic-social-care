@@ -22,6 +22,7 @@ import type { LoginRequest } from "@/lib/auth-types";
 export default function LoginPage() {
   const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const {
     register,
@@ -29,16 +30,36 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm<LoginRequest>();
 
-  // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated && !authLoading) {
-      window.location.href = "/";
-    }
-  }, [isAuthenticated, authLoading]);
+    setMounted(true);
+  }, []);
 
-  // Show nothing while checking auth or redirecting
-  if (authLoading || isAuthenticated) {
-    return null;
+  // Redirect if already authenticated - deferred to avoid hydration issues
+  useEffect(() => {
+    if (mounted && isAuthenticated && !authLoading) {
+      const timer = setTimeout(() => {
+        window.location.href = "/";
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, authLoading, mounted]);
+
+  // Show loading during SSR and while checking auth
+  if (!mounted || authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-muted-foreground">جاري التحميل...</div>
+      </div>
+    );
+  }
+
+  // Show loading while redirecting
+  if (isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-muted-foreground">جاري التحويل...</div>
+      </div>
+    );
   }
 
   const onSubmit = async (data: LoginRequest) => {

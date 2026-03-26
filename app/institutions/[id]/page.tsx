@@ -2,10 +2,11 @@
 
 import { use } from "react";
 import Link from "next/link";
-import { Building2, ArrowRight, Pencil, Calendar, MapPin, Users } from "lucide-react";
+import { Building2, ArrowRight, Pencil, Calendar, MapPin, Users, FileDown } from "lucide-react";
 import { useAuthSWR } from "@/lib/use-auth-swr";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
+import { PDFDownloadButton } from "@/components/pdf/pdf-download-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -105,6 +106,7 @@ export default function InstitutionDetailPage({
                     العودة
                   </Button>
                 </Link>
+                <PDFDownloadButton data={data} variant="outline" />
                 <Link href={`/institutions/${id}/edit`}>
                   <Button className="gap-2">
                     <Pencil className="h-4 w-4" />
