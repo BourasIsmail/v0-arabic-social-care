@@ -631,31 +631,59 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
                 <h4 className="font-medium">موسم {seasonLabel}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label>المستفيدون من الإيواء (ذكور)</Label>
+                    <Label>إجمالي المستفيدين</Label>
                     <Input
                       type="number"
-                      {...register(`housingMeals.${season}.housingBeneficiariesMale` as keyof InstitutionRequest, { valueAsNumber: true })}
+                      {...register(`housingMeals.${season}.totalBeneficiaries` as keyof InstitutionRequest, { valueAsNumber: true })}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>المستفيدون من الإيواء (إناث)</Label>
+                    <Label>المستفيدون (ذكور)</Label>
                     <Input
                       type="number"
-                      {...register(`housingMeals.${season}.housingBeneficiariesFemale` as keyof InstitutionRequest, { valueAsNumber: true })}
+                      {...register(`housingMeals.${season}.maleBeneficiaries` as keyof InstitutionRequest, { valueAsNumber: true })}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>المستفيدون من الوجبات (ذكور)</Label>
+                    <Label>المستفيدون (إناث)</Label>
                     <Input
                       type="number"
-                      {...register(`housingMeals.${season}.mealBeneficiariesMale` as keyof InstitutionRequest, { valueAsNumber: true })}
+                      {...register(`housingMeals.${season}.femaleBeneficiaries` as keyof InstitutionRequest, { valueAsNumber: true })}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>المستفيدون من الوجبات (إناث)</Label>
+                    <Label>مستفيدون ابتدائي</Label>
                     <Input
                       type="number"
-                      {...register(`housingMeals.${season}.mealBeneficiariesFemale` as keyof InstitutionRequest, { valueAsNumber: true })}
+                      {...register(`housingMeals.${season}.primaryBeneficiaries` as keyof InstitutionRequest, { valueAsNumber: true })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>مستفيدون إعدادي</Label>
+                    <Input
+                      type="number"
+                      {...register(`housingMeals.${season}.middleSchoolBeneficiaries` as keyof InstitutionRequest, { valueAsNumber: true })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>مستفيدون ثانوي</Label>
+                    <Input
+                      type="number"
+                      {...register(`housingMeals.${season}.highSchoolBeneficiaries` as keyof InstitutionRequest, { valueAsNumber: true })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>الأيتام</Label>
+                    <Input
+                      type="number"
+                      {...register(`housingMeals.${season}.orphans` as keyof InstitutionRequest, { valueAsNumber: true })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>ذوو الإعاقة</Label>
+                    <Input
+                      type="number"
+                      {...register(`housingMeals.${season}.disabled` as keyof InstitutionRequest, { valueAsNumber: true })}
                     />
                   </div>
                 </div>
