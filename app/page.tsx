@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { Building2, FileText, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
+import { PartnerLogos } from "@/components/partner-logos";
 
 export default function HomePage() {
   return (
@@ -110,6 +111,9 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Partner Logos */}
+        <PartnerLogos />
 
         {/* Footer */}
         <footer className="border-t border-border bg-muted/30 py-8">

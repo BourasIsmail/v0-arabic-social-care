@@ -1,22 +1,25 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import { useState, useEffect } from "react";
+import { AuthProvider } from "@/lib/auth-context";
 import { Toaster } from "@/components/ui/sonner";
 
-// Dynamically import AuthProvider with SSR disabled to avoid router initialization issues
-const AuthProvider = dynamic(
-  () => import("@/lib/auth-context").then((mod) => mod.AuthProvider),
-  {
-    ssr: false,
-    loading: () => (
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Show loading state during SSR and initial hydration
+  if (!mounted) {
+    return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-muted-foreground">جاري التحميل...</div>
       </div>
-    ),
+    );
   }
-);
 
-export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
       {children}

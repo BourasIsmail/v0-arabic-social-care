@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Building2, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,15 +17,22 @@ function EditFormContent({ id }: { id: string }) {
   const fetcher = useAuthFetcher();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const loadedRef = useRef(false);
 
   useEffect(() => {
+    // Prevent double loading
+    if (loadedRef.current) return;
+
     async function loadInstitution() {
       try {
+        loadedRef.current = true;
         setIsLoading(true);
         const data: InstitutionResponse = await fetcher(`/api/institutions/${id}`);
         
+        console.log("[v0] Loaded institution data:", data);
+        
         // Transform response data to form data structure
-        initializeForm({
+        const formDataToInit = {
           institutionType: data.institutionType,
           associationName: data.associationName,
           institutionName: data.institutionName,
@@ -63,8 +70,12 @@ function EditFormContent({ id }: { id: string }) {
             season2526: {},
           },
           staffMembers: data.staffMembers || [],
-        });
+        };
+        
+        console.log("[v0] Form data to initialize:", formDataToInit);
+        initializeForm(formDataToInit);
         setEditMode(parseInt(id));
+        console.log("[v0] Form initialized successfully");
         setError(null);
       } catch (err) {
         console.error("Error loading institution:", err);
@@ -75,12 +86,8 @@ function EditFormContent({ id }: { id: string }) {
     }
 
     loadInstitution();
-
-    // Cleanup on unmount
-    return () => {
-      resetForm();
-    };
-  }, [id, fetcher, initializeForm, setEditMode, resetForm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   if (isLoading) {
     return (
