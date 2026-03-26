@@ -13,6 +13,7 @@ interface FormContextType {
   isEditMode: boolean;
   editId: number | null;
   setEditMode: (id: number | null) => void;
+  formVersion: number; // Increments when form is initialized with new data
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
@@ -47,6 +48,7 @@ export function FormProvider({ children }: { children: ReactNode }) {
   const [formData, setFormData] = useState<Partial<InstitutionRequest>>(initialFormData);
   const [currentStep, setCurrentStep] = useState<FormStep>("institution");
   const [editId, setEditId] = useState<number | null>(null);
+  const [formVersion, setFormVersion] = useState(0);
 
   const updateFormData = useCallback((data: Partial<InstitutionRequest>) => {
     setFormData((prev) => ({ ...prev, ...data }));
@@ -56,11 +58,14 @@ export function FormProvider({ children }: { children: ReactNode }) {
     setFormData(initialFormData);
     setCurrentStep("institution");
     setEditId(null);
+    setFormVersion((v) => v + 1);
   }, []);
 
   const initializeForm = useCallback((data: Partial<InstitutionRequest>) => {
+    console.log("[v0] initializeForm called with data:", data);
     setFormData({ ...initialFormData, ...data });
     setCurrentStep("institution");
+    setFormVersion((v) => v + 1);
   }, []);
 
   const setEditMode = useCallback((id: number | null) => {
@@ -79,6 +84,7 @@ export function FormProvider({ children }: { children: ReactNode }) {
         isEditMode: editId !== null,
         editId,
         setEditMode,
+        formVersion,
       }}
     >
       {children}

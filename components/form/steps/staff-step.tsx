@@ -26,15 +26,15 @@ import type { StaffMemberDTO } from "@/lib/types";
 import { ArrowLeft, ArrowRight, Plus, Trash2 } from "lucide-react";
 
 export function StaffStep() {
-  const { formData, updateFormData, setCurrentStep } = useFormContext();
+  const { formData, updateFormData, setCurrentStep, formVersion } = useFormContext();
   const [staffMembers, setStaffMembers] = useState<StaffMemberDTO[]>(
     formData.staffMembers || []
   );
 
-  // Sync staffMembers when formData changes (for edit mode)
+  // Sync staffMembers when formVersion changes (for edit mode)
   useEffect(() => {
     setStaffMembers(formData.staffMembers || []);
-  }, [formData.staffMembers]);
+  }, [formVersion]);
 
   const [newMember, setNewMember] = useState<Partial<StaffMemberDTO>>({
     staffType: undefined,
