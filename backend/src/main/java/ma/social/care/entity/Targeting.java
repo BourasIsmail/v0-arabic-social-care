@@ -2,6 +2,7 @@ package ma.social.care.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import ma.social.care.entity.enums.*;
 
 import java.math.BigDecimal;
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class Targeting extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)

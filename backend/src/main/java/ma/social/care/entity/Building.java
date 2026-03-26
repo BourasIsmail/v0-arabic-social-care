@@ -2,6 +2,7 @@ package ma.social.care.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import ma.social.care.entity.enums.*;
 
 @Entity
@@ -10,7 +11,7 @@ import ma.social.care.entity.enums.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class Building extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)

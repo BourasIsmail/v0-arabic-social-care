@@ -2,6 +2,7 @@ package ma.social.care.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import ma.social.care.entity.embeddable.SeasonBeneficiaries;
 import ma.social.care.entity.enums.MealServiceType;
 
@@ -11,7 +12,7 @@ import ma.social.care.entity.enums.MealServiceType;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class HousingMeals extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
