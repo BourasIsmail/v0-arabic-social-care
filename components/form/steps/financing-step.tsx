@@ -20,8 +20,10 @@ export function FinancingStep() {
 
   // Reset form when formVersion changes (for edit mode)
   useEffect(() => {
-    reset(formData.financing || {});
-  }, [formVersion, reset]);
+    if (formVersion > 0) {
+      reset(formData.financing || {});
+    }
+  }, [formVersion, reset, formData.financing]);
 
   const onSubmit = (data: FinancingDTO) => {
     updateFormData({ financing: data });
