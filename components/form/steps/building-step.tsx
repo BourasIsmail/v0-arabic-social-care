@@ -52,7 +52,7 @@ export function BuildingStep() {
           <div className="space-y-2">
             <Label htmlFor="buildingStatus">وضعية البناية</Label>
             <Select
-              value={watch("buildingStatus")}
+              value={watch("buildingStatus") || ""}
               onValueChange={(value) => setValue("buildingStatus", value as BuildingStatus)}
             >
               <SelectTrigger>
@@ -71,7 +71,7 @@ export function BuildingStep() {
           <div className="space-y-2">
             <Label htmlFor="buildingCondition">حالة البناية</Label>
             <Select
-              value={watch("buildingCondition")}
+              value={watch("buildingCondition") || ""}
               onValueChange={(value) => setValue("buildingCondition", value as BuildingCondition)}
             >
               <SelectTrigger>
@@ -90,7 +90,7 @@ export function BuildingStep() {
           <div className="space-y-2">
             <Label htmlFor="renovationCapacity">القدرة على التجديد</Label>
             <Select
-              value={watch("renovationCapacity")}
+              value={watch("renovationCapacity") || ""}
               onValueChange={(value) => setValue("renovationCapacity", value as RenovationCapacity)}
             >
               <SelectTrigger>
@@ -109,7 +109,7 @@ export function BuildingStep() {
           <div className="space-y-2">
             <Label htmlFor="ownerType">نوع المالك</Label>
             <Select
-              value={watch("ownerType")}
+              value={watch("ownerType") || ""}
               onValueChange={(value) => setValue("ownerType", value as OwnerType)}
             >
               <SelectTrigger>
@@ -128,7 +128,7 @@ export function BuildingStep() {
           <div className="flex items-center gap-2 sm:col-span-2">
             <Checkbox
               id="hasPartnershipAgreement"
-              checked={watch("hasPartnershipAgreement")}
+              checked={watch("hasPartnershipAgreement") || false}
               onCheckedChange={(checked) =>
                 setValue("hasPartnershipAgreement", checked as boolean)
               }

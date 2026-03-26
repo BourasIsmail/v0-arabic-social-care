@@ -75,7 +75,7 @@ export function TargetingStep() {
               <div key={criteria.key} className="flex items-center gap-2">
                 <Checkbox
                   id={criteria.key}
-                  checked={watch(criteria.key as keyof TargetingDTO) as boolean}
+                  checked={(watch(criteria.key as keyof TargetingDTO) as boolean) || false}
                   onCheckedChange={(checked) =>
                     setValue(criteria.key as keyof TargetingDTO, checked as boolean)
                   }
@@ -127,7 +127,7 @@ export function TargetingStep() {
           <div className="space-y-2">
             <Label htmlFor="selectionBody">جهة الانتقاء</Label>
             <Select
-              value={watch("selectionBody")}
+              value={watch("selectionBody") || ""}
               onValueChange={(value) => setValue("selectionBody", value as SelectionBody)}
             >
               <SelectTrigger>
@@ -151,7 +151,7 @@ export function TargetingStep() {
                   <div key={member.key} className="flex items-center gap-2">
                     <Checkbox
                       id={member.key}
-                      checked={watch(member.key as keyof TargetingDTO) as boolean}
+                      checked={(watch(member.key as keyof TargetingDTO) as boolean) || false}
                       onCheckedChange={(checked) =>
                         setValue(member.key as keyof TargetingDTO, checked as boolean)
                       }
@@ -186,7 +186,7 @@ export function TargetingStep() {
           <div className="flex items-center gap-2">
             <Checkbox
               id="servicesAreFree"
-              checked={servicesAreFree}
+              checked={servicesAreFree || false}
               onCheckedChange={(checked) => setValue("servicesAreFree", checked as boolean)}
             />
             <Label htmlFor="servicesAreFree" className="cursor-pointer">
@@ -199,7 +199,7 @@ export function TargetingStep() {
               <div className="space-y-2">
                 <Label htmlFor="tariffType">نوع التعريفة</Label>
                 <Select
-                  value={tariffType}
+                  value={tariffType || ""}
                   onValueChange={(value) => setValue("tariffType", value as TariffType)}
                 >
                   <SelectTrigger>
@@ -232,7 +232,7 @@ export function TargetingStep() {
                 <div className="space-y-2">
                   <Label htmlFor="tariffBracket">شريحة التعريفة</Label>
                   <Select
-                    value={watch("tariffBracket")}
+                    value={watch("tariffBracket") || ""}
                     onValueChange={(value) => setValue("tariffBracket", value as TariffBracket)}
                   >
                     <SelectTrigger>

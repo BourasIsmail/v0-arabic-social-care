@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import useSWR from "swr";
 import { Building2, Plus, Search, Filter, Eye, Pencil, Trash2, Download } from "lucide-react";
+import { ProtectedRoute } from "@/components/auth/protected-route";
+import { UserMenu } from "@/components/auth/user-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -105,35 +107,37 @@ export default function InstitutionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Building2 className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-foreground">نظام الرعاية الاجتماعية</h1>
-                <p className="text-sm text-muted-foreground">قائمة المؤسسات</p>
-              </div>
-            </Link>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={handleExport} className="gap-2">
-                <Download className="h-4 w-4" />
-                <span className="hidden sm:inline">تصدير CSV</span>
-              </Button>
-              <Link href="/diagnostic">
-                <Button className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  <span className="hidden sm:inline">مؤسسة جديدة</span>
-                </Button>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="border-b border-border bg-card sticky top-0 z-50">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <Link href="/" className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                  <Building2 className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold text-foreground">نظام الرعاية الاجتماعية</h1>
+                  <p className="text-sm text-muted-foreground">قائمة المؤسسات</p>
+                </div>
               </Link>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" onClick={handleExport} className="gap-2">
+                  <Download className="h-4 w-4" />
+                  <span className="hidden sm:inline">تصدير CSV</span>
+                </Button>
+                <Link href="/diagnostic">
+                  <Button className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    <span className="hidden sm:inline">مؤسسة جديدة</span>
+                  </Button>
+                </Link>
+                <UserMenu />
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
@@ -353,6 +357,7 @@ export default function InstitutionsPage() {
           </CardContent>
         </Card>
       </main>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }
