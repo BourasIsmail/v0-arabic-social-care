@@ -12,9 +12,9 @@ const _ibmPlexArabic = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
-  title: 'استمارة تشخيص مؤسسات الرعاية الاجتماعية',
-  description: 'نظام إدارة بيانات مؤسسات الرعاية الاجتماعية - دور الطالب والطالبة',
-  generator: 'v0.app',
+  title: "استمارة تشخيص مؤسسات الرعاية الاجتماعية",
+  description: "نظام إدارة بيانات مؤسسات الرعاية الاجتماعية - دور الطالب والطالبة",
+  generator: "v0.app",
   icons: {
     icon: [
       {
