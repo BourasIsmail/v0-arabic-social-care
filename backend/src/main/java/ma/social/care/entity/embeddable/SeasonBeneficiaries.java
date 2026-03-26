@@ -12,24 +12,27 @@ import lombok.*;
 @Builder
 public class SeasonBeneficiaries {
 
-    @Column(name = "total")
-    private Integer total;
+    @Column(name = "total_beneficiaries")
+    private Integer totalBeneficiaries;
 
-    @Column(name = "male")
-    private Integer male;
+    @Column(name = "male_beneficiaries")
+    private Integer maleBeneficiaries;
 
-    @Column(name = "female")
-    private Integer female;
+    @Column(name = "female_beneficiaries")
+    private Integer femaleBeneficiaries;
 
-    @Column(name = "primary_level")
-    private Integer primary;
+    @Column(name = "primary_beneficiaries")
+    private Integer primaryBeneficiaries;
 
-    @Column(name = "middle_school")
-    private Integer middleSchool;
+    @Column(name = "middle_school_beneficiaries")
+    private Integer middleSchoolBeneficiaries;
 
-    @Column(name = "high_school")
-    private Integer highSchool;
+    @Column(name = "high_school_beneficiaries")
+    private Integer highSchoolBeneficiaries;
 
-    @Column(name = "other_level")
-    private Integer other;
+    @Column(name = "orphans")
+    private Integer orphans;
+
+    @Column(name = "disabled")
+    private Integer disabled;
 }

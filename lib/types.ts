@@ -6,7 +6,7 @@ export enum InstitutionType {
 }
 
 export enum Milieu {
-  URBAN = "URBAN",
+  URBAIN = "URBAIN",
   RURAL = "RURAL",
 }
 
@@ -366,7 +366,7 @@ export const institutionTypeLabels: Record<InstitutionType, string> = {
 };
 
 export const milieuLabels: Record<Milieu, string> = {
-  [Milieu.URBAN]: "حضري",
+  [Milieu.URBAIN]: "حضري",
   [Milieu.RURAL]: "قروي",
 };
 

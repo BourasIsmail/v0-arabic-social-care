@@ -70,13 +70,19 @@ public class GlobalExceptionHandler {
             HttpMessageNotReadableException ex,
             HttpServletRequest request
     ) {
-        log.warn("Malformed JSON request: {}", ex.getMessage());
+        log.error("Malformed JSON request: {}", ex.getMessage(), ex);
+
+        String detailedMessage = "Malformed JSON request or invalid data type";
+        Throwable cause = ex.getCause();
+        if (cause != null) {
+            detailedMessage = cause.getMessage();
+        }
 
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message("Malformed JSON request or invalid data type")
+                .message(detailedMessage)
                 .path(request.getRequestURI())
                 .build();
 

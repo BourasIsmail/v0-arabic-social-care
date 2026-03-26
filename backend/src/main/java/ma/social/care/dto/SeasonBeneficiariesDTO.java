@@ -10,24 +10,27 @@ import lombok.*;
 @Builder
 public class SeasonBeneficiariesDTO {
 
-    @Min(value = 0, message = "Total cannot be negative")
-    private Integer total;
+    @Min(value = 0, message = "Total beneficiaries cannot be negative")
+    private Integer totalBeneficiaries;
 
-    @Min(value = 0, message = "Male count cannot be negative")
-    private Integer male;
+    @Min(value = 0, message = "Male beneficiaries cannot be negative")
+    private Integer maleBeneficiaries;
 
-    @Min(value = 0, message = "Female count cannot be negative")
-    private Integer female;
+    @Min(value = 0, message = "Female beneficiaries cannot be negative")
+    private Integer femaleBeneficiaries;
 
-    @Min(value = 0, message = "Primary count cannot be negative")
-    private Integer primary;
+    @Min(value = 0, message = "Primary beneficiaries cannot be negative")
+    private Integer primaryBeneficiaries;
 
-    @Min(value = 0, message = "Middle school count cannot be negative")
-    private Integer middleSchool;
+    @Min(value = 0, message = "Middle school beneficiaries cannot be negative")
+    private Integer middleSchoolBeneficiaries;
 
-    @Min(value = 0, message = "High school count cannot be negative")
-    private Integer highSchool;
+    @Min(value = 0, message = "High school beneficiaries cannot be negative")
+    private Integer highSchoolBeneficiaries;
 
-    @Min(value = 0, message = "Other count cannot be negative")
-    private Integer other;
+    @Min(value = 0, message = "Orphans count cannot be negative")
+    private Integer orphans;
+
+    @Min(value = 0, message = "Disabled count cannot be negative")
+    private Integer disabled;
 }

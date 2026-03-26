@@ -22,37 +22,40 @@ public class HousingMeals extends BaseEntity {
     // === Season Beneficiaries ===
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "total", column = @Column(name = "season_2324_total")),
-            @AttributeOverride(name = "male", column = @Column(name = "season_2324_male")),
-            @AttributeOverride(name = "female", column = @Column(name = "season_2324_female")),
-            @AttributeOverride(name = "primary", column = @Column(name = "season_2324_primary")),
-            @AttributeOverride(name = "middleSchool", column = @Column(name = "season_2324_middle_school")),
-            @AttributeOverride(name = "highSchool", column = @Column(name = "season_2324_high_school")),
-            @AttributeOverride(name = "other", column = @Column(name = "season_2324_other"))
+            @AttributeOverride(name = "totalBeneficiaries", column = @Column(name = "season_2324_total")),
+            @AttributeOverride(name = "maleBeneficiaries", column = @Column(name = "season_2324_male")),
+            @AttributeOverride(name = "femaleBeneficiaries", column = @Column(name = "season_2324_female")),
+            @AttributeOverride(name = "primaryBeneficiaries", column = @Column(name = "season_2324_primary")),
+            @AttributeOverride(name = "middleSchoolBeneficiaries", column = @Column(name = "season_2324_middle_school")),
+            @AttributeOverride(name = "highSchoolBeneficiaries", column = @Column(name = "season_2324_high_school")),
+            @AttributeOverride(name = "orphans", column = @Column(name = "season_2324_orphans")),
+            @AttributeOverride(name = "disabled", column = @Column(name = "season_2324_disabled"))
     })
     private SeasonBeneficiaries season2324;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "total", column = @Column(name = "season_2425_total")),
-            @AttributeOverride(name = "male", column = @Column(name = "season_2425_male")),
-            @AttributeOverride(name = "female", column = @Column(name = "season_2425_female")),
-            @AttributeOverride(name = "primary", column = @Column(name = "season_2425_primary")),
-            @AttributeOverride(name = "middleSchool", column = @Column(name = "season_2425_middle_school")),
-            @AttributeOverride(name = "highSchool", column = @Column(name = "season_2425_high_school")),
-            @AttributeOverride(name = "other", column = @Column(name = "season_2425_other"))
+            @AttributeOverride(name = "totalBeneficiaries", column = @Column(name = "season_2425_total")),
+            @AttributeOverride(name = "maleBeneficiaries", column = @Column(name = "season_2425_male")),
+            @AttributeOverride(name = "femaleBeneficiaries", column = @Column(name = "season_2425_female")),
+            @AttributeOverride(name = "primaryBeneficiaries", column = @Column(name = "season_2425_primary")),
+            @AttributeOverride(name = "middleSchoolBeneficiaries", column = @Column(name = "season_2425_middle_school")),
+            @AttributeOverride(name = "highSchoolBeneficiaries", column = @Column(name = "season_2425_high_school")),
+            @AttributeOverride(name = "orphans", column = @Column(name = "season_2425_orphans")),
+            @AttributeOverride(name = "disabled", column = @Column(name = "season_2425_disabled"))
     })
     private SeasonBeneficiaries season2425;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "total", column = @Column(name = "season_2526_total")),
-            @AttributeOverride(name = "male", column = @Column(name = "season_2526_male")),
-            @AttributeOverride(name = "female", column = @Column(name = "season_2526_female")),
-            @AttributeOverride(name = "primary", column = @Column(name = "season_2526_primary")),
-            @AttributeOverride(name = "middleSchool", column = @Column(name = "season_2526_middle_school")),
-            @AttributeOverride(name = "highSchool", column = @Column(name = "season_2526_high_school")),
-            @AttributeOverride(name = "other", column = @Column(name = "season_2526_other"))
+            @AttributeOverride(name = "totalBeneficiaries", column = @Column(name = "season_2526_total")),
+            @AttributeOverride(name = "maleBeneficiaries", column = @Column(name = "season_2526_male")),
+            @AttributeOverride(name = "femaleBeneficiaries", column = @Column(name = "season_2526_female")),
+            @AttributeOverride(name = "primaryBeneficiaries", column = @Column(name = "season_2526_primary")),
+            @AttributeOverride(name = "middleSchoolBeneficiaries", column = @Column(name = "season_2526_middle_school")),
+            @AttributeOverride(name = "highSchoolBeneficiaries", column = @Column(name = "season_2526_high_school")),
+            @AttributeOverride(name = "orphans", column = @Column(name = "season_2526_orphans")),
+            @AttributeOverride(name = "disabled", column = @Column(name = "season_2526_disabled"))
     })
     private SeasonBeneficiaries season2526;
 
