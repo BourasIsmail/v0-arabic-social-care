@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, IBM_Plex_Sans_Arabic } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from '@/components/ui/sonner'
 import { AuthProvider } from '@/lib/auth-context'
+import { ClientOnly } from '@/components/client-only'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -49,10 +50,16 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body className="font-sans antialiased min-h-screen bg-background">
-        <AuthProvider>
-          {children}
-          <Toaster position="top-center" richColors />
-        </AuthProvider>
+        <ClientOnly fallback={
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-muted-foreground">جاري التحميل...</div>
+          </div>
+        }>
+          <AuthProvider>
+            {children}
+            <Toaster position="top-center" richColors />
+          </AuthProvider>
+        </ClientOnly>
         <Analytics />
       </body>
     </html>
