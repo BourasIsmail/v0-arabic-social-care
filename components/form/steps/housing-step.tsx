@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useFormContext } from "@/lib/form-context";
 import { Button } from "@/components/ui/button";
@@ -116,13 +117,22 @@ function SeasonFields({
 export function HousingStep() {
   const { formData, updateFormData, setCurrentStep } = useFormContext();
 
-  const { register, watch, setValue, handleSubmit } = useForm<HousingMealsDTO>({
+  const { register, watch, setValue, handleSubmit, reset } = useForm<HousingMealsDTO>({
     defaultValues: formData.housingMeals || {
       season2324: {},
       season2425: {},
       season2526: {},
     },
   });
+
+  // Reset form when formData changes (for edit mode)
+  useEffect(() => {
+    reset(formData.housingMeals || {
+      season2324: {},
+      season2425: {},
+      season2526: {},
+    });
+  }, [formData.housingMeals, reset]);
 
   const onSubmit = (data: HousingMealsDTO) => {
     updateFormData({ housingMeals: data });

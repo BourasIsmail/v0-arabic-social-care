@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormContext } from "@/lib/form-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,11 @@ export function StaffStep() {
   const [staffMembers, setStaffMembers] = useState<StaffMemberDTO[]>(
     formData.staffMembers || []
   );
+
+  // Sync staffMembers when formData changes (for edit mode)
+  useEffect(() => {
+    setStaffMembers(formData.staffMembers || []);
+  }, [formData.staffMembers]);
 
   const [newMember, setNewMember] = useState<Partial<StaffMemberDTO>>({
     staffType: undefined,
