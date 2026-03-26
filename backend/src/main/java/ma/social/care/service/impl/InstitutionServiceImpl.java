@@ -7,8 +7,7 @@ import ma.social.care.entity.*;
 import ma.social.care.entity.enums.*;
 import ma.social.care.exception.ResourceNotFoundException;
 import ma.social.care.mapper.InstitutionMapper;
-import ma.social.care.repository.InstitutionRepository;
-import ma.social.care.repository.StaffMemberRepository;
+import ma.social.care.repository.*;
 import ma.social.care.service.InstitutionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +27,9 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     private final InstitutionRepository institutionRepository;
     private final StaffMemberRepository staffMemberRepository;
+    private final RegionRepository regionRepository;
+    private final PrefectureRepository prefectureRepository;
+    private final CommuneRepository communeRepository;
     private final InstitutionMapper mapper;
 
     @Override
@@ -35,6 +37,23 @@ public class InstitutionServiceImpl implements InstitutionService {
         log.info("Creating new institution: {}", request.getInstitutionName());
 
         Institution institution = mapper.toEntity(request);
+
+        // Set geo relationships
+        if (request.getRegionId() != null) {
+            Region region = regionRepository.findById(request.getRegionId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Region", "id", request.getRegionId()));
+            institution.setRegion(region);
+        }
+        if (request.getPrefectureId() != null) {
+            Prefecture prefecture = prefectureRepository.findById(request.getPrefectureId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Prefecture", "id", request.getPrefectureId()));
+            institution.setPrefecture(prefecture);
+        }
+        if (request.getCommuneId() != null) {
+            Commune commune = communeRepository.findById(request.getCommuneId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Commune", "id", request.getCommuneId()));
+            institution.setCommune(commune);
+        }
 
         // Set nested entities
         if (request.getBuilding() != null) {
@@ -114,6 +133,29 @@ public class InstitutionServiceImpl implements InstitutionService {
 
         // Update main entity fields
         mapper.updateEntityFromDTO(request, institution);
+
+        // Update geo relationships
+        if (request.getRegionId() != null) {
+            Region region = regionRepository.findById(request.getRegionId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Region", "id", request.getRegionId()));
+            institution.setRegion(region);
+        } else {
+            institution.setRegion(null);
+        }
+        if (request.getPrefectureId() != null) {
+            Prefecture prefecture = prefectureRepository.findById(request.getPrefectureId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Prefecture", "id", request.getPrefectureId()));
+            institution.setPrefecture(prefecture);
+        } else {
+            institution.setPrefecture(null);
+        }
+        if (request.getCommuneId() != null) {
+            Commune commune = communeRepository.findById(request.getCommuneId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Commune", "id", request.getCommuneId()));
+            institution.setCommune(commune);
+        } else {
+            institution.setCommune(null);
+        }
 
         // Update Building
         if (request.getBuilding() != null) {

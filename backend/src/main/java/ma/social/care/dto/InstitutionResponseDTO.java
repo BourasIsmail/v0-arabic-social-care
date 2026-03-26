@@ -21,9 +21,12 @@ public class InstitutionResponseDTO {
     private String associationName;
     private String institutionName;
     private String address;
-    private String region;
-    private String prefectureProvince;
-    private String commune;
+    private Long regionId;
+    private String regionName;
+    private Long prefectureId;
+    private String prefectureName;
+    private Long communeId;
+    private String communeName;
     private Milieu milieu;
     private Integer creationYear;
     private LegalStatus legalStatus;
