@@ -17,6 +17,7 @@ export async function backendFetch(
   }
 
   const url = `${BACKEND_URL}${path}`;
+  console.log("[v0] backendFetch URL:", url);
   
   return fetch(url, {
     ...options,
