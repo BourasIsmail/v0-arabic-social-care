@@ -47,7 +47,7 @@ export default function RegisterPage() {
     if (mounted && isAuthenticated && !authLoading && !redirectingRef.current) {
       redirectingRef.current = true;
       requestAnimationFrame(() => {
-        window.location.href = "/dour-talib";
+        window.location.href = "/";
       });
     }
   }, [isAuthenticated, authLoading, mounted]);
@@ -79,7 +79,7 @@ export default function RegisterPage() {
         password: data.password,
       });
       toast.success("تم إنشاء الحساب بنجاح");
-      window.location.href = "/dour-talib";
+      window.location.href = "/";
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "فشل إنشاء الحساب"

@@ -28,7 +28,7 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
 
     if (needsAuthRedirect || needsRoleRedirect) {
       redirectingRef.current = true;
-      const redirectUrl = needsAuthRedirect ? "/dour-talib/login" : "/dour-talib";
+      const redirectUrl = needsAuthRedirect ? "/login" : "/";
       
       // Use requestAnimationFrame to ensure we're past hydration
       requestAnimationFrame(() => {

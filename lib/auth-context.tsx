@@ -16,7 +16,7 @@ import type {
   AuthState,
 } from "./auth-types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://entraide.ma/dour-talib/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://enfance.entraide.ma/api";
 
 interface AuthContextType extends AuthState {
   login: (data: LoginRequest) => Promise<void>;
@@ -149,7 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     // Use window.location for navigation to avoid router initialization issues
     if (typeof window !== "undefined") {
-      window.location.href = "/dour-talib/login";
+      window.location.href = "/login";
     }
   }, []);
 
