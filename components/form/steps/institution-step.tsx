@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useFormContext } from "@/lib/form-context";
+import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,7 +31,13 @@ import type { InstitutionRequest } from "@/lib/types";
 import { ArrowLeft } from "lucide-react";
 
 export function InstitutionStep() {
-  const { formData, updateFormData, setCurrentStep, formVersion } = useFormContext();
+  const { formData, updateFormData, setCurrentStep, formVersion, isEditMode } = useFormContext();
+  const { user } = useAuth();
+  
+  // Check if user has fixed region/prefecture (USER role)
+  const isUserRole = user?.role === "USER";
+  const userRegionId = user?.regionId ? parseInt(user.regionId) : null;
+  const userPrefectureId = user?.prefectureId ? parseInt(user.prefectureId) : null;
 
   const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<
     Partial<InstitutionRequest>
@@ -41,10 +48,21 @@ export function InstitutionStep() {
   // Reset form when formVersion changes (for edit mode - ensures we only reset when new data is loaded)
   useEffect(() => {
     if (formVersion > 0) {
-      console.log("[v0] InstitutionStep reset triggered, formVersion:", formVersion, "formData:", formData);
       reset(formData);
     }
   }, [formVersion, reset, formData]);
+
+  // Pre-fill region and prefecture for USER role (only for new institutions)
+  useEffect(() => {
+    if (isUserRole && !isEditMode) {
+      if (userRegionId && !watch("regionId")) {
+        setValue("regionId", userRegionId);
+      }
+      if (userPrefectureId && !watch("prefectureId")) {
+        setValue("prefectureId", userPrefectureId);
+      }
+    }
+  }, [isUserRole, isEditMode, userRegionId, userPrefectureId, setValue, watch]);
 
   const legalStatus = watch("legalStatus");
 
@@ -139,6 +157,7 @@ export function InstitutionStep() {
             onRegionChange={(value) => setValue("regionId", value)}
             onPrefectureChange={(value) => setValue("prefectureId", value)}
             onCommuneChange={(value) => setValue("communeId", value)}
+            disabled={isUserRole && !isEditMode}
           />
 
           <div className="space-y-2">

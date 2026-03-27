@@ -20,6 +20,8 @@ interface CascadeGeoSelectProps {
   onRegionChange: (value: number | "") => void;
   onPrefectureChange: (value: number | "") => void;
   onCommuneChange: (value: number | "") => void;
+  hideCommune?: boolean;
+  disabled?: boolean;
 }
 
 export function CascadeGeoSelect({
@@ -29,6 +31,8 @@ export function CascadeGeoSelect({
   onRegionChange,
   onPrefectureChange,
   onCommuneChange,
+  hideCommune = false,
+  disabled = false,
 }: CascadeGeoSelectProps) {
   const fetcher = useAuthFetcher();
   const [regions, setRegions] = useState<GeoDTO[]>([]);
@@ -127,7 +131,7 @@ export function CascadeGeoSelect({
         <Select
           value={regionId ? String(regionId) : ""}
           onValueChange={handleRegionChange}
-          disabled={loadingRegions}
+          disabled={loadingRegions || disabled}
         >
           <SelectTrigger className="relative">
             <SelectValue placeholder="اختر الجهة" />
@@ -151,7 +155,7 @@ export function CascadeGeoSelect({
         <Select
           value={prefectureId ? String(prefectureId) : ""}
           onValueChange={handlePrefectureChange}
-          disabled={!regionId || loadingPrefectures}
+          disabled={!regionId || loadingPrefectures || disabled}
         >
           <SelectTrigger className="relative">
             <SelectValue placeholder={regionId ? "اختر العمالة / الإقليم" : "اختر الجهة أولاً"} />
@@ -170,28 +174,30 @@ export function CascadeGeoSelect({
       </div>
 
       {/* Commune Select */}
-      <div className="space-y-2">
-        <Label htmlFor="communeId">الجماعة</Label>
-        <Select
-          value={communeId ? String(communeId) : ""}
-          onValueChange={handleCommuneChange}
-          disabled={!prefectureId || loadingCommunes}
-        >
-          <SelectTrigger className="relative">
-            <SelectValue placeholder={prefectureId ? "اختر الجماعة" : "اختر العمالة / الإقليم أولاً"} />
-            {loadingCommunes && (
-              <Loader2 className="absolute left-3 h-4 w-4 animate-spin text-muted-foreground" />
-            )}
-          </SelectTrigger>
-          <SelectContent>
-            {communes.map((commune) => (
-              <SelectItem key={commune.id} value={String(commune.id)}>
-                {commune.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {!hideCommune && (
+        <div className="space-y-2">
+          <Label htmlFor="communeId">الجماعة</Label>
+          <Select
+            value={communeId ? String(communeId) : ""}
+            onValueChange={handleCommuneChange}
+            disabled={!prefectureId || loadingCommunes}
+          >
+            <SelectTrigger className="relative">
+              <SelectValue placeholder={prefectureId ? "اختر الجماعة" : "اختر العمالة / الإقليم أولاً"} />
+              {loadingCommunes && (
+                <Loader2 className="absolute left-3 h-4 w-4 animate-spin text-muted-foreground" />
+              )}
+            </SelectTrigger>
+            <SelectContent>
+              {communes.map((commune) => (
+                <SelectItem key={commune.id} value={String(commune.id)}>
+                  {commune.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
     </>
   );
 }

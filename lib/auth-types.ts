@@ -3,6 +3,8 @@ export interface User {
   email: string;
   fullName: string;
   role: "USER" | "ADMIN";
+  regionId?: string;
+  prefectureId?: string;
 }
 
 export interface LoginRequest {
@@ -14,6 +16,9 @@ export interface RegisterRequest {
   fullName: string;
   email: string;
   password: string;
+  role?: "USER" | "ADMIN";
+  regionId?: string;
+  prefectureId?: string;
 }
 
 export interface AuthResponse {
