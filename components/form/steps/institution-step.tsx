@@ -149,9 +149,18 @@ export function InstitutionStep() {
             regionId={watch("regionId") || ""}
             prefectureId={watch("prefectureId") || ""}
             communeId={watch("communeId") || ""}
-            onRegionChange={(value) => setValue("regionId", value)}
-            onPrefectureChange={(value) => setValue("prefectureId", value)}
-            onCommuneChange={(value) => setValue("communeId", value)}
+            onRegionChange={(value) => {
+              console.log("[v0] onRegionChange called with:", value);
+              setValue("regionId", value);
+            }}
+            onPrefectureChange={(value) => {
+              console.log("[v0] onPrefectureChange called with:", value);
+              setValue("prefectureId", value);
+            }}
+            onCommuneChange={(value) => {
+              console.log("[v0] onCommuneChange called with:", value);
+              setValue("communeId", value);
+            }}
           />
 
           <div className="space-y-2">
