@@ -52,16 +52,15 @@ export default function InstitutionsPage() {
   const authFetch = useAuthMutate();
   const { user, isLoading: isAuthLoading } = useAuth();
 
-  // Check if user is USER role (not ADMIN) - they can only see their prefecture's institutions
+  // Check if user is USER role (not ADMIN) - they can only see their region's institutions
+  // Note: InstitutionSummary only has regionId, not prefectureId, so we filter by region
   const isUserRole = user?.role === "USER";
-  const userPrefectureId = user?.prefectureId;
+  const userRegionId = user?.regionId;
   
   // For USER role, wait until user data is loaded before fetching
-  // This prevents fetching all data before we know the user's prefecture
+  // This prevents fetching all data before we know the user's region
   const isUserDataReady = !isAuthLoading && user !== null;
-  const shouldFetch = isUserRole ? (isUserDataReady && !!userPrefectureId) : isUserDataReady;
-  
-  console.log("[v0] Auth state:", { isAuthLoading, user: user?.username, role: user?.role, prefectureId: userPrefectureId, isUserDataReady, shouldFetch });
+  const shouldFetch = isUserRole ? (isUserDataReady && !!userRegionId) : isUserDataReady;
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
@@ -74,9 +73,9 @@ export default function InstitutionsPage() {
   if (institutionType && institutionType !== "all") {
     queryParams.set("institutionType", institutionType);
   }
-  // Filter by prefecture for USER role
-  if (isUserRole && userPrefectureId) {
-    queryParams.set("prefectureId", userPrefectureId.toString());
+  // Filter by region for USER role
+  if (isUserRole && userRegionId) {
+    queryParams.set("regionId", userRegionId.toString());
   }
 
   // Only fetch when user data is ready (prevents race condition for USER role)
@@ -87,18 +86,16 @@ export default function InstitutionsPage() {
   // Combined loading state (auth loading OR data loading)
   const isLoading = isAuthLoading || isDataLoading;
   
-  // Client-side filtering for USER role (in case backend doesn't support prefectureId filter)
-  // Use == for loose comparison to handle string/number type mismatch
-  console.log("[v0] Raw data:", rawData?.content?.length, "items, first item prefectureId:", rawData?.content?.[0]?.prefectureId, "type:", typeof rawData?.content?.[0]?.prefectureId, "userPrefectureId:", userPrefectureId, "type:", typeof userPrefectureId);
-  
-  const data = rawData && isUserRole && userPrefectureId
+  // Client-side filtering for USER role (in case backend doesn't support regionId filter)
+  // Use String() for comparison to handle string/number type mismatch
+  const data = rawData && isUserRole && userRegionId
     ? {
         ...rawData,
         content: rawData.content.filter(
-          (inst) => String(inst.prefectureId) === String(userPrefectureId)
+          (inst) => String(inst.regionId) === String(userRegionId)
         ),
         totalElements: rawData.content.filter(
-          (inst) => String(inst.prefectureId) === String(userPrefectureId)
+          (inst) => String(inst.regionId) === String(userRegionId)
         ).length,
       }
     : rawData;
@@ -373,7 +370,7 @@ export default function InstitutionsPage() {
                       السابق
                     </Button>
                     <span className="text-sm text-muted-foreground">
-                      صفحة {data.number + 1} من {data.totalPages}
+                      ص��حة {data.number + 1} من {data.totalPages}
                     </span>
                     <Button
                       variant="outline"
