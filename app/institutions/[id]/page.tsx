@@ -33,7 +33,7 @@ export default function InstitutionDetailPage({
 }) {
   const { id } = use(params);
   const { data, error, isLoading } = useAuthSWR<InstitutionResponse>(
-    `/api/institutions/${id}`
+    `/api/api/institutions/${id}`
   );
 
   if (isLoading) {

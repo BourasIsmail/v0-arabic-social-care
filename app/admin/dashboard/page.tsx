@@ -58,7 +58,7 @@ export default function AdminDashboardPage() {
   }, [user, isAuthLoading, router]);
 
   const { data: stats, isLoading, error } = useAuthSWR<DashboardStats>(
-    user?.role === "ADMIN" ? "/api/statistics/dashboard" : null
+    user?.role === "ADMIN" ? "/api/api/statistics/dashboard" : null
   );
 
   if (isAuthLoading || isLoading) {
