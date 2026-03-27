@@ -5,8 +5,6 @@ import { Button } from "@/components/ui/button";
 import { FileDown, Loader2, Printer } from "lucide-react";
 import type { InstitutionResponse } from "@/lib/types";
 import { toast } from "sonner";
-import { pdf } from "@react-pdf/renderer";
-import { InstitutionPDF } from "./institution-pdf";
 
 interface PDFDownloadButtonProps {
   data: InstitutionResponse;
@@ -21,23 +19,45 @@ export function PDFDownloadButton({
 }: PDFDownloadButtonProps) {
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const generateHtml = async () => {
+    // Prepare data with region/prefecture names
+    const pdfData = {
+      ...data,
+      regionName: data.regionName || data.regionId?.toString(),
+      prefectureName: data.prefectureName || data.prefectureId?.toString(),
+      communeName: data.communeName || data.communeId?.toString(),
+    };
+
+    // Call the API to generate HTML
+    const response = await fetch('/api/generate-pdf', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data: pdfData }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to generate PDF');
+    }
+
+    return await response.text();
+  };
+
   const handleDownload = async () => {
     setIsGenerating(true);
     try {
-      // Generate PDF blob using @react-pdf/renderer
-      const blob = await pdf(<InstitutionPDF data={data} />).toBlob();
+      const html = await generateHtml();
       
-      // Create download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `تقرير_${data.institutionName || 'مؤسسة'}_${new Date().toLocaleDateString('ar-MA')}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      toast.success("تم تحميل الملف بنجاح");
+      // Open in new window for print/save as PDF
+      const printWindow = window.open('', '_blank', 'width=900,height=700');
+      if (printWindow) {
+        printWindow.document.write(html);
+        printWindow.document.close();
+        toast.info("استخدم 'حفظ كـ PDF' من قائمة الطباعة لتحميل الملف");
+      } else {
+        toast.error("يرجى السماح بالنوافذ المنبثقة");
+      }
     } catch (error) {
       console.error("Error generating PDF:", error);
       toast.error("حدث خطأ أثناء إنشاء الملف");
@@ -49,16 +69,17 @@ export function PDFDownloadButton({
   const handlePrint = async () => {
     setIsGenerating(true);
     try {
-      // Generate PDF blob
-      const blob = await pdf(<InstitutionPDF data={data} />).toBlob();
+      const html = await generateHtml();
       
       // Open in new window for printing
-      const url = URL.createObjectURL(blob);
-      const printWindow = window.open(url, '_blank');
+      const printWindow = window.open('', '_blank', 'width=900,height=700');
       if (printWindow) {
-        printWindow.onload = () => {
+        printWindow.document.write(html);
+        printWindow.document.close();
+        // Wait for content to load then print
+        setTimeout(() => {
           printWindow.print();
-        };
+        }, 500);
       } else {
         toast.error("يرجى السماح بالنوافذ المنبثقة للطباعة");
       }
