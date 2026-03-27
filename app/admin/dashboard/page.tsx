@@ -26,7 +26,7 @@ import { useAuthSWR } from "@/lib/use-auth-swr";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
 import type { DashboardStats } from "@/lib/types";
-import { Building2, Users, MapPin, CheckCircle, Home, Loader2 } from "lucide-react";
+import { Building2, Users, MapPin, CheckCircle, Home, Loader2, UserCog, Utensils, TrendingUp } from "lucide-react";
 
 // Chart colors - computed values, not CSS variables
 const COLORS = {
@@ -139,8 +139,8 @@ export default function AdminDashboardPage() {
         </header>
 
         <main className="container py-6">
-          {/* Summary Cards */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+          {/* Summary Cards - Row 1 */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -162,6 +162,11 @@ export default function AdminDashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{stats?.totalCapacity?.toLocaleString() || 0}</div>
+                {stats?.averageCapacity !== undefined && (
+                  <p className="text-xs text-muted-foreground">
+                    معدل {stats.averageCapacity.toLocaleString()} لكل مؤسسة
+                  </p>
+                )}
               </CardContent>
             </Card>
 
@@ -188,6 +193,66 @@ export default function AdminDashboardPage() {
                 <div className="text-3xl font-bold text-green-600">{stats?.licensedCount || 0}</div>
                 <p className="text-xs text-muted-foreground">
                   من أصل {stats?.totalInstitutions || 0} مؤسسة
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Summary Cards - Row 2 */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  إجمالي الموظفين
+                </CardTitle>
+                <UserCog className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{stats?.totalStaffCount?.toLocaleString() || 0}</div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  مؤسسات بالإيواء
+                </CardTitle>
+                <Home className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{stats?.institutionsWithHousing || 0}</div>
+                <p className="text-xs text-muted-foreground">
+                  {stats?.totalInstitutions ? Math.round((stats.institutionsWithHousing || 0) / stats.totalInstitutions * 100) : 0}% من المؤسسات
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  مؤسسات بالإطعام
+                </CardTitle>
+                <Utensils className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{stats?.institutionsWithMeals || 0}</div>
+                <p className="text-xs text-muted-foreground">
+                  {stats?.totalInstitutions ? Math.round((stats.institutionsWithMeals || 0) / stats.totalInstitutions * 100) : 0}% من المؤسسات
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  غير مرخصة
+                </CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-red-600">{stats?.unlicensedCount || 0}</div>
+                <p className="text-xs text-muted-foreground">
+                  {stats?.totalInstitutions ? Math.round((stats.unlicensedCount || 0) / stats.totalInstitutions * 100) : 0}% تحتاج ترخيص
                 </p>
               </CardContent>
             </Card>

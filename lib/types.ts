@@ -335,6 +335,7 @@ export interface RegionStats {
   regionName?: string;
   count: number;
   capacity: number;
+  beneficiaries?: number;
 }
 
 export interface PrefectureStats {
@@ -342,6 +343,7 @@ export interface PrefectureStats {
   prefectureName?: string;
   count: number;
   capacity: number;
+  beneficiaries?: number;
 }
 
 export interface DashboardStats {
@@ -357,6 +359,11 @@ export interface DashboardStats {
   unlicensedCount: number;
   byRegion: RegionStats[];
   byPrefecture: PrefectureStats[];
+  // Additional stats from backend
+  totalStaffCount?: number;
+  averageCapacity?: number;
+  institutionsWithHousing?: number;
+  institutionsWithMeals?: number;
 }
 
 // Form step type
