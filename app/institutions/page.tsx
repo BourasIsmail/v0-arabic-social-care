@@ -50,11 +50,16 @@ export default function InstitutionsPage() {
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const authFetch = useAuthMutate();
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
 
   // Check if user is USER role (not ADMIN) - they can only see their prefecture's institutions
   const isUserRole = user?.role === "USER";
   const userPrefectureId = user?.prefectureId;
+  
+  // For USER role, wait until user data is loaded before fetching
+  // This prevents fetching all data before we know the user's prefecture
+  const isUserDataReady = !isAuthLoading && user !== null;
+  const shouldFetch = isUserRole ? (isUserDataReady && !!userPrefectureId) : isUserDataReady;
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
@@ -71,13 +76,14 @@ export default function InstitutionsPage() {
   if (isUserRole && userPrefectureId) {
     queryParams.set("prefectureId", userPrefectureId.toString());
   }
-  
-  console.log("[v0] User role:", user?.role, "prefectureId:", userPrefectureId, "isUserRole:", isUserRole);
-  console.log("[v0] Query params:", queryParams.toString());
 
-  const { data, error, isLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
-    `/api/institutions?${queryParams.toString()}`
+  // Only fetch when user data is ready (prevents race condition for USER role)
+  const { data, error, isLoading: isDataLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
+    shouldFetch ? `/api/institutions?${queryParams.toString()}` : null
   );
+  
+  // Combined loading state (auth loading OR data loading)
+  const isLoading = isAuthLoading || isDataLoading;
 
   // Fetch stats (filtered by prefecture for USER role)
   const statsQueryParams = new URLSearchParams();
@@ -89,7 +95,7 @@ export default function InstitutionsPage() {
     DAR_TALIB: number;
     DAR_TALIBA: number;
     MIXED: number;
-  }>(`/api/institutions/stats?${statsQueryParams.toString()}`);
+  }>(shouldFetch ? `/api/institutions/stats?${statsQueryParams.toString()}` : null);
 
   const handleDelete = async (id: number) => {
     try {
