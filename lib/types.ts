@@ -329,6 +329,36 @@ export interface PageResponse<T> {
   last: boolean;
 }
 
+// Dashboard Statistics
+export interface RegionStats {
+  regionId: number;
+  regionName?: string;
+  count: number;
+  capacity: number;
+}
+
+export interface PrefectureStats {
+  prefectureId: number;
+  prefectureName?: string;
+  count: number;
+  capacity: number;
+}
+
+export interface DashboardStats {
+  totalInstitutions: number;
+  totalCapacity: number;
+  totalBeneficiaries: number;
+  darTalibCount: number;
+  darTalibaCount: number;
+  mixedCount: number;
+  urbanCount: number;
+  ruralCount: number;
+  licensedCount: number;
+  unlicensedCount: number;
+  byRegion: RegionStats[];
+  byPrefecture: PrefectureStats[];
+}
+
 // Form step type
 export type FormStep =
   | "institution"

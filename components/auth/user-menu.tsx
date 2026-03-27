@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { User, LogOut, Users } from "lucide-react";
+import { User, LogOut, Users, LayoutDashboard } from "lucide-react";
 
 export function UserMenu() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -54,12 +54,20 @@ export function UserMenu() {
           <span>الملف الشخصي</span>
         </DropdownMenuItem>
         {user.role === "ADMIN" && (
-          <Link href="/users">
-            <DropdownMenuItem className="gap-2 cursor-pointer">
-              <Users className="h-4 w-4" />
-              <span>إدارة المستخدمين</span>
-            </DropdownMenuItem>
-          </Link>
+          <>
+            <Link href="/admin/dashboard">
+              <DropdownMenuItem className="gap-2 cursor-pointer">
+                <LayoutDashboard className="h-4 w-4" />
+                <span>لوحة التحكم</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link href="/users">
+              <DropdownMenuItem className="gap-2 cursor-pointer">
+                <Users className="h-4 w-4" />
+                <span>إدارة المستخدمين</span>
+              </DropdownMenuItem>
+            </Link>
+          </>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem className="gap-2 text-destructive" onClick={logout}>
