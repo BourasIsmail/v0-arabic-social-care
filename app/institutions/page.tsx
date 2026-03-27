@@ -82,27 +82,26 @@ export default function InstitutionsPage() {
     shouldFetch ? `/api/institutions?${queryParams.toString()}` : null
   );
   
+  // Fetch communes for user's prefecture (for USER role filtering)
+  // Since backend doesn't return prefectureId in institution data, we filter by communeId
+  const { data: prefectureCommunes } = useAuthSWR<Array<{ id: number; name: string }>>(
+    isUserRole && userPrefectureId ? `/api/geo/prefectures/${userPrefectureId}/communes` : null
+  );
+  
   // Combined loading state (auth loading OR data loading)
   const isLoading = isAuthLoading || isDataLoading;
   
-  // Debug: log the raw data to see what fields are available
-  if (rawData?.content?.length > 0) {
-    const firstInst = rawData.content[0];
-    console.log("[v0] First institution ALL KEYS:", Object.keys(firstInst));
-    console.log("[v0] First institution FULL DATA:", JSON.stringify(firstInst));
-  }
-  console.log("[v0] User prefectureId:", userPrefectureId, "isUserRole:", isUserRole);
-  
-  // Client-side filtering for USER role (in case backend doesn't support prefectureId filter)
-  // Use String() for comparison to handle string/number type mismatch
-  const data = rawData && isUserRole && userPrefectureId
+  // Client-side filtering for USER role by communeId (since backend doesn't have prefectureId in response)
+  // Filter institutions whose communeId is in the user's prefecture communes list
+  const prefectureCommuneIds = prefectureCommunes?.map(c => c.id) || [];
+  const data = rawData && isUserRole && prefectureCommuneIds.length > 0
     ? {
         ...rawData,
         content: rawData.content.filter(
-          (inst) => String(inst.prefectureId) === String(userPrefectureId)
+          (inst) => prefectureCommuneIds.includes(inst.communeId as number)
         ),
         totalElements: rawData.content.filter(
-          (inst) => String(inst.prefectureId) === String(userPrefectureId)
+          (inst) => prefectureCommuneIds.includes(inst.communeId as number)
         ).length,
       }
     : rawData;
