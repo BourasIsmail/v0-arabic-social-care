@@ -79,13 +79,13 @@ export default function InstitutionsPage() {
 
   // Only fetch when user data is ready (prevents race condition for USER role)
   const { data: rawData, error, isLoading: isDataLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
-    shouldFetch ? `/api/api/institutions?${queryParams.toString()}` : null
+    shouldFetch ? `/api/api/v1/institutions?${queryParams.toString()}` : null
   );
   
   // Fetch communes for user's prefecture (for USER role filtering)
   // Since backend doesn't return prefectureId in institution data, we filter by communeId
   const { data: prefectureCommunes } = useAuthSWR<Array<{ id: number; name: string }>>(
-    isUserRole && userPrefectureId ? `/api/api/geo/prefectures/${userPrefectureId}/communes` : null
+    isUserRole && userPrefectureId ? `/api/api/v1/prefectures/${userPrefectureId}/communes` : null
   );
   
   // Combined loading state (auth loading OR data loading)
@@ -118,7 +118,7 @@ export default function InstitutionsPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await authFetch(`/api/api/institutions/${id}`, {
+      const response = await authFetch(`/api/api/v1/institutions/${id}`, {
         method: "DELETE",
       });
 
@@ -137,7 +137,7 @@ export default function InstitutionsPage() {
 
   const handleExport = async () => {
     try {
-      const response = await authFetch("/api/api/institutions/export");
+      const response = await authFetch("/api/api/v1/institutions/export");
       if (!response.ok) throw new Error("Export failed");
 
       const blob = await response.blob();
@@ -339,7 +339,7 @@ export default function InstitutionsPage() {
                                     <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
                                     <AlertDialogDescription>
                                       هل أنت متأكد من حذف هذه المؤسسة؟ لا يمكن التراجع عن هذا
-                                      الإجراء.
+                                      ال��جراء.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
