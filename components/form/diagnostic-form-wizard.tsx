@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { FormProvider, useFormContext } from "@/lib/form-context";
+import { useAuth } from "@/lib/auth-context";
 import { StepIndicator } from "./step-indicator";
 import { InstitutionStep } from "./steps/institution-step";
 import { BuildingStep } from "./steps/building-step";
@@ -11,7 +13,18 @@ import { StaffStep } from "./steps/staff-step";
 import { ReviewStep } from "./steps/review-step";
 
 function FormContent() {
-  const { currentStep, setCurrentStep } = useFormContext();
+  const { currentStep, setCurrentStep, updateFormData, isEditMode, formData } = useFormContext();
+  const { user } = useAuth();
+
+  // Pre-fill region and prefecture for USER role on new institutions
+  useEffect(() => {
+    if (user?.role === "USER" && !isEditMode && user.regionId && !formData.regionId) {
+      updateFormData({
+        regionId: user.regionId,
+        prefectureId: user.prefectureId,
+      });
+    }
+  }, [user, isEditMode, updateFormData, formData.regionId]);
 
   const renderStep = () => {
     switch (currentStep) {
