@@ -103,7 +103,9 @@ export function CascadeGeoSelect({
   }, [prefectureId, fetcher]);
 
   const handleRegionChange = (value: string) => {
+    console.log("[v0] handleRegionChange called with value:", value);
     const numValue = value ? parseInt(value, 10) : "";
+    console.log("[v0] Parsed numValue:", numValue, "type:", typeof numValue);
     onRegionChange(numValue);
     onPrefectureChange("");
     onCommuneChange("");
