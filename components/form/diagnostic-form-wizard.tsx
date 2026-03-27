@@ -18,10 +18,7 @@ function FormContent() {
 
   // Pre-fill region and prefecture for USER role on new institutions
   useEffect(() => {
-    console.log("[v0] FormContent useEffect - user:", user);
-    console.log("[v0] isEditMode:", isEditMode, "formData.regionId:", formData.regionId);
     if (user?.role === "USER" && !isEditMode && user.regionId && !formData.regionId) {
-      console.log("[v0] Pre-filling regionId:", user.regionId, "prefectureId:", user.prefectureId);
       updateFormData({
         regionId: user.regionId,
         prefectureId: user.prefectureId,

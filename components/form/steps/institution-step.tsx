@@ -50,14 +50,8 @@ export function InstitutionStep() {
 
   // Reset form when formVersion changes or formData changes (for edit mode and when user geo is pre-filled)
   useEffect(() => {
-    console.log("[v0] InstitutionStep resetting form with formData:", formData);
-    console.log("[v0] formData.regionId:", formData.regionId, "formData.prefectureId:", formData.prefectureId);
     reset(formData);
   }, [formVersion, reset, formData]);
-
-  const watchedRegionId = watch("regionId");
-  const watchedPrefectureId = watch("prefectureId");
-  console.log("[v0] InstitutionStep watched values - regionId:", watchedRegionId, "prefectureId:", watchedPrefectureId);
 
   const legalStatus = watch("legalStatus");
 
@@ -149,18 +143,9 @@ export function InstitutionStep() {
             regionId={watch("regionId") || ""}
             prefectureId={watch("prefectureId") || ""}
             communeId={watch("communeId") || ""}
-            onRegionChange={(value) => {
-              console.log("[v0] onRegionChange called with:", value);
-              setValue("regionId", value);
-            }}
-            onPrefectureChange={(value) => {
-              console.log("[v0] onPrefectureChange called with:", value);
-              setValue("prefectureId", value);
-            }}
-            onCommuneChange={(value) => {
-              console.log("[v0] onCommuneChange called with:", value);
-              setValue("communeId", value);
-            }}
+            onRegionChange={(value) => setValue("regionId", value)}
+            onPrefectureChange={(value) => setValue("prefectureId", value)}
+            onCommuneChange={(value) => setValue("communeId", value)}
           />
 
           <div className="space-y-2">
