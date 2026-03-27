@@ -67,7 +67,7 @@ import {
 } from "lucide-react";
 import type { User } from "@/lib/auth-types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://enfance.entraide.ma/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://enfance.entraide.ma";
 
 interface UserWithDetails extends User {
   regionName?: string;

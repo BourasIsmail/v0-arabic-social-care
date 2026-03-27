@@ -16,7 +16,7 @@ import type {
   AuthState,
 } from "./auth-types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://enfance.entraide.ma/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://enfance.entraide.ma";
 
 interface AuthContextType extends AuthState {
   login: (data: LoginRequest) => Promise<void>;
