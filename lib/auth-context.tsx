@@ -149,7 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     // Use window.location for navigation to avoid router initialization issues
     if (typeof window !== "undefined") {
-      window.location.href = "/login";
+      window.location.href = "/dour-talib/login";
     }
   }, []);
 
