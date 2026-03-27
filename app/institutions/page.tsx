@@ -52,15 +52,14 @@ export default function InstitutionsPage() {
   const authFetch = useAuthMutate();
   const { user, isLoading: isAuthLoading } = useAuth();
 
-  // Check if user is USER role (not ADMIN) - they can only see their region's institutions
-  // Note: InstitutionSummary only has regionId, not prefectureId, so we filter by region
+  // Check if user is USER role (not ADMIN) - they can only see their prefecture's institutions
   const isUserRole = user?.role === "USER";
-  const userRegionId = user?.regionId;
+  const userPrefectureId = user?.prefectureId;
   
   // For USER role, wait until user data is loaded before fetching
-  // This prevents fetching all data before we know the user's region
+  // This prevents fetching all data before we know the user's prefecture
   const isUserDataReady = !isAuthLoading && user !== null;
-  const shouldFetch = isUserRole ? (isUserDataReady && !!userRegionId) : isUserDataReady;
+  const shouldFetch = isUserRole ? (isUserDataReady && !!userPrefectureId) : isUserDataReady;
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
@@ -73,9 +72,9 @@ export default function InstitutionsPage() {
   if (institutionType && institutionType !== "all") {
     queryParams.set("institutionType", institutionType);
   }
-  // Filter by region for USER role
-  if (isUserRole && userRegionId) {
-    queryParams.set("regionId", userRegionId.toString());
+  // Filter by prefecture for USER role
+  if (isUserRole && userPrefectureId) {
+    queryParams.set("prefectureId", userPrefectureId.toString());
   }
 
   // Only fetch when user data is ready (prevents race condition for USER role)
@@ -86,16 +85,16 @@ export default function InstitutionsPage() {
   // Combined loading state (auth loading OR data loading)
   const isLoading = isAuthLoading || isDataLoading;
   
-  // Client-side filtering for USER role (in case backend doesn't support regionId filter)
+  // Client-side filtering for USER role (in case backend doesn't support prefectureId filter)
   // Use String() for comparison to handle string/number type mismatch
-  const data = rawData && isUserRole && userRegionId
+  const data = rawData && isUserRole && userPrefectureId
     ? {
         ...rawData,
         content: rawData.content.filter(
-          (inst) => String(inst.regionId) === String(userRegionId)
+          (inst) => String(inst.prefectureId) === String(userPrefectureId)
         ),
         totalElements: rawData.content.filter(
-          (inst) => String(inst.regionId) === String(userRegionId)
+          (inst) => String(inst.prefectureId) === String(userPrefectureId)
         ).length,
       }
     : rawData;

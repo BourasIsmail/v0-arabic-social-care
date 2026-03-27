@@ -311,6 +311,8 @@ export interface InstitutionSummary {
   associationName: string;
   regionId?: number;
   regionName?: string;
+  prefectureId?: number;
+  prefectureName?: string;
   communeId?: number;
   communeName?: string;
   totalCapacity?: number;
