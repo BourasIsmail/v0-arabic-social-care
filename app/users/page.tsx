@@ -108,7 +108,7 @@ export default function UsersPage() {
   const loadUsers = async () => {
     try {
       setIsLoading(true);
-      const data = await fetcher(`${API_BASE_URL}/v1/users`);
+      const data = await fetcher(`${API_BASE_URL}/api/v1/users`);
       setUsers(data);
     } catch (error) {
       toast.error("حدث خطأ أثناء تحميل المستخدمين");
@@ -160,7 +160,7 @@ export default function UsersPage() {
           updateData.password = formData.password;
         }
 
-        const response = await authMutate(`${API_BASE_URL}/v1/users/${editingUser.id}`, {
+        const response = await authMutate(`${API_BASE_URL}/api/v1/users/${editingUser.id}`, {
           method: "PUT",
           body: JSON.stringify(updateData),
         });
@@ -170,7 +170,7 @@ export default function UsersPage() {
         toast.success("تم تحديث المستخدم بنجاح");
       } else {
         // Create new user
-        const response = await authMutate(`${API_BASE_URL}/v1/users`, {
+        const response = await authMutate(`${API_BASE_URL}/api/v1/users`, {
           method: "POST",
           body: JSON.stringify({
             fullName: formData.fullName,
@@ -203,7 +203,7 @@ export default function UsersPage() {
 
   const handleDelete = async (userId: number) => {
     try {
-      const response = await authMutate(`${API_BASE_URL}/v1/users/${userId}`, {
+      const response = await authMutate(`${API_BASE_URL}/api/v1/users/${userId}`, {
         method: "DELETE",
       });
       if (!response.ok) {

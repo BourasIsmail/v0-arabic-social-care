@@ -9,7 +9,7 @@ export async function GET(
 
   try {
     const response = await backendFetch(
-      `/v1/prefectures/${prefectureId}/communes`,
+      `/api/v1/prefectures/${prefectureId}/communes`,
       { method: "GET" }
     );
 

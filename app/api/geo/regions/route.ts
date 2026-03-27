@@ -3,7 +3,7 @@ import { backendFetch } from "@/lib/backend-api";
 
 export async function GET() {
   try {
-    const response = await backendFetch("/v1/regions", { method: "GET" });
+    const response = await backendFetch("/api/v1/regions", { method: "GET" });
 
     if (!response.ok) {
       return NextResponse.json(
