@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   
   // Forward all query parameters to backend
   const queryString = searchParams.toString();
-  const path = `/api/v1/institutions${queryString ? `?${queryString}` : ""}`;
+  const path = `/v1/institutions${queryString ? `?${queryString}` : ""}`;
 
   try {
     const response = await backendFetch(path, { method: "GET" }, token);
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     const response = await backendFetch(
-      "/api/v1/institutions",
+      "/v1/institutions",
       {
         method: "POST",
         body: JSON.stringify(body),

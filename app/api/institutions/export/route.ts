@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const response = await backendFetch(
-      "/api/v1/institutions/export/csv",
+      "/v1/institutions/export/csv",
       { method: "GET" },
       token
     );

@@ -10,7 +10,7 @@ export async function GET(
 
   try {
     const response = await backendFetch(
-      `/api/v1/institutions/${id}`,
+      `/v1/institutions/${id}`,
       { method: "GET" },
       token
     );
@@ -45,7 +45,7 @@ export async function PUT(
     const body = await request.json();
 
     const response = await backendFetch(
-      `/api/v1/institutions/${id}`,
+      `/v1/institutions/${id}`,
       {
         method: "PUT",
         body: JSON.stringify(body),
@@ -81,7 +81,7 @@ export async function DELETE(
 
   try {
     const response = await backendFetch(
-      `/api/v1/institutions/${id}`,
+      `/v1/institutions/${id}`,
       { method: "DELETE" },
       token
     );

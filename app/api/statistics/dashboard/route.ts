@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Fetch from backend statistics endpoint
-    const response = await backendFetch("/api/v1/statistics/dashboard", { method: "GET" }, token);
+    const response = await backendFetch("/v1/statistics/dashboard", { method: "GET" }, token);
     
     if (response.ok) {
       const data = await response.json();
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     console.log("Backend statistics endpoint returned error, computing from institutions data");
     
     const institutionsResponse = await backendFetch(
-      "/api/v1/institutions?size=10000",
+      "/v1/institutions?size=10000",
       { method: "GET" },
       token
     );
