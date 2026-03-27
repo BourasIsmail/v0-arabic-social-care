@@ -130,6 +130,7 @@ export function CascadeGeoSelect({
       {/* Region Select */}
       <div className="space-y-2">
         <Label htmlFor="regionId">الجهة</Label>
+        {console.log("[v0] Rendering Select - regionId prop:", regionId, "regions count:", regions.length, "value being set:", regionId ? String(regionId) : "")}
         <Select
           value={regionId ? String(regionId) : ""}
           onValueChange={handleRegionChange}
