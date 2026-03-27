@@ -36,8 +36,8 @@ export function InstitutionStep() {
   
   // Check if user has fixed region/prefecture (USER role)
   const isUserRole = user?.role === "USER";
-  const userRegionId = user?.regionId ? parseInt(user.regionId) : null;
-  const userPrefectureId = user?.prefectureId ? parseInt(user.prefectureId) : null;
+  const userRegionId = user?.regionId || null;
+  const userPrefectureId = user?.prefectureId || null;
 
   const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<
     Partial<InstitutionRequest>
