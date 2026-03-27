@@ -60,6 +60,8 @@ export default function InstitutionsPage() {
   // This prevents fetching all data before we know the user's prefecture
   const isUserDataReady = !isAuthLoading && user !== null;
   const shouldFetch = isUserRole ? (isUserDataReady && !!userPrefectureId) : isUserDataReady;
+  
+  console.log("[v0] Auth state:", { isAuthLoading, user: user?.username, role: user?.role, prefectureId: userPrefectureId, isUserDataReady, shouldFetch });
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
