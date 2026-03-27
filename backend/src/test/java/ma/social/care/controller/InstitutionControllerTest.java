@@ -45,7 +45,7 @@ class InstitutionControllerTest {
                 .andExpect(jsonPath("$.institutionType").value("DAR_TALIB"))
                 .andExpect(jsonPath("$.associationName").value("Test Association"))
                 .andExpect(jsonPath("$.institutionName").value("Test Institution"))
-                .andExpect(jsonPath("$.region").value("Casablanca-Settat"))
+                .andExpect(jsonPath("$.regionId").value(1))
                 .andExpect(jsonPath("$.building.buildingStatus").value("OWNED"))
                 .andExpect(jsonPath("$.financing.totalConstructionCost").value(1000000.00))
                 .andExpect(jsonPath("$.targeting.selectionBody").value("MIXED_COMMITTEE"))
@@ -108,7 +108,7 @@ class InstitutionControllerTest {
 
         // Get with filters
         mockMvc.perform(get("/api/v1/institutions")
-                        .param("region", "Casablanca-Settat")
+                        .param("regionId", "1")
                         .param("institutionType", "DAR_TALIB"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
@@ -275,12 +275,12 @@ class InstitutionControllerTest {
                 .build();
 
         SeasonBeneficiariesDTO season2526 = SeasonBeneficiariesDTO.builder()
-                .total(100)
-                .male(50)
-                .female(50)
-                .primary(20)
-                .middleSchool(40)
-                .highSchool(40)
+                .totalBeneficiaries(100)
+                .maleBeneficiaries(50)
+                .femaleBeneficiaries(50)
+                .primaryBeneficiaries(20)
+                .middleSchoolBeneficiaries(40)
+                .highSchoolBeneficiaries(40)
                 .build();
 
         HousingMealsDTO housingMeals = HousingMealsDTO.builder()
@@ -313,9 +313,9 @@ class InstitutionControllerTest {
                 .associationName("Test Association")
                 .institutionName("Test Institution")
                 .address("123 Test Street")
-                .region("Casablanca-Settat")
-                .prefectureProvince("Casablanca")
-                .commune("Anfa")
+                .regionId(1L)
+                .prefectureId(1L)
+                .communeId(1L)
                 .milieu(Milieu.URBAIN)
                 .creationYear(2010)
                 .legalStatus(LegalStatus.LICENSED)
