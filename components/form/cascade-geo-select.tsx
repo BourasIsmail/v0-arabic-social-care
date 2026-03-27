@@ -103,9 +103,7 @@ export function CascadeGeoSelect({
   }, [prefectureId, fetcher]);
 
   const handleRegionChange = (value: string) => {
-    console.log("[v0] handleRegionChange called with value:", value);
     const numValue = value ? parseInt(value, 10) : "";
-    console.log("[v0] Parsed numValue:", numValue, "type:", typeof numValue);
     onRegionChange(numValue);
     onPrefectureChange("");
     onCommuneChange("");
@@ -130,7 +128,6 @@ export function CascadeGeoSelect({
       {/* Region Select */}
       <div className="space-y-2">
         <Label htmlFor="regionId">الجهة</Label>
-        {console.log("[v0] Rendering Select - regionId prop:", regionId, "regions count:", regions.length, "value being set:", regionId ? String(regionId) : "")}
         <Select
           value={regionId ? String(regionId) : ""}
           onValueChange={handleRegionChange}
