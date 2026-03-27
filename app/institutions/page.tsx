@@ -85,6 +85,16 @@ export default function InstitutionsPage() {
   // Combined loading state (auth loading OR data loading)
   const isLoading = isAuthLoading || isDataLoading;
   
+  // Debug: log the raw data to see what fields are available
+  console.log("[v0] Raw data from API:", rawData?.content?.map(inst => ({ 
+    id: inst.id, 
+    name: inst.institutionName,
+    prefectureId: inst.prefectureId,
+    regionId: inst.regionId,
+    communeId: inst.communeId
+  })));
+  console.log("[v0] User prefectureId:", userPrefectureId, "isUserRole:", isUserRole);
+  
   // Client-side filtering for USER role (in case backend doesn't support prefectureId filter)
   // Use String() for comparison to handle string/number type mismatch
   const data = rawData && isUserRole && userPrefectureId
@@ -369,7 +379,7 @@ export default function InstitutionsPage() {
                       السابق
                     </Button>
                     <span className="text-sm text-muted-foreground">
-                      ص��حة {data.number + 1} من {data.totalPages}
+                      ص��حة {data.number + 1} م�� {data.totalPages}
                     </span>
                     <Button
                       variant="outline"
