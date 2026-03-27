@@ -50,11 +50,16 @@ export default function InstitutionsPage() {
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const authFetch = useAuthMutate();
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
 
   // Check if user is USER role (not ADMIN) - they can only see their prefecture's institutions
   const isUserRole = user?.role === "USER";
   const userPrefectureId = user?.prefectureId;
+  
+  // For USER role, wait until user data is loaded before fetching
+  // This prevents fetching all data before we know the user's prefecture
+  const isUserDataReady = !isAuthLoading && user !== null;
+  const shouldFetch = isUserRole ? (isUserDataReady && !!userPrefectureId) : isUserDataReady;
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
@@ -72,21 +77,36 @@ export default function InstitutionsPage() {
     queryParams.set("prefectureId", userPrefectureId.toString());
   }
 
-  const { data, error, isLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
-    `/api/institutions?${queryParams.toString()}`
+  // Only fetch when user data is ready (prevents race condition for USER role)
+  const { data: rawData, error, isLoading: isDataLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
+    shouldFetch ? `/api/institutions?${queryParams.toString()}` : null
   );
+  
+  // Combined loading state (auth loading OR data loading)
+  const isLoading = isAuthLoading || isDataLoading;
+  
+  // Client-side filtering for USER role (in case backend doesn't support prefectureId filter)
+  const data = rawData && isUserRole && userPrefectureId
+    ? {
+        ...rawData,
+        content: rawData.content.filter(
+          (inst) => inst.prefectureId === userPrefectureId
+        ),
+        totalElements: rawData.content.filter(
+          (inst) => inst.prefectureId === userPrefectureId
+        ).length,
+      }
+    : rawData;
 
-  // Fetch stats (filtered by prefecture for USER role)
-  const statsQueryParams = new URLSearchParams();
-  if (isUserRole && userPrefectureId) {
-    statsQueryParams.set("prefectureId", userPrefectureId.toString());
-  }
-  const { data: stats } = useAuthSWR<{
-    total: number;
-    DAR_TALIB: number;
-    DAR_TALIBA: number;
-    MIXED: number;
-  }>(`/api/institutions/stats?${statsQueryParams.toString()}`);
+  // Calculate stats from filtered data (client-side)
+  const stats = data?.content
+    ? {
+        total: data.content.length,
+        DAR_TALIB: data.content.filter((i) => i.institutionType === "DAR_TALIB").length,
+        DAR_TALIBA: data.content.filter((i) => i.institutionType === "DAR_TALIBA").length,
+        MIXED: data.content.filter((i) => i.institutionType === "MIXED").length,
+      }
+    : null;
 
   const handleDelete = async (id: number) => {
     try {
@@ -206,7 +226,7 @@ export default function InstitutionsPage() {
               <div className="relative flex-1">
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="البحث عن مؤسسة..."
+                  placeholder="البحث ع�� مؤسسة..."
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
