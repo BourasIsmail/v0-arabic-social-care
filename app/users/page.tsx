@@ -84,11 +84,18 @@ export default function UsersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    fullName: string;
+    email: string;
+    password: string;
+    role: "USER" | "ADMIN";
+    regionId: number | "";
+    prefectureId: number | "";
+  }>({
     fullName: "",
     email: "",
     password: "",
-    role: "USER" as "USER" | "ADMIN",
+    role: "USER",
     regionId: "",
     prefectureId: "",
   });
