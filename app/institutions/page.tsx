@@ -71,6 +71,9 @@ export default function InstitutionsPage() {
   if (isUserRole && userPrefectureId) {
     queryParams.set("prefectureId", userPrefectureId.toString());
   }
+  
+  console.log("[v0] User role:", user?.role, "prefectureId:", userPrefectureId, "isUserRole:", isUserRole);
+  console.log("[v0] Query params:", queryParams.toString());
 
   const { data, error, isLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
     `/api/institutions?${queryParams.toString()}`
@@ -206,7 +209,7 @@ export default function InstitutionsPage() {
               <div className="relative flex-1">
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="البحث عن مؤسسة..."
+                  placeholder="البحث ع�� مؤسسة..."
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
