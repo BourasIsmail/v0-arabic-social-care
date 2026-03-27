@@ -5,7 +5,7 @@ import type { InstitutionRequest, FormStep } from "./types";
 
 interface FormContextType {
   formData: Partial<InstitutionRequest>;
-  updateFormData: (data: Partial<InstitutionRequest>) => void;
+  updateFormData: (data: Partial<InstitutionRequest>, incrementVersion?: boolean) => void;
   currentStep: FormStep;
   setCurrentStep: (step: FormStep) => void;
   resetForm: () => void;
@@ -50,8 +50,11 @@ export function FormProvider({ children }: { children: ReactNode }) {
   const [editId, setEditId] = useState<number | null>(null);
   const [formVersion, setFormVersion] = useState(0);
 
-  const updateFormData = useCallback((data: Partial<InstitutionRequest>) => {
+  const updateFormData = useCallback((data: Partial<InstitutionRequest>, incrementVersion = false) => {
     setFormData((prev) => ({ ...prev, ...data }));
+    if (incrementVersion) {
+      setFormVersion((v) => v + 1);
+    }
   }, []);
 
   const resetForm = useCallback(() => {

@@ -104,22 +104,34 @@ export function CascadeGeoSelect({
 
   const handleRegionChange = (value: string) => {
     const numValue = value ? parseInt(value, 10) : "";
+    // Only update if value actually changed
+    if (numValue === regionId) return;
     onRegionChange(numValue);
-    onPrefectureChange("");
-    onCommuneChange("");
-    setPrefectures([]);
-    setCommunes([]);
+    // Only clear dependent fields when region actually changes to a different value
+    if (numValue !== regionId) {
+      onPrefectureChange("");
+      onCommuneChange("");
+      setPrefectures([]);
+      setCommunes([]);
+    }
   };
 
   const handlePrefectureChange = (value: string) => {
     const numValue = value ? parseInt(value, 10) : "";
+    // Only update if value actually changed
+    if (numValue === prefectureId) return;
     onPrefectureChange(numValue);
-    onCommuneChange("");
-    setCommunes([]);
+    // Only clear commune when prefecture actually changes
+    if (numValue !== prefectureId) {
+      onCommuneChange("");
+      setCommunes([]);
+    }
   };
 
   const handleCommuneChange = (value: string) => {
     const numValue = value ? parseInt(value, 10) : "";
+    // Only update if value actually changed
+    if (numValue === communeId) return;
     onCommuneChange(numValue);
   };
 
