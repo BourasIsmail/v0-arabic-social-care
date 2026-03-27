@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ma.social.care.entity.enums.Role;
 
 @Data
 @Builder
@@ -25,4 +26,10 @@ public class RegisterRequest {
     @NotBlank(message = "Password is required")
     @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
     private String password;
+
+    private Role role;
+
+    private Long regionId;
+
+    private Long prefectureId;
 }

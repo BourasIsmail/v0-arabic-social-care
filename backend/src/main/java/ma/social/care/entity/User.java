@@ -31,4 +31,10 @@ public class User extends BaseEntity {
     @Column(name = "is_active")
     @Builder.Default
     private Boolean isActive = true;
+
+    @Column(name = "region_id")
+    private Long regionId;
+
+    @Column(name = "prefecture_id")
+    private Long prefectureId;
 }

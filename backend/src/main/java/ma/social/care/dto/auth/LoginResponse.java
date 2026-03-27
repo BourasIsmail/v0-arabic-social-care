@@ -26,5 +26,7 @@ public class LoginResponse {
         private String email;
         private String fullName;
         private Role role;
+        private Long regionId;
+        private Long prefectureId;
     }
 }
