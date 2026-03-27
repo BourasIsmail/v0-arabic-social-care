@@ -74,7 +74,7 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
   const [newStaff, setNewStaff] = useState<Partial<StaffMemberDTO>>({});
 
   // Geo data
-  const { data: regions } = useSWR<GeoDTO[]>("/api/geo/regions", fetcher);
+  const { data: regions } = useSWR<GeoDTO[]>("/api/api/geo/regions", fetcher);
   const [selectedRegion, setSelectedRegion] = useState<number | undefined>(
     institution.regionId
   );
@@ -83,11 +83,11 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
   );
 
   const { data: prefectures } = useSWR<GeoDTO[]>(
-    selectedRegion ? `/api/geo/regions/${selectedRegion}/prefectures` : null,
+    selectedRegion ? `/api/api/geo/regions/${selectedRegion}/prefectures` : null,
     fetcher
   );
   const { data: communes } = useSWR<GeoDTO[]>(
-    selectedPrefecture ? `/api/geo/prefectures/${selectedPrefecture}/communes` : null,
+    selectedPrefecture ? `/api/api/geo/prefectures/${selectedPrefecture}/communes` : null,
     fetcher
   );
 
@@ -161,7 +161,7 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
         staffMembers,
       };
 
-      const response = await authMutate(`/api/institutions/${institution.id}`, {
+      const response = await authMutate(`/api/api/institutions/${institution.id}`, {
         method: "PUT",
         body: JSON.stringify(payload),
       });
