@@ -1,60 +1,98 @@
 import { NextResponse } from 'next/server';
 
-// Helper function to get display value for different field types
+// Helper function to get display value
 function getDisplayValue(value: any, defaultValue: string = '—'): string {
   if (value === undefined || value === null || value === '') return defaultValue;
   return String(value);
 }
 
-// Helper function to format date
-function formatDate(dateStr: string | undefined): string {
-  if (!dateStr) return '—';
-  try {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('ar-MA');
-  } catch {
-    return dateStr;
-  }
+// Helper function for boolean display
+function getBooleanDisplay(value: boolean | undefined): string {
+  return value ? 'نعم' : 'لا';
 }
 
-// Labels mapping
+// Helper function for checkbox
+function getCheckbox(value: boolean | undefined): string {
+  return value ? '☑' : '☐';
+}
+
+// Labels mapping in Arabic
 const labels = {
-  legalStatus: {
-    PUBLIC: 'عمومية',
-    PRIVATE: 'خاصة',
-    ASSOCIATION: 'جمعوية',
-  },
   institutionType: {
     DAR_TALIB: 'دار الطالب',
     DAR_TALIBA: 'دار الطالبة',
     DAR_TALIB_TALIBA: 'دار الطالب والطالبة',
-    CENTRE_ACCUEIL: 'مركز الاستقبال',
   },
-  buildingOwnership: {
+  milieu: {
+    URBAIN: 'حضري',
+    RURAL: 'قروي',
+  },
+  legalStatus: {
+    LICENSED: 'مرخصة',
+    UNLICENSED: 'غير مرخصة',
+  },
+  distance: {
+    INSIDE: 'داخل المؤسسة',
+    LT_1KM: 'أقل من 1 كم',
+    BETWEEN_1_5KM: 'بين 1 و 5 كم',
+    GT_5KM: 'أكثر من 5 كم',
+  },
+  buildingStatus: {
+    RENTAL: 'مكترى',
     OWNED: 'ملك',
-    RENTED: 'كراء',
-    BORROWED: 'إعارة',
+    AT_DISPOSAL: 'رهن الإشارة',
     OTHER: 'أخرى',
   },
   buildingCondition: {
     GOOD: 'جيدة',
-    AVERAGE: 'متوسطة',
+    SOME_DEGRADATION: 'متوسطة',
     BAD: 'سيئة',
   },
-  milieu: {
-    URBAN: 'حضري',
-    RURAL: 'قروي',
+  renovationCapacity: {
+    EASY: 'سهلة',
+    DIFFICULT: 'صعبة',
+    NEEDS_RECONSTRUCTION: 'تحتاج إعادة بناء',
   },
-  gender: {
-    MALE: 'ذكور',
-    FEMALE: 'إناث',
-    MIXED: 'مختلط',
+  ownerType: {
+    STATE_DOMAIN: 'ملك الدولة',
+    COMMUNAL: 'جماعي',
+    PRIVATE: 'خاص',
+    OTHER: 'أخرى',
   },
-  educationLevel: {
-    PRIMARY: 'ابتدائي',
-    MIDDLE: 'إعدادي',
-    SECONDARY: 'ثانوي',
-    MIXED: 'مختلط',
+  selectionBody: {
+    ASSOCIATION_ALONE: 'الجمعية لوحدها',
+    MIXED_COMMITTEE: 'لجنة مختلطة',
+  },
+  tariffType: {
+    UNIFORM: 'موحد',
+    NON_UNIFORM: 'غير موحد',
+  },
+  tariffBracket: {
+    LT_50: 'أقل من 50 درهم',
+    BETWEEN_50_100: 'بين 50 و 100 درهم',
+    BETWEEN_100_200: 'بين 100 و 200 درهم',
+    GT_200: 'أكثر من 200 درهم',
+  },
+  mealServiceType: {
+    INSTITUTION_KITCHEN: 'مطبخ المؤسسة',
+    READY_MEALS: 'وجبات جاهزة',
+    OTHER: 'أخرى',
+  },
+  staffType: {
+    DIRECTOR: 'مدير',
+    FINANCIAL_MANAGER: 'مسؤول مالي',
+    GENERAL_GUARD: 'حارس عام',
+    SOCIAL_WORKER: 'مساعد اجتماعي',
+    DOCTOR: 'طبيب',
+    NURSE: 'ممرض',
+    PSYCHOLOGIST: 'أخصائي نفسي',
+    EDUCATORS: 'مربين',
+    KITCHEN_MANAGER: 'مسؤول المطبخ',
+    KITCHEN_AGENTS: 'عمال المطبخ',
+    STORAGE_MANAGER: 'مسؤول المخزن',
+    SECURITY: 'الأمن',
+    SERVICE_AGENTS: 'عمال الخدمة',
+    OTHER: 'أخرى',
   },
 };
 
@@ -76,12 +114,22 @@ export async function POST(request: Request) {
       day: 'numeric',
     });
 
+    // Build staff table rows
+    const staffRows = (data.staffMembers || []).map((staff: any) => `
+      <tr>
+        <td>${getLabelValue('staffType', staff.staffType)}</td>
+        <td>${getDisplayValue(staff.count, '0')}</td>
+        <td>${getBooleanDisplay(staff.isCertified)}</td>
+        <td>${getDisplayValue(staff.monthlySalary, '—')}</td>
+      </tr>
+    `).join('');
+
     const htmlContent = `
       <!DOCTYPE html>
       <html dir="rtl" lang="ar">
       <head>
         <meta charset="UTF-8">
-        <title>استمارة تشخيص المؤسسة</title>
+        <title>استمارة تشخيص المؤسسة - ${getDisplayValue(data.institutionName, 'مؤسسة')}</title>
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&display=swap');
           * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -92,7 +140,7 @@ export async function POST(request: Request) {
             color: #333;
             padding: 0;
             font-size: 11px;
-            line-height: 1.5;
+            line-height: 1.6;
             background: #f5f5f5;
           }
           .print-bar {
@@ -139,8 +187,7 @@ export async function POST(request: Request) {
           }
           .page {
             background: white;
-            padding: 15mm;
-            min-height: 297mm;
+            padding: 12mm;
           }
           .header {
             text-align: center;
@@ -153,10 +200,7 @@ export async function POST(request: Request) {
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 15px;
-          }
-          .header-top div {
             font-size: 10px;
-            line-height: 1.4;
           }
           .header h1 {
             font-size: 18px;
@@ -164,21 +208,21 @@ export async function POST(request: Request) {
             margin-bottom: 5px;
           }
           .header h2 {
-            font-size: 14px;
+            font-size: 13px;
             color: #666;
             font-weight: 600;
           }
           .section {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             break-inside: avoid;
           }
           .section-title {
             background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
             color: white;
-            padding: 10px 16px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            font-size: 14px;
+            padding: 8px 14px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 13px;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -187,65 +231,85 @@ export async function POST(request: Request) {
           .section-number {
             background: white;
             color: #1e3a5f;
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 12px;
+          }
+          .fields-container {
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
           }
           .field-row {
             display: flex;
             border-bottom: 1px solid #e0e0e0;
-            min-height: 36px;
+            min-height: 32px;
           }
           .field-row:last-child {
             border-bottom: none;
           }
           .field-label {
             background: #f8f9fa;
-            padding: 8px 12px;
+            padding: 6px 10px;
             font-weight: 600;
             color: #555;
             width: 40%;
             border-left: 1px solid #e0e0e0;
             display: flex;
             align-items: center;
+            font-size: 10px;
           }
           .field-value {
-            padding: 8px 12px;
+            padding: 6px 10px;
             width: 60%;
             display: flex;
             align-items: center;
             color: #333;
+            font-size: 10px;
           }
-          .fields-container {
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            overflow: hidden;
-          }
-          .two-columns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+          .checkbox-row {
+            display: flex;
+            flex-wrap: wrap;
             gap: 15px;
+            padding: 8px 10px;
+          }
+          .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+          }
+          .checkbox-item .check {
+            font-size: 14px;
+          }
+          .sub-section {
+            background: #f0f4f8;
+            padding: 6px 10px;
+            font-weight: 600;
+            color: #1e3a5f;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 11px;
           }
           .stats-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 10px;
+            margin-top: 8px;
+            font-size: 9px;
           }
           .stats-table th {
             background: #1e3a5f;
             color: white;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
             font-weight: 600;
           }
           .stats-table td {
-            padding: 6px 8px;
+            padding: 5px 6px;
             border: 1px solid #e0e0e0;
             text-align: center;
           }
@@ -253,57 +317,37 @@ export async function POST(request: Request) {
             background: #f8f9fa;
           }
           .signature-section {
-            margin-top: 40px;
+            margin-top: 30px;
             display: flex;
             justify-content: space-between;
-            gap: 30px;
+            gap: 20px;
           }
           .signature-box {
             flex: 1;
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             border: 1px dashed #ccc;
-            border-radius: 8px;
+            border-radius: 6px;
           }
           .signature-box h4 {
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             color: #555;
+            font-size: 11px;
           }
           .signature-line {
             border-top: 1px solid #333;
-            margin-top: 50px;
+            margin-top: 40px;
             padding-top: 5px;
-            font-size: 10px;
+            font-size: 9px;
             color: #666;
           }
           .footer {
             text-align: center;
-            margin-top: 30px;
-            padding-top: 15px;
+            margin-top: 20px;
+            padding-top: 10px;
             border-top: 2px solid #1e3a5f;
-            font-size: 10px;
+            font-size: 9px;
             color: #999;
-          }
-          .checkbox {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid #1e3a5f;
-            border-radius: 3px;
-            margin-left: 5px;
-            vertical-align: middle;
-          }
-          .checkbox.checked {
-            background: #1e3a5f;
-            position: relative;
-          }
-          .checkbox.checked::after {
-            content: '✓';
-            color: white;
-            font-size: 10px;
-            position: absolute;
-            top: -1px;
-            left: 1px;
           }
           @media print {
             .print-bar { display: none !important; }
@@ -317,12 +361,14 @@ export async function POST(request: Request) {
               background: white;
             }
             @page { 
-              margin: 10mm; 
+              margin: 8mm; 
               size: A4; 
             }
             .page {
               padding: 0;
-              min-height: auto;
+            }
+            .section {
+              break-inside: avoid;
             }
           }
         </style>
@@ -347,14 +393,14 @@ export async function POST(request: Request) {
                 </div>
               </div>
               <h1>استمارة تشخيص مؤسسات الرعاية الاجتماعية</h1>
-              <h2>التي تتكفل بالأطفال المتمدرسين (دور الطالب والطالبة)</h2>
+              <h2>دور الطالب والطالبة</h2>
             </div>
 
-            <!-- Section 1: Basic Information -->
+            <!-- Section 1: معلومات المؤسسة -->
             <div class="section">
               <div class="section-title">
                 <span class="section-number">I</span>
-                المعلومات الأساسية
+                معلومات المؤسسة
               </div>
               <div class="fields-container">
                 <div class="field-row">
@@ -362,25 +408,41 @@ export async function POST(request: Request) {
                   <div class="field-value">${getLabelValue('institutionType', data.institutionType)}</div>
                 </div>
                 <div class="field-row">
-                  <div class="field-label">الصفة القانونية</div>
-                  <div class="field-value">${getLabelValue('legalStatus', data.legalStatus)}</div>
+                  <div class="field-label">اسم الجمعية المسيرة</div>
+                  <div class="field-value">${getDisplayValue(data.associationName)}</div>
                 </div>
                 <div class="field-row">
                   <div class="field-label">اسم المؤسسة</div>
                   <div class="field-value">${getDisplayValue(data.institutionName)}</div>
                 </div>
                 <div class="field-row">
-                  <div class="field-label">اسم الجمعية المسيرة</div>
-                  <div class="field-value">${getDisplayValue(data.associationName)}</div>
-                </div>
-                <div class="field-row">
                   <div class="field-label">سنة التأسيس</div>
                   <div class="field-value">${getDisplayValue(data.creationYear)}</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">الوضعية القانونية</div>
+                  <div class="field-value">${getLabelValue('legalStatus', data.legalStatus)}</div>
+                </div>
+                ${data.legalStatus === 'LICENSED' ? `
+                <div class="field-row">
+                  <div class="field-label">رقم الترخيص</div>
+                  <div class="field-value">${getDisplayValue(data.licenseNumber)}</div>
+                </div>
+                ` : ''}
+                ${data.legalStatus === 'UNLICENSED' ? `
+                <div class="field-row">
+                  <div class="field-label">سبب عدم الترخيص</div>
+                  <div class="field-value">${getDisplayValue(data.unlicensedReason)}</div>
+                </div>
+                ` : ''}
+                <div class="field-row">
+                  <div class="field-label">تاريخ بداية الخدمة</div>
+                  <div class="field-value">${getDisplayValue(data.serviceStartDate)}</div>
                 </div>
               </div>
             </div>
 
-            <!-- Section 2: Geographic Location -->
+            <!-- Section 2: الموقع الجغرافي -->
             <div class="section">
               <div class="section-title">
                 <span class="section-number">II</span>
@@ -407,144 +469,325 @@ export async function POST(request: Request) {
                   <div class="field-label">العنوان</div>
                   <div class="field-value">${getDisplayValue(data.address)}</div>
                 </div>
+                <div class="field-row">
+                  <div class="field-label">المسافة عن المؤسسة التعليمية</div>
+                  <div class="field-value">${getLabelValue('distance', data.distanceToSchool)}</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">المسافة عن الداخلية الوطنية</div>
+                  <div class="field-value">${getLabelValue('distance', data.distanceToNationalBoardingSchool)}</div>
+                </div>
               </div>
             </div>
 
-            <!-- Section 3: Building Information -->
+            <!-- Section 3: الخدمات المقدمة -->
             <div class="section">
               <div class="section-title">
                 <span class="section-number">III</span>
+                الخدمات المقدمة
+              </div>
+              <div class="fields-container">
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.housing)}</span> الإيواء</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.meals)}</span> الإطعام</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.educationalSupport)}</span> الدعم التربوي</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.culturalActivities)}</span> الأنشطة الثقافية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.healthCare)}</span> الرعاية الصحية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.insurance)}</span> التأمين</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.psychologicalSupport)}</span> الدعم النفسي</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 4: الطاقة الاستيعابية -->
+            <div class="section">
+              <div class="section-title">
+                <span class="section-number">IV</span>
+                الطاقة الاستيعابية والمستويات المستهدفة
+              </div>
+              <div class="fields-container">
+                <div class="field-row">
+                  <div class="field-label">الطاقة الاستيعابية الإجمالية</div>
+                  <div class="field-value">${getDisplayValue(data.totalCapacity)}</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">طاقة الذكور</div>
+                  <div class="field-value">${getDisplayValue(data.maleCapacity)}</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">طاقة الإناث</div>
+                  <div class="field-value">${getDisplayValue(data.femaleCapacity)}</div>
+                </div>
+                <div class="sub-section">المستويات المستهدفة</div>
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.primary)}</span> ابتدائي</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.middleSchool)}</span> إعدادي</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.highSchool)}</span> ثانوي</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.other)}</span> أخرى ${data.otherDetail ? `(${data.otherDetail})` : ''}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 5: معلومات البناية -->
+            <div class="section">
+              <div class="section-title">
+                <span class="section-number">V</span>
                 معلومات البناية
               </div>
               <div class="fields-container">
                 <div class="field-row">
-                  <div class="field-label">طبيعة ملكية البناية</div>
-                  <div class="field-value">${getLabelValue('buildingOwnership', data.buildingOwnership)}</div>
+                  <div class="field-label">وضعية البناية</div>
+                  <div class="field-value">${getLabelValue('buildingStatus', data.building?.buildingStatus)}</div>
                 </div>
                 <div class="field-row">
                   <div class="field-label">حالة البناية</div>
-                  <div class="field-value">${getLabelValue('buildingCondition', data.buildingCondition)}</div>
+                  <div class="field-value">${getLabelValue('buildingCondition', data.building?.buildingCondition)}</div>
                 </div>
                 <div class="field-row">
-                  <div class="field-label">المساحة الإجمالية (م²)</div>
-                  <div class="field-value">${getDisplayValue(data.totalArea)}</div>
+                  <div class="field-label">إمكانية الترميم</div>
+                  <div class="field-value">${getLabelValue('renovationCapacity', data.building?.renovationCapacity)}</div>
                 </div>
                 <div class="field-row">
-                  <div class="field-label">عدد الطوابق</div>
-                  <div class="field-value">${getDisplayValue(data.numberOfFloors)}</div>
+                  <div class="field-label">نوع المالك</div>
+                  <div class="field-value">${getLabelValue('ownerType', data.building?.ownerType)}</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">وجود اتفاقية شراكة</div>
+                  <div class="field-value">${getBooleanDisplay(data.building?.hasPartnershipAgreement)}</div>
                 </div>
               </div>
             </div>
 
-            <!-- Section 4: Beneficiaries -->
-            <div class="section">
-              <div class="section-title">
-                <span class="section-number">IV</span>
-                المستفيدون
-              </div>
-              <div class="fields-container">
-                <div class="field-row">
-                  <div class="field-label">الجنس المستهدف</div>
-                  <div class="field-value">${getLabelValue('gender', data.beneficiaryGender)}</div>
-                </div>
-                <div class="field-row">
-                  <div class="field-label">المستوى التعليمي</div>
-                  <div class="field-value">${getLabelValue('educationLevel', data.educationLevel)}</div>
-                </div>
-                <div class="field-row">
-                  <div class="field-label">الطاقة الاستيعابية</div>
-                  <div class="field-value">${getDisplayValue(data.totalCapacity)}</div>
-                </div>
-                <div class="field-row">
-                  <div class="field-label">العدد الفعلي للمستفيدين</div>
-                  <div class="field-value">${getDisplayValue(data.currentOccupancy)}</div>
-                </div>
-              </div>
-              
-              ${data.beneficiaryStats ? `
-              <table class="stats-table">
-                <thead>
-                  <tr>
-                    <th>المستوى</th>
-                    <th>ذكور</th>
-                    <th>إناث</th>
-                    <th>المجموع</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>ابتدائي</td>
-                    <td>${getDisplayValue(data.beneficiaryStats?.primaryMale, '0')}</td>
-                    <td>${getDisplayValue(data.beneficiaryStats?.primaryFemale, '0')}</td>
-                    <td>${(Number(data.beneficiaryStats?.primaryMale || 0) + Number(data.beneficiaryStats?.primaryFemale || 0))}</td>
-                  </tr>
-                  <tr>
-                    <td>إعدادي</td>
-                    <td>${getDisplayValue(data.beneficiaryStats?.middleMale, '0')}</td>
-                    <td>${getDisplayValue(data.beneficiaryStats?.middleFemale, '0')}</td>
-                    <td>${(Number(data.beneficiaryStats?.middleMale || 0) + Number(data.beneficiaryStats?.middleFemale || 0))}</td>
-                  </tr>
-                  <tr>
-                    <td>ثانوي</td>
-                    <td>${getDisplayValue(data.beneficiaryStats?.secondaryMale, '0')}</td>
-                    <td>${getDisplayValue(data.beneficiaryStats?.secondaryFemale, '0')}</td>
-                    <td>${(Number(data.beneficiaryStats?.secondaryMale || 0) + Number(data.beneficiaryStats?.secondaryFemale || 0))}</td>
-                  </tr>
-                </tbody>
-              </table>
-              ` : ''}
-            </div>
-
-            <!-- Section 5: Staff -->
-            <div class="section">
-              <div class="section-title">
-                <span class="section-number">V</span>
-                الموارد البشرية
-              </div>
-              <div class="fields-container">
-                <div class="field-row">
-                  <div class="field-label">عدد المديرين</div>
-                  <div class="field-value">${getDisplayValue(data.directorsCount, '0')}</div>
-                </div>
-                <div class="field-row">
-                  <div class="field-label">عدد المشرفين</div>
-                  <div class="field-value">${getDisplayValue(data.supervisorsCount, '0')}</div>
-                </div>
-                <div class="field-row">
-                  <div class="field-label">عدد الطباخين</div>
-                  <div class="field-value">${getDisplayValue(data.cooksCount, '0')}</div>
-                </div>
-                <div class="field-row">
-                  <div class="field-label">عدد الحراس</div>
-                  <div class="field-value">${getDisplayValue(data.guardsCount, '0')}</td>
-                </div>
-                <div class="field-row">
-                  <div class="field-label">عدد عمال النظافة</div>
-                  <div class="field-value">${getDisplayValue(data.cleanersCount, '0')}</div>
-                </div>
-                <div class="field-row">
-                  <div class="field-label">موظفون آخرون</div>
-                  <div class="field-value">${getDisplayValue(data.otherStaffCount, '0')}</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Section 6: Financing -->
+            <!-- Section 6: التمويل -->
             <div class="section">
               <div class="section-title">
                 <span class="section-number">VI</span>
                 التمويل
               </div>
               <div class="fields-container">
+                <div class="sub-section">مصادر تمويل البناء</div>
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.constructionByAssociation)}</span> الجمعية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.constructionByMinistry)}</span> الوزارة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.constructionByINDH)}</span> المبادرة الوطنية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.constructionByCouncil)}</span> المجلس</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.constructionByDonors)}</span> المانحون</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.constructionByOther)}</span> أخرى</span>
+                </div>
+                <div class="sub-section">مصادر تمويل التجهيز</div>
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentByAssociation)}</span> الجمعية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentByMinistry)}</span> الوزارة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentByINDH)}</span> المبادرة الوطنية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentByCouncil)}</span> المجلس</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentByDonors)}</span> المانحون</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentByOther)}</span> أخرى</span>
+                </div>
+                <div class="sub-section">مصادر تمويل التسيير</div>
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingByAssociation)}</span> الجمعية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingByMinistry)}</span> الوزارة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingByINDH)}</span> المبادرة الوطنية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingByCouncil)}</span> المجلس</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingByDonors)}</span> المانحون</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingByOther)}</span> أخرى</span>
+                </div>
+                <div class="sub-section">الميزانية السنوية</div>
                 <div class="field-row">
-                  <div class="field-label">الميزانية السنوية (درهم)</div>
-                  <div class="field-value">${getDisplayValue(data.annualBudget)}</div>
+                  <div class="field-label">الميزانية الإجمالية (درهم)</div>
+                  <div class="field-value">${getDisplayValue(data.financing?.annualBudget)}</div>
                 </div>
                 <div class="field-row">
-                  <div class="field-label">مصادر التمويل</div>
-                  <div class="field-value">${getDisplayValue(data.fundingSources)}</div>
+                  <div class="field-label">مساهمة الوزارة (درهم)</div>
+                  <div class="field-value">${getDisplayValue(data.financing?.ministryContribution)}</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">مساهمة الجمعية (درهم)</div>
+                  <div class="field-value">${getDisplayValue(data.financing?.associationContribution)}</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">مساهمة المجلس (درهم)</div>
+                  <div class="field-value">${getDisplayValue(data.financing?.councilContribution)}</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">مساهمات أخرى (درهم)</div>
+                  <div class="field-value">${getDisplayValue(data.financing?.otherContribution)}</div>
                 </div>
               </div>
+            </div>
+
+            <!-- Section 7: الاستهداف -->
+            <div class="section">
+              <div class="section-title">
+                <span class="section-number">VII</span>
+                الاستهداف
+              </div>
+              <div class="fields-container">
+                <div class="sub-section">معايير الانتقاء</div>
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.povertyBased)}</span> الفقر</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.distanceBased)}</span> البعد</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.orphansBased)}</span> اليتم</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.disabilityBased)}</span> الإعاقة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.otherCriteria)}</span> أخرى</span>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">هيئة الانتقاء</div>
+                  <div class="field-value">${getLabelValue('selectionBody', data.targeting?.selectionBody)}</div>
+                </div>
+                ${data.targeting?.selectionBody === 'MIXED_COMMITTEE' ? `
+                <div class="sub-section">أعضاء اللجنة</div>
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.committeeHasAssociation)}</span> الجمعية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.committeeHasAuthority)}</span> السلطة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.committeeHasEducation)}</span> التعليم</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.committeeHasSocial)}</span> الشؤون الاجتماعية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.committeeHasOther)}</span> أخرى</span>
+                </div>
+                ` : ''}
+                <div class="sub-section">التعرفة</div>
+                <div class="field-row">
+                  <div class="field-label">الخدمات مجانية</div>
+                  <div class="field-value">${getBooleanDisplay(data.targeting?.servicesAreFree)}</div>
+                </div>
+                ${!data.targeting?.servicesAreFree ? `
+                <div class="field-row">
+                  <div class="field-label">نوع التعرفة</div>
+                  <div class="field-value">${getLabelValue('tariffType', data.targeting?.tariffType)}</div>
+                </div>
+                ${data.targeting?.tariffType === 'UNIFORM' ? `
+                <div class="field-row">
+                  <div class="field-label">مبلغ التعرفة الموحدة (درهم)</div>
+                  <div class="field-value">${getDisplayValue(data.targeting?.fixedTariffAmount)}</div>
+                </div>
+                ` : ''}
+                ${data.targeting?.tariffType === 'NON_UNIFORM' ? `
+                <div class="field-row">
+                  <div class="field-label">شريحة التعرفة</div>
+                  <div class="field-value">${getLabelValue('tariffBracket', data.targeting?.tariffBracket)}</div>
+                </div>
+                ` : ''}
+                ` : ''}
+              </div>
+            </div>
+
+            <!-- Section 8: الإيواء والإطعام -->
+            <div class="section">
+              <div class="section-title">
+                <span class="section-number">VIII</span>
+                الإيواء والإطعام
+              </div>
+              <div class="fields-container">
+                <div class="field-row">
+                  <div class="field-label">عدد الغرف</div>
+                  <div class="field-value">${getDisplayValue(data.housingMeals?.totalRooms)}</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">عدد الأسرة</div>
+                  <div class="field-value">${getDisplayValue(data.housingMeals?.totalBeds)}</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">عدد الأسرة في الغرفة</div>
+                  <div class="field-value">${getDisplayValue(data.housingMeals?.bedsPerRoom)}</div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">وجود مطعم</div>
+                  <div class="field-value">${getBooleanDisplay(data.housingMeals?.hasRefectory)}</div>
+                </div>
+                ${data.housingMeals?.hasRefectory ? `
+                <div class="field-row">
+                  <div class="field-label">طاقة المطعم</div>
+                  <div class="field-value">${getDisplayValue(data.housingMeals?.refectoryCapacity)}</div>
+                </div>
+                ` : ''}
+                <div class="field-row">
+                  <div class="field-label">نوع خدمة الوجبات</div>
+                  <div class="field-value">${getLabelValue('mealServiceType', data.housingMeals?.mealServiceType)}</div>
+                </div>
+                <div class="sub-section">مقترحات التحسين</div>
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.housingMeals?.suggestBuildingRenovation)}</span> ترميم البناية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.housingMeals?.suggestNewBuilding)}</span> بناء جديد</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.housingMeals?.suggestEquipment)}</span> تجهيزات</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.housingMeals?.suggestCapacityIncrease)}</span> زيادة الطاقة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.housingMeals?.suggestStaffTraining)}</span> تكوين الموظفين</span>
+                </div>
+              </div>
+              
+              <!-- Season Statistics -->
+              <table class="stats-table">
+                <thead>
+                  <tr>
+                    <th>الموسم</th>
+                    <th>المجموع</th>
+                    <th>ذكور</th>
+                    <th>إناث</th>
+                    <th>ابتدائي</th>
+                    <th>إعدادي</th>
+                    <th>ثانوي</th>
+                    <th>أيتام</th>
+                    <th>ذوي إعاقة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2023-2024</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.totalBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.maleBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.femaleBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.primaryBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.middleSchoolBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.highSchoolBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.orphans, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.disabled, '0')}</td>
+                  </tr>
+                  <tr>
+                    <td>2024-2025</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.totalBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.maleBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.femaleBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.primaryBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.middleSchoolBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.highSchoolBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.orphans, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.disabled, '0')}</td>
+                  </tr>
+                  <tr>
+                    <td>2025-2026</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.totalBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.maleBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.femaleBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.primaryBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.middleSchoolBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.highSchoolBeneficiaries, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.orphans, '0')}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.disabled, '0')}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Section 9: الموارد البشرية -->
+            <div class="section">
+              <div class="section-title">
+                <span class="section-number">IX</span>
+                الموارد البشرية
+              </div>
+              ${(data.staffMembers && data.staffMembers.length > 0) ? `
+              <table class="stats-table">
+                <thead>
+                  <tr>
+                    <th>الفئة</th>
+                    <th>العدد</th>
+                    <th>مؤهل</th>
+                    <th>الأجر الشهري (درهم)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${staffRows}
+                </tbody>
+              </table>
+              ` : '<div class="fields-container"><div class="field-row"><div class="field-value" style="width:100%; text-align:center;">لا يوجد موظفون مسجلون</div></div></div>'}
             </div>
 
             <!-- Signatures -->
@@ -561,7 +804,7 @@ export async function POST(request: Request) {
 
             <!-- Footer -->
             <div class="footer">
-              تقرير مُنشأ تلقائياً - نظام تشخيص مؤسسات الرعاية الاجتماعية
+              استمارة تشخيص مؤسسات الرعاية الاجتماعية - نظام إلكتروني
             </div>
           </div>
         </div>
