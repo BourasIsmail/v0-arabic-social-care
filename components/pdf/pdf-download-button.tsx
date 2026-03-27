@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { pdf } from "@react-pdf/renderer";
 import { Button } from "@/components/ui/button";
 import { FileDown, Loader2 } from "lucide-react";
-import { InstitutionPDF } from "./institution-pdf";
 import type { InstitutionResponse } from "@/lib/types";
 import { toast } from "sonner";
 
@@ -24,16 +22,37 @@ export function PDFDownloadButton({
   const handleDownload = async () => {
     setIsGenerating(true);
     try {
-      const blob = await pdf(<InstitutionPDF data={data} />).toBlob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${data.institutionName || "institution"}_fiche.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      toast.success("تم تحميل الملف بنجاح");
+      // Prepare data with region/prefecture names
+      const pdfData = {
+        ...data,
+        regionName: data.regionName || data.regionId?.toString(),
+        prefectureName: data.prefectureName || data.prefectureId?.toString(),
+        communeName: data.communeName || data.communeId?.toString(),
+      };
+
+      // Call the API to generate HTML
+      const response = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data: pdfData }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate PDF');
+      }
+
+      const html = await response.text();
+      
+      // Open in new window for print/save
+      const printWindow = window.open('', '_blank', 'width=900,height=700');
+      if (printWindow) {
+        printWindow.document.write(html);
+        printWindow.document.close();
+      } else {
+        toast.error("يرجى السماح بالنوافذ المنبثقة لعرض التقرير");
+      }
     } catch (error) {
       console.error("Error generating PDF:", error);
       toast.error("حدث خطأ أثناء إنشاء الملف");
