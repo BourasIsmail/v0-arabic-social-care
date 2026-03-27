@@ -41,7 +41,9 @@ public class AuthService {
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(request.getRole() != null ? request.getRole() : Role.USER)
+                .regionId(request.getRegionId())
+                .prefectureId(request.getPrefectureId())
                 .isActive(true)
                 .build();
 
@@ -106,6 +108,8 @@ public class AuthService {
                 .email(user.getEmail())
                 .fullName(user.getFullName())
                 .role(user.getRole())
+                .regionId(user.getRegionId())
+                .prefectureId(user.getPrefectureId())
                 .build();
     }
 
@@ -120,6 +124,8 @@ public class AuthService {
                         .email(user.getEmail())
                         .fullName(user.getFullName())
                         .role(user.getRole())
+                        .regionId(user.getRegionId())
+                        .prefectureId(user.getPrefectureId())
                         .build())
                 .build();
     }
