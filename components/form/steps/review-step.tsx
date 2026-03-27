@@ -101,9 +101,9 @@ export function ReviewStep() {
       
       // Redirect after successful save
       if (isEditMode) {
-        window.location.href = `/institutions/${editId}`;
+        window.location.href = `/dour-talib/institutions/${editId}`;
       } else {
-        window.location.href = "/institutions";
+        window.location.href = "/dour-talib/institutions";
       }
     } catch (error) {
       toast.error("حدث خطأ أثناء حفظ البيانات");
