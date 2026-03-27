@@ -60,8 +60,6 @@ export default function InstitutionsPage() {
   // This prevents fetching all data before we know the user's prefecture
   const isUserDataReady = !isAuthLoading && user !== null;
   const shouldFetch = isUserRole ? (isUserDataReady && !!userPrefectureId) : isUserDataReady;
-  
-  console.log("[v0] Auth state:", { isAuthLoading, user: user?.username, role: user?.role, prefectureId: userPrefectureId, isUserDataReady, shouldFetch });
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
@@ -88,14 +86,15 @@ export default function InstitutionsPage() {
   const isLoading = isAuthLoading || isDataLoading;
   
   // Client-side filtering for USER role (in case backend doesn't support prefectureId filter)
+  // Use String() for comparison to handle string/number type mismatch
   const data = rawData && isUserRole && userPrefectureId
     ? {
         ...rawData,
         content: rawData.content.filter(
-          (inst) => inst.prefectureId === userPrefectureId
+          (inst) => String(inst.prefectureId) === String(userPrefectureId)
         ),
         totalElements: rawData.content.filter(
-          (inst) => inst.prefectureId === userPrefectureId
+          (inst) => String(inst.prefectureId) === String(userPrefectureId)
         ).length,
       }
     : rawData;
@@ -370,7 +369,7 @@ export default function InstitutionsPage() {
                       السابق
                     </Button>
                     <span className="text-sm text-muted-foreground">
-                      صفحة {data.number + 1} من {data.totalPages}
+                      ص��حة {data.number + 1} من {data.totalPages}
                     </span>
                     <Button
                       variant="outline"
