@@ -146,7 +146,6 @@ export function InstitutionStep() {
             onRegionChange={(value) => setValue("regionId", value)}
             onPrefectureChange={(value) => setValue("prefectureId", value)}
             onCommuneChange={(value) => setValue("communeId", value)}
-            disabled={isUserRole && !isEditMode}
           />
 
           <div className="space-y-2">
