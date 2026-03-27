@@ -22,7 +22,6 @@ export function PDFDownloadButton({
   const handlePrint = async () => {
     setIsGenerating(true);
     try {
-      // Prepare data with region/prefecture names
       const pdfData = {
         ...data,
         regionName: data.regionName || data.regionId?.toString(),
@@ -30,7 +29,6 @@ export function PDFDownloadButton({
         communeName: data.communeName || data.communeId?.toString(),
       };
 
-      // Call the API to generate HTML
       const response = await fetch('/api/generate-pdf', {
         method: 'POST',
         headers: {
@@ -44,14 +42,13 @@ export function PDFDownloadButton({
       }
 
       const html = await response.text();
-
-      // Open in new window for print
+      
       const printWindow = window.open('', '_blank', 'width=900,height=700');
       if (printWindow) {
         printWindow.document.write(html);
         printWindow.document.close();
       } else {
-        toast.error("يرجى السماح بالنوافذ المنبثقة للطباعة");
+        toast.error("يرجى السماح بالنوافذ المنبثقة لعرض التقرير");
       }
     } catch (error) {
       console.error("Error generating PDF:", error);
