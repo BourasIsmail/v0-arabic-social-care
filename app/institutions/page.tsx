@@ -86,13 +86,11 @@ export default function InstitutionsPage() {
   const isLoading = isAuthLoading || isDataLoading;
   
   // Debug: log the raw data to see what fields are available
-  console.log("[v0] Raw data from API:", rawData?.content?.map(inst => ({ 
-    id: inst.id, 
-    name: inst.institutionName,
-    prefectureId: inst.prefectureId,
-    regionId: inst.regionId,
-    communeId: inst.communeId
-  })));
+  if (rawData?.content?.length > 0) {
+    const firstInst = rawData.content[0];
+    console.log("[v0] First institution ALL KEYS:", Object.keys(firstInst));
+    console.log("[v0] First institution FULL DATA:", JSON.stringify(firstInst));
+  }
   console.log("[v0] User prefectureId:", userPrefectureId, "isUserRole:", isUserRole);
   
   // Client-side filtering for USER role (in case backend doesn't support prefectureId filter)
