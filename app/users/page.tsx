@@ -341,13 +341,15 @@ export default function UsersPage() {
                         regionId={formData.regionId}
                         prefectureId={formData.prefectureId}
                         communeId=""
-                        onRegionChange={(value) =>
+                        onRegionChange={(value) => {
+                          console.log("[v0] onRegionChange received:", value, "type:", typeof value);
                           setFormData({
                             ...formData,
                             regionId: value,
                             prefectureId: "",
-                          })
-                        }
+                          });
+                          console.log("[v0] formData after set:", { ...formData, regionId: value, prefectureId: "" });
+                        }}
                         onPrefectureChange={(value) =>
                           setFormData({ ...formData, prefectureId: value })
                         }
