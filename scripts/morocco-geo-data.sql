@@ -1,4 +1,4 @@
--- Morocco Administrative Data: Regions, Prefectures/Provinces, and Communes
+-- Morocco Admoinistrative Data: Regions, Prefectures/Provinces, and Communes
 -- Based on the 12 regions of Morocco (2015 territorial division)
 
 -- Clear existing data (optional - uncomment if needed)
