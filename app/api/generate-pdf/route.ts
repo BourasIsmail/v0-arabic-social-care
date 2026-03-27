@@ -193,9 +193,21 @@ export async function POST(request: Request) {
             background: white;
             padding: 12mm;
           }
+          .logos-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 0;
+            border-bottom: 2px solid #c8a415;
+            margin-bottom: 15px;
+          }
+          .logos-header img {
+            height: 60px;
+            object-fit: contain;
+          }
           .header {
             text-align: center;
-            border-bottom: 3px solid #1e3a5f;
             padding-bottom: 15px;
             margin-bottom: 20px;
           }
@@ -322,28 +334,47 @@ export async function POST(request: Request) {
           }
           .signature-section {
             margin-top: 30px;
+          }
+          .main-signature {
+            text-align: center;
+            margin-bottom: 20px;
+          }
+          .main-signature h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+            text-decoration: underline;
+          }
+          .main-signature-box {
+            border: 1px solid #333;
+            border-radius: 10px;
+            height: 120px;
+            max-width: 600px;
+            margin: 0 auto;
+          }
+          .visa-row {
             display: flex;
             justify-content: space-between;
-            gap: 20px;
+            gap: 15px;
+            margin-top: 20px;
           }
-          .signature-box {
+          .visa-box {
             flex: 1;
+            border: 1px solid #333;
             text-align: center;
-            padding: 15px;
-            border: 1px dashed #ccc;
-            border-radius: 6px;
           }
-          .signature-box h4 {
-            margin-bottom: 30px;
-            color: #555;
+          .visa-box h4 {
+            padding: 10px;
             font-size: 11px;
+            font-weight: 700;
+            color: #333;
+            text-decoration: underline;
+            border-bottom: 1px solid #333;
+            background: #fff;
           }
-          .signature-line {
-            border-top: 1px solid #333;
-            margin-top: 40px;
-            padding-top: 5px;
-            font-size: 9px;
-            color: #666;
+          .visa-box .visa-space {
+            height: 150px;
           }
           .footer {
             text-align: center;
@@ -385,13 +416,14 @@ export async function POST(request: Request) {
         </div>
         <div class="content">
           <div class="page">
+            <!-- Logos Header -->
+            <div class="logos-header">
+              <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled-3-0A5X35LevNjDCojiGr2ARp26r3Ti5k.png" alt="الشعارات الرسمية" style="height: 70px; width: 100%; object-fit: contain;" />
+            </div>
+            
             <!-- Header -->
             <div class="header">
               <div class="header-top">
-                <div>
-                  المملكة المغربية<br/>
-                  وزارة التضامن والإدماج الاجتماعي والأسرة
-                </div>
                 <div>
                   التاريخ: ${dateStr}
                 </div>
@@ -866,13 +898,26 @@ export async function POST(request: Request) {
 
             <!-- Signatures -->
             <div class="signature-section">
-              <div class="signature-box">
-                <h4>توقيع المدير</h4>
-                <div class="signature-line">التاريخ: ____/____/________</div>
+              <!-- Main Signature -->
+              <div class="main-signature">
+                <h4>توقيع رئيس الجهة المديرة لدار الطالب(ة)</h4>
+                <div class="main-signature-box"></div>
               </div>
-              <div class="signature-box">
-                <h4>ختم المؤسسة</h4>
-                <div class="signature-line"></div>
+              
+              <!-- Visa Row -->
+              <div class="visa-row">
+                <div class="visa-box">
+                  <h4>تأشيرة رئيس قسم العمل الاجتماعي</h4>
+                  <div class="visa-space"></div>
+                </div>
+                <div class="visa-box">
+                  <h4>تأشيرة المدير الإقليمي لوزارة التربية الوطنية والتعليم الأولي والرياضة</h4>
+                  <div class="visa-space"></div>
+                </div>
+                <div class="visa-box">
+                  <h4>تأشيرة المدير الإقليمي للتعاون الوطني</h4>
+                  <div class="visa-space"></div>
+                </div>
               </div>
             </div>
 
