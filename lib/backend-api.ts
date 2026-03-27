@@ -1,5 +1,5 @@
 // Backend API configuration
-export const BACKEND_URL = process.env.BACKEND_URL || "https://entraide.ma/dour-talib/api";
+export const BACKEND_URL = process.env.BACKEND_URL || "https://enfance.entraide.ma/api";
 
 export async function backendFetch(
   path: string,
