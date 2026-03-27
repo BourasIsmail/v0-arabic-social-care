@@ -16,7 +16,7 @@ import type {
   AuthState,
 } from "./auth-types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || /*"http://localhost:8080"*/ "https://entraide.ma/dour-talib/api";
 
 interface AuthContextType extends AuthState {
   login: (data: LoginRequest) => Promise<void>;
