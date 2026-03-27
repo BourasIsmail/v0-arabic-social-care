@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
-import { useAuthFetcher } from "@/lib/use-auth-swr";
+import { useAuthFetcher, useAuthMutate } from "@/lib/use-auth-swr";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
 import { Button } from "@/components/ui/button";
@@ -77,6 +77,7 @@ interface UserWithDetails extends User {
 export default function UsersPage() {
   const { user: currentUser } = useAuth();
   const fetcher = useAuthFetcher();
+  const authMutate = useAuthMutate();
   const [users, setUsers] = useState<UserWithDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -159,17 +160,18 @@ export default function UsersPage() {
           updateData.password = formData.password;
         }
 
-        await fetcher(`${API_BASE_URL}/api/v1/users/${editingUser.id}`, {
+        const response = await authMutate(`${API_BASE_URL}/api/v1/users/${editingUser.id}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updateData),
         });
+        if (!response.ok) {
+          throw new Error("Failed to update user");
+        }
         toast.success("تم تحديث المستخدم بنجاح");
       } else {
         // Create new user
-        await fetcher(`${API_BASE_URL}/api/v1/users`, {
+        const response = await authMutate(`${API_BASE_URL}/api/v1/users`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             fullName: formData.fullName,
             email: formData.email,
@@ -179,6 +181,9 @@ export default function UsersPage() {
             prefectureId: formData.prefectureId || null,
           }),
         });
+        if (!response.ok) {
+          throw new Error("Failed to create user");
+        }
         toast.success("تم إنشاء المستخدم بنجاح");
       }
 
@@ -198,9 +203,12 @@ export default function UsersPage() {
 
   const handleDelete = async (userId: number) => {
     try {
-      await fetcher(`${API_BASE_URL}/api/v1/users/${userId}`, {
+      const response = await authMutate(`${API_BASE_URL}/api/v1/users/${userId}`, {
         method: "DELETE",
       });
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
       toast.success("تم حذف المستخدم بنجاح");
       loadUsers();
     } catch (error) {
