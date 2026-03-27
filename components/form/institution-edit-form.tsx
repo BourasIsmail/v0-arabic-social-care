@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, Plus, Trash2, Save } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -60,9 +61,13 @@ interface InstitutionEditFormProps {
 
 export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const fetcher = useAuthFetcher();
   const authMutate = useAuthMutate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Check if user has fixed region/prefecture (USER role) - but allow editing all in edit mode
+  const isUserRole = user?.role === "USER";
   const [staffMembers, setStaffMembers] = useState<StaffMemberDTO[]>(
     institution.staffMembers || []
   );

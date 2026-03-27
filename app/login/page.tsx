@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
@@ -144,7 +143,7 @@ export default function LoginPage() {
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col gap-4">
+          <CardFooter>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <>
@@ -155,12 +154,6 @@ export default function LoginPage() {
                 "تسجيل الدخول"
               )}
             </Button>
-            <p className="text-sm text-muted-foreground text-center">
-              ليس لديك حساب؟{" "}
-              <Link href="/register" className="text-primary hover:underline">
-                إنشاء حساب جديد
-              </Link>
-            </p>
           </CardFooter>
         </form>
       </Card>

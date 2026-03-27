@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { User, LogOut, Shield } from "lucide-react";
+import { User, LogOut, Users } from "lucide-react";
 
 export function UserMenu() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -53,10 +54,12 @@ export function UserMenu() {
           <span>الملف الشخصي</span>
         </DropdownMenuItem>
         {user.role === "ADMIN" && (
-          <DropdownMenuItem className="gap-2">
-            <Shield className="h-4 w-4" />
-            <span>لوحة الإدارة</span>
-          </DropdownMenuItem>
+          <Link href="/users">
+            <DropdownMenuItem className="gap-2 cursor-pointer">
+              <Users className="h-4 w-4" />
+              <span>إدارة المستخدمين</span>
+            </DropdownMenuItem>
+          </Link>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem className="gap-2 text-destructive" onClick={logout}>
