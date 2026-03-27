@@ -88,14 +88,17 @@ export default function InstitutionsPage() {
   const isLoading = isAuthLoading || isDataLoading;
   
   // Client-side filtering for USER role (in case backend doesn't support prefectureId filter)
+  // Use == for loose comparison to handle string/number type mismatch
+  console.log("[v0] Raw data:", rawData?.content?.length, "items, first item prefectureId:", rawData?.content?.[0]?.prefectureId, "type:", typeof rawData?.content?.[0]?.prefectureId, "userPrefectureId:", userPrefectureId, "type:", typeof userPrefectureId);
+  
   const data = rawData && isUserRole && userPrefectureId
     ? {
         ...rawData,
         content: rawData.content.filter(
-          (inst) => inst.prefectureId === userPrefectureId
+          (inst) => String(inst.prefectureId) === String(userPrefectureId)
         ),
         totalElements: rawData.content.filter(
-          (inst) => inst.prefectureId === userPrefectureId
+          (inst) => String(inst.prefectureId) === String(userPrefectureId)
         ).length,
       }
     : rawData;
