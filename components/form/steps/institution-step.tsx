@@ -54,15 +54,19 @@ export function InstitutionStep() {
 
   // Pre-fill region and prefecture for USER role (only for new institutions)
   useEffect(() => {
+    console.log("[v0] InstitutionStep - user:", user);
+    console.log("[v0] isUserRole:", isUserRole, "userRegionId:", userRegionId, "userPrefectureId:", userPrefectureId);
     if (isUserRole && !isEditMode) {
       if (userRegionId && !watch("regionId")) {
+        console.log("[v0] Setting regionId to:", userRegionId);
         setValue("regionId", userRegionId);
       }
       if (userPrefectureId && !watch("prefectureId")) {
+        console.log("[v0] Setting prefectureId to:", userPrefectureId);
         setValue("prefectureId", userPrefectureId);
       }
     }
-  }, [isUserRole, isEditMode, userRegionId, userPrefectureId, setValue, watch]);
+  }, [isUserRole, isEditMode, userRegionId, userPrefectureId, setValue, watch, user]);
 
   const legalStatus = watch("legalStatus");
 
