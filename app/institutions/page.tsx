@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Building2, Plus, Search, Filter, Eye, Pencil, Trash2, Download } from "lucide-react";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
+import { useAuth } from "@/lib/auth-context";
 import { useAuthSWR, useAuthMutate } from "@/lib/use-auth-swr";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,6 +50,11 @@ export default function InstitutionsPage() {
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const authFetch = useAuthMutate();
+  const { user } = useAuth();
+
+  // Check if user is USER role (not ADMIN) - they can only see their prefecture's institutions
+  const isUserRole = user?.role === "USER";
+  const userPrefectureId = user?.prefectureId;
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
@@ -61,10 +67,26 @@ export default function InstitutionsPage() {
   if (institutionType && institutionType !== "all") {
     queryParams.set("institutionType", institutionType);
   }
+  // Filter by prefecture for USER role
+  if (isUserRole && userPrefectureId) {
+    queryParams.set("prefectureId", userPrefectureId.toString());
+  }
 
   const { data, error, isLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
     `/api/institutions?${queryParams.toString()}`
   );
+
+  // Fetch stats (filtered by prefecture for USER role)
+  const statsQueryParams = new URLSearchParams();
+  if (isUserRole && userPrefectureId) {
+    statsQueryParams.set("prefectureId", userPrefectureId.toString());
+  }
+  const { data: stats } = useAuthSWR<{
+    total: number;
+    DAR_TALIB: number;
+    DAR_TALIBA: number;
+    MIXED: number;
+  }>(`/api/institutions/stats?${statsQueryParams.toString()}`);
 
   const handleDelete = async (id: number) => {
     try {
@@ -148,7 +170,7 @@ export default function InstitutionsPage() {
               <CardTitle className="text-sm text-muted-foreground">إجمالي المؤسسات</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{data?.totalElements || 0}</p>
+              <p className="text-2xl font-bold">{stats?.total ?? data?.totalElements ?? 0}</p>
             </CardContent>
           </Card>
           <Card>
@@ -156,7 +178,7 @@ export default function InstitutionsPage() {
               <CardTitle className="text-sm text-muted-foreground">دور الطالب</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-primary">-</p>
+              <p className="text-2xl font-bold text-primary">{stats?.DAR_TALIB ?? "-"}</p>
             </CardContent>
           </Card>
           <Card>
@@ -164,7 +186,7 @@ export default function InstitutionsPage() {
               <CardTitle className="text-sm text-muted-foreground">دور الطالبة</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-accent">-</p>
+              <p className="text-2xl font-bold text-accent">{stats?.DAR_TALIBA ?? "-"}</p>
             </CardContent>
           </Card>
           <Card>
@@ -172,7 +194,7 @@ export default function InstitutionsPage() {
               <CardTitle className="text-sm text-muted-foreground">مختلطة</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">-</p>
+              <p className="text-2xl font-bold">{stats?.MIXED ?? "-"}</p>
             </CardContent>
           </Card>
         </div>
