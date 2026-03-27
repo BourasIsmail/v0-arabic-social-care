@@ -48,7 +48,7 @@ export function CascadeGeoSelect({
     async function fetchRegions() {
       setLoadingRegions(true);
       try {
-        const data = await fetcher("/api/api/geo/regions");
+        const data = await fetcher("/api/api/v1/regions");
         setRegions(data);
       } catch (error) {
         console.error("Failed to fetch regions:", error);
@@ -70,7 +70,7 @@ export function CascadeGeoSelect({
     async function fetchPrefectures() {
       setLoadingPrefectures(true);
       try {
-        const data = await fetcher(`/api/api/geo/regions/${regionId}/prefectures`);
+        const data = await fetcher(`/api/api/v1/regions/${regionId}/prefectures`);
         setPrefectures(data);
       } catch (error) {
         console.error("Failed to fetch prefectures:", error);
@@ -91,7 +91,7 @@ export function CascadeGeoSelect({
     async function fetchCommunes() {
       setLoadingCommunes(true);
       try {
-        const data = await fetcher(`/api/api/geo/prefectures/${prefectureId}/communes`);
+        const data = await fetcher(`/api/api/v1/prefectures/${prefectureId}/communes`);
         setCommunes(data);
       } catch (error) {
         console.error("Failed to fetch communes:", error);

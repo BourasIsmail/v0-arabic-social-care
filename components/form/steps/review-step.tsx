@@ -43,7 +43,7 @@ export function ReviewStep() {
 
       if (formData.regionId) {
         try {
-          const regions: GeoDTO[] = await fetcher("/api/api/geo/regions");
+          const regions: GeoDTO[] = await fetcher("/api/api/v1/regions");
           const region = regions.find((r) => r.id === formData.regionId);
           if (region) names.region = region.name;
         } catch (e) {
@@ -53,7 +53,7 @@ export function ReviewStep() {
 
       if (formData.regionId && formData.prefectureId) {
         try {
-          const prefectures: GeoDTO[] = await fetcher(`/api/api/geo/regions/${formData.regionId}/prefectures`);
+          const prefectures: GeoDTO[] = await fetcher(`/api/api/v1/regions/${formData.regionId}/prefectures`);
           const prefecture = prefectures.find((p) => p.id === formData.prefectureId);
           if (prefecture) names.prefecture = prefecture.name;
         } catch (e) {
@@ -63,7 +63,7 @@ export function ReviewStep() {
 
       if (formData.prefectureId && formData.communeId) {
         try {
-          const communes: GeoDTO[] = await fetcher(`/api/api/geo/prefectures/${formData.prefectureId}/communes`);
+          const communes: GeoDTO[] = await fetcher(`/api/api/v1/prefectures/${formData.prefectureId}/communes`);
           const commune = communes.find((c) => c.id === formData.communeId);
           if (commune) names.commune = commune.name;
         } catch (e) {
@@ -84,7 +84,7 @@ export function ReviewStep() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const url = isEditMode ? `/api/api/institutions/${editId}` : "/api/api/institutions";
+      const url = isEditMode ? `/api/api/v1/institutions/${editId}` : "/api/api/v1/institutions";
       const method = isEditMode ? "PUT" : "POST";
       
       const response = await authFetch(url, {
