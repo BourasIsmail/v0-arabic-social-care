@@ -1,5 +1,5 @@
 // Backend API configuration
-export const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8080";
+export const BACKEND_URL = process.env.BACKEND_URL || "https://entraide.ma/dour-talib/api";
 
 export async function backendFetch(
   path: string,
