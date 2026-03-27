@@ -67,7 +67,7 @@ import {
 } from "lucide-react";
 import type { User } from "@/lib/auth-types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://entraide.ma/dour-talib/api";
 
 interface UserWithDetails extends User {
   regionName?: string;
