@@ -123,13 +123,6 @@ export function CascadeGeoSelect({
     onCommuneChange(numValue);
   };
 
-  // Find selected names for display
-  const selectedRegion = regions.find(r => r.id === regionId);
-  const selectedPrefecture = prefectures.find(p => p.id === prefectureId);
-
-  console.log("[v0] CascadeGeoSelect - regionId:", regionId, "regions loaded:", regions.length, "selectedRegion:", selectedRegion?.name);
-  console.log("[v0] CascadeGeoSelect - prefectureId:", prefectureId, "prefectures loaded:", prefectures.length, "selectedPrefecture:", selectedPrefecture?.name);
-
   return (
     <>
       {/* Region Select */}

@@ -36,37 +36,22 @@ export function InstitutionStep() {
   
   // Check if user has fixed region/prefecture (USER role)
   const isUserRole = user?.role === "USER";
-  const userRegionId = user?.regionId || null;
-  const userPrefectureId = user?.prefectureId || null;
 
-  const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<
-    Partial<InstitutionRequest>
-  >({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<Partial<InstitutionRequest>>({
     defaultValues: formData,
   });
 
-  // Reset form when formVersion changes (for edit mode - ensures we only reset when new data is loaded)
+  // Reset form when formVersion changes or formData changes (for edit mode and when user geo is pre-filled)
   useEffect(() => {
-    if (formVersion > 0) {
-      reset(formData);
-    }
+    reset(formData);
   }, [formVersion, reset, formData]);
-
-  // Pre-fill region and prefecture for USER role (only for new institutions)
-  useEffect(() => {
-    console.log("[v0] InstitutionStep - user:", user);
-    console.log("[v0] isUserRole:", isUserRole, "userRegionId:", userRegionId, "userPrefectureId:", userPrefectureId);
-    if (isUserRole && !isEditMode) {
-      if (userRegionId && !watch("regionId")) {
-        console.log("[v0] Setting regionId to:", userRegionId);
-        setValue("regionId", userRegionId);
-      }
-      if (userPrefectureId && !watch("prefectureId")) {
-        console.log("[v0] Setting prefectureId to:", userPrefectureId);
-        setValue("prefectureId", userPrefectureId);
-      }
-    }
-  }, [isUserRole, isEditMode, userRegionId, userPrefectureId, setValue, watch, user]);
 
   const legalStatus = watch("legalStatus");
 
