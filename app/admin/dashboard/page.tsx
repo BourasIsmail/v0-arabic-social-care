@@ -27,7 +27,9 @@ import { useAuthSWR } from "@/lib/use-auth-swr";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
 import type { DashboardStats } from "@/lib/types";
-import { Building2, Users, MapPin, CheckCircle, Home, Loader2, UserCog, Utensils, TrendingUp } from "lucide-react";
+import { Building2, Users, MapPin, CheckCircle, Home, Loader2, UserCog, Utensils, TrendingUp, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 // Chart colors - computed values, not CSS variables
 const COLORS = {
@@ -129,17 +131,41 @@ export default function AdminDashboardPage() {
     <ProtectedRoute>
       <div className="min-h-screen bg-background" dir="rtl">
         {/* Header */}
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container flex h-16 items-center justify-between">
+        <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <h1 className="text-xl font-bold">لوحة التحكم</h1>
-              <span className="text-sm text-muted-foreground">إحصائيات المؤسسات</span>
+              <Link href="/" className="flex items-center gap-2 text-primary">
+                <Building2 className="h-6 w-6" />
+                <span className="font-bold text-lg hidden sm:inline">
+                  نظام الرعاية الاجتماعية
+                </span>
+              </Link>
             </div>
             <UserMenu />
           </div>
         </header>
 
-        <main className="container py-6">
+        <main className="container mx-auto px-4 py-8">
+          {/* Back button and title */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <Link href="/">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <ArrowRight className="h-4 w-4" />
+                  الرئيسية
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-2xl font-bold flex items-center gap-2">
+                  <MapPin className="h-6 w-6" />
+                  لوحة التحكم
+                </h1>
+                <p className="text-muted-foreground">
+                  إحصائيات المؤسسات
+                </p>
+              </div>
+            </div>
+          </div>
           {/* Summary Cards - Row 1 */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
             <Card>
