@@ -27,7 +27,7 @@ export default function EditInstitutionPage({
     async function loadInstitution() {
       try {
         loadedRef.current = true;
-        const data = await fetcher(`/api/institutions/${id}`);
+        const data = await fetcher(`/api/api/institutions/${id}`);
         setInstitution(data);
       } catch (err) {
         console.error("Error loading institution:", err);
