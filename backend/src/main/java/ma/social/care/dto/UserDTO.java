@@ -18,4 +18,6 @@ public class UserDTO {
     private Boolean isActive;
     private Long regionId;
     private Long prefectureId;
+    private String regionName;
+    private String prefectureName;
 }

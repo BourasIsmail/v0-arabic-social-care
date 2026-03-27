@@ -5,8 +5,12 @@ import ma.social.care.dto.CreateUserRequest;
 import ma.social.care.dto.UpdateUserRequest;
 import ma.social.care.dto.UserDTO;
 import ma.social.care.entity.User;
+import ma.social.care.entity.Region;
+import ma.social.care.entity.Prefecture;
 import ma.social.care.exception.ResourceNotFoundException;
 import ma.social.care.repository.UserRepository;
+import ma.social.care.repository.RegionRepository;
+import ma.social.care.repository.PrefectureRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +23,8 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RegionRepository regionRepository;
+    private final PrefectureRepository prefectureRepository;
     private final PasswordEncoder passwordEncoder;
 
     public List<UserDTO> getAllUsers() {
@@ -96,6 +102,21 @@ public class UserService {
     }
 
     private UserDTO mapToDTO(User user) {
+        String regionName = null;
+        String prefectureName = null;
+        
+        if (user.getRegionId() != null) {
+            regionName = regionRepository.findById(user.getRegionId())
+                    .map(Region::getName)
+                    .orElse(null);
+        }
+        
+        if (user.getPrefectureId() != null) {
+            prefectureName = prefectureRepository.findById(user.getPrefectureId())
+                    .map(Prefecture::getName)
+                    .orElse(null);
+        }
+        
         return UserDTO.builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -104,6 +125,8 @@ public class UserService {
                 .isActive(user.getIsActive())
                 .regionId(user.getRegionId())
                 .prefectureId(user.getPrefectureId())
+                .regionName(regionName)
+                .prefectureName(prefectureName)
                 .build();
     }
 }
