@@ -21,6 +21,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
+// Note: ChartContainer used for bar chart, custom legends for pie charts
 import { useAuth } from "@/lib/auth-context";
 import { useAuthSWR } from "@/lib/use-auth-swr";
 import { ProtectedRoute } from "@/components/auth/protected-route";
@@ -297,28 +298,47 @@ export default function AdminDashboardPage() {
                 <CardDescription>دار الطالب، دار الطالبة، ومختلطة</CardDescription>
               </CardHeader>
               <CardContent>
-                <ChartContainer config={pieChartConfig} className="h-[250px]">
+                <div className="h-[200px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={typeDistributionData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={40}
+                        innerRadius={50}
                         outerRadius={80}
-                        paddingAngle={5}
+                        paddingAngle={2}
                         dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        labelLine={false}
                       >
                         {typeDistributionData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
                       </Pie>
-                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <ChartTooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-background border rounded-lg shadow-lg p-2 text-sm">
+                                <p className="font-medium">{data.name}</p>
+                                <p className="text-muted-foreground">{data.value} مؤسسة</p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
-                </ChartContainer>
+                </div>
+                <div className="flex flex-wrap justify-center gap-4 mt-4">
+                  {typeDistributionData.map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.fill }} />
+                      <span className="text-sm">{item.name}: {item.value}</span>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
 
@@ -329,34 +349,47 @@ export default function AdminDashboardPage() {
                 <CardDescription>حضري وقروي</CardDescription>
               </CardHeader>
               <CardContent>
-                <ChartContainer
-                  config={{
-                    urban: { label: "حضري", color: COLORS.urban },
-                    rural: { label: "قروي", color: COLORS.rural },
-                  }}
-                  className="h-[250px]"
-                >
+                <div className="h-[200px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={milieuData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={40}
+                        innerRadius={50}
                         outerRadius={80}
-                        paddingAngle={5}
+                        paddingAngle={2}
                         dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        labelLine={false}
                       >
                         {milieuData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
                       </Pie>
-                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <ChartTooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-background border rounded-lg shadow-lg p-2 text-sm">
+                                <p className="font-medium">{data.name}</p>
+                                <p className="text-muted-foreground">{data.value} مؤسسة</p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
-                </ChartContainer>
+                </div>
+                <div className="flex flex-wrap justify-center gap-4 mt-4">
+                  {milieuData.map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.fill }} />
+                      <span className="text-sm">{item.name}: {item.value}</span>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
 
@@ -367,34 +400,47 @@ export default function AdminDashboardPage() {
                 <CardDescription>مرخصة وغير مرخصة</CardDescription>
               </CardHeader>
               <CardContent>
-                <ChartContainer
-                  config={{
-                    licensed: { label: "مرخصة", color: COLORS.licensed },
-                    unlicensed: { label: "غير مرخصة", color: COLORS.unlicensed },
-                  }}
-                  className="h-[250px]"
-                >
+                <div className="h-[200px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={legalStatusData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={40}
+                        innerRadius={50}
                         outerRadius={80}
-                        paddingAngle={5}
+                        paddingAngle={2}
                         dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        labelLine={false}
                       >
                         {legalStatusData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
                       </Pie>
-                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <ChartTooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-background border rounded-lg shadow-lg p-2 text-sm">
+                                <p className="font-medium">{data.name}</p>
+                                <p className="text-muted-foreground">{data.value} مؤسسة</p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
-                </ChartContainer>
+                </div>
+                <div className="flex flex-wrap justify-center gap-4 mt-4">
+                  {legalStatusData.map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.fill }} />
+                      <span className="text-sm">{item.name}: {item.value}</span>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </div>
