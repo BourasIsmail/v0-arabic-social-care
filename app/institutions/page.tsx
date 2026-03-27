@@ -82,19 +82,26 @@ export default function InstitutionsPage() {
     shouldFetch ? `/api/institutions?${queryParams.toString()}` : null
   );
   
+  // Fetch communes for user's prefecture (for USER role filtering)
+  // Since backend doesn't return prefectureId in institution data, we filter by communeId
+  const { data: prefectureCommunes } = useAuthSWR<Array<{ id: number; name: string }>>(
+    isUserRole && userPrefectureId ? `/api/geo/prefectures/${userPrefectureId}/communes` : null
+  );
+  
   // Combined loading state (auth loading OR data loading)
   const isLoading = isAuthLoading || isDataLoading;
   
-  // Client-side filtering for USER role (in case backend doesn't support prefectureId filter)
-  // Use String() for comparison to handle string/number type mismatch
-  const data = rawData && isUserRole && userPrefectureId
+  // Client-side filtering for USER role by communeId (since backend doesn't have prefectureId in response)
+  // Filter institutions whose communeId is in the user's prefecture communes list
+  const prefectureCommuneIds = prefectureCommunes?.map(c => c.id) || [];
+  const data = rawData && isUserRole && prefectureCommuneIds.length > 0
     ? {
         ...rawData,
         content: rawData.content.filter(
-          (inst) => String(inst.prefectureId) === String(userPrefectureId)
+          (inst) => prefectureCommuneIds.includes(inst.communeId as number)
         ),
         totalElements: rawData.content.filter(
-          (inst) => String(inst.prefectureId) === String(userPrefectureId)
+          (inst) => prefectureCommuneIds.includes(inst.communeId as number)
         ).length,
       }
     : rawData;
@@ -369,7 +376,7 @@ export default function InstitutionsPage() {
                       السابق
                     </Button>
                     <span className="text-sm text-muted-foreground">
-                      ص��حة {data.number + 1} من {data.totalPages}
+                      ص��حة {data.number + 1} م�� {data.totalPages}
                     </span>
                     <Button
                       variant="outline"
