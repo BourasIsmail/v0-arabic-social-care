@@ -104,32 +104,34 @@ export function CascadeGeoSelect({
 
   const handleRegionChange = (value: string) => {
     const numValue = value ? parseInt(value, 10) : "";
+    // Don't clear if we already have a value and new value is empty (prevents initialization clearing)
+    if (numValue === "" && regionId) return;
     // Only update if value actually changed
     if (numValue === regionId) return;
     onRegionChange(numValue);
-    // Only clear dependent fields when region actually changes to a different value
-    if (numValue !== regionId) {
-      onPrefectureChange("");
-      onCommuneChange("");
-      setPrefectures([]);
-      setCommunes([]);
-    }
+    // Clear dependent fields when region changes
+    onPrefectureChange("");
+    onCommuneChange("");
+    setPrefectures([]);
+    setCommunes([]);
   };
 
   const handlePrefectureChange = (value: string) => {
     const numValue = value ? parseInt(value, 10) : "";
+    // Don't clear if we already have a value and new value is empty
+    if (numValue === "" && prefectureId) return;
     // Only update if value actually changed
     if (numValue === prefectureId) return;
     onPrefectureChange(numValue);
-    // Only clear commune when prefecture actually changes
-    if (numValue !== prefectureId) {
-      onCommuneChange("");
-      setCommunes([]);
-    }
+    // Clear commune when prefecture changes
+    onCommuneChange("");
+    setCommunes([]);
   };
 
   const handleCommuneChange = (value: string) => {
     const numValue = value ? parseInt(value, 10) : "";
+    // Don't clear if we already have a value and new value is empty
+    if (numValue === "" && communeId) return;
     // Only update if value actually changed
     if (numValue === communeId) return;
     onCommuneChange(numValue);
