@@ -22,6 +22,9 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
   useEffect(() => {
     if (!mounted || isLoading || redirectingRef.current) return;
 
+    console.log("[v0] ProtectedRoute check - user:", user, "requiredRole:", requiredRole);
+    console.log("[v0] User role:", user?.role, "Is ADMIN:", user?.role === "ADMIN");
+
     // Check if we need to redirect
     const needsAuthRedirect = !isAuthenticated;
     const needsRoleRedirect = requiredRole === "ADMIN" && user?.role !== "ADMIN";
