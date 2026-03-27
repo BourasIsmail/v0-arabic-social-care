@@ -78,24 +78,35 @@ export default function InstitutionsPage() {
   }
 
   // Only fetch when user data is ready (prevents race condition for USER role)
-  const { data, error, isLoading: isDataLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
+  const { data: rawData, error, isLoading: isDataLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
     shouldFetch ? `/api/institutions?${queryParams.toString()}` : null
   );
   
   // Combined loading state (auth loading OR data loading)
   const isLoading = isAuthLoading || isDataLoading;
+  
+  // Client-side filtering for USER role (in case backend doesn't support prefectureId filter)
+  const data = rawData && isUserRole && userPrefectureId
+    ? {
+        ...rawData,
+        content: rawData.content.filter(
+          (inst) => inst.prefectureId === userPrefectureId
+        ),
+        totalElements: rawData.content.filter(
+          (inst) => inst.prefectureId === userPrefectureId
+        ).length,
+      }
+    : rawData;
 
-  // Fetch stats (filtered by prefecture for USER role)
-  const statsQueryParams = new URLSearchParams();
-  if (isUserRole && userPrefectureId) {
-    statsQueryParams.set("prefectureId", userPrefectureId.toString());
-  }
-  const { data: stats } = useAuthSWR<{
-    total: number;
-    DAR_TALIB: number;
-    DAR_TALIBA: number;
-    MIXED: number;
-  }>(shouldFetch ? `/api/institutions/stats?${statsQueryParams.toString()}` : null);
+  // Calculate stats from filtered data (client-side)
+  const stats = data?.content
+    ? {
+        total: data.content.length,
+        DAR_TALIB: data.content.filter((i) => i.institutionType === "DAR_TALIB").length,
+        DAR_TALIBA: data.content.filter((i) => i.institutionType === "DAR_TALIBA").length,
+        MIXED: data.content.filter((i) => i.institutionType === "MIXED").length,
+      }
+    : null;
 
   const handleDelete = async (id: number) => {
     try {

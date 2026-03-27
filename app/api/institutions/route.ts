@@ -8,9 +8,6 @@ export async function GET(request: NextRequest) {
   // Forward all query parameters to backend
   const queryString = searchParams.toString();
   const path = `/api/v1/institutions${queryString ? `?${queryString}` : ""}`;
-  
-  console.log("[v0] Institutions API - query params:", queryString);
-  console.log("[v0] Institutions API - backend path:", path);
 
   try {
     const response = await backendFetch(path, { method: "GET" }, token);
