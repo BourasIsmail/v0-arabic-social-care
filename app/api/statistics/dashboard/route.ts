@@ -6,19 +6,17 @@ export async function GET(request: NextRequest) {
   const token = getTokenFromRequest(request);
 
   try {
-    // Try to fetch from backend statistics endpoint first
-    try {
-      const response = await backendFetch("/api/v1/statistics/dashboard", { method: "GET" }, token);
-      if (response.ok) {
-        const data = await response.json();
-        return NextResponse.json(data, { status: 200 });
-      }
-    } catch {
-      // Backend doesn't have statistics endpoint, compute from institutions
-      console.log("Backend statistics endpoint not available, computing from institutions data");
+    // Fetch from backend statistics endpoint
+    const response = await backendFetch("/api/v1/statistics/dashboard", { method: "GET" }, token);
+    
+    if (response.ok) {
+      const data = await response.json();
+      return NextResponse.json(data, { status: 200 });
     }
 
-    // Fallback: Compute statistics from institutions list
+    // If backend endpoint fails, fallback to computing from institutions
+    console.log("Backend statistics endpoint returned error, computing from institutions data");
+    
     const institutionsResponse = await backendFetch(
       "/api/v1/institutions?size=10000",
       { method: "GET" },
@@ -32,11 +30,14 @@ export async function GET(request: NextRequest) {
     const institutionsData: PageResponse<InstitutionSummary> = await institutionsResponse.json();
     const institutions = institutionsData.content || [];
 
-    // Compute statistics
+    // Compute statistics from institutions list
+    const totalCapacity = institutions.reduce((sum, inst) => sum + (inst.totalCapacity || 0), 0);
+    const totalInstitutions = institutions.length;
+
     const stats: DashboardStats = {
-      totalInstitutions: institutions.length,
-      totalCapacity: institutions.reduce((sum, inst) => sum + (inst.totalCapacity || 0), 0),
-      totalBeneficiaries: 0, // Will need separate API call or field
+      totalInstitutions,
+      totalCapacity,
+      totalBeneficiaries: 0,
       darTalibCount: institutions.filter((i) => i.institutionType === "DAR_TALIB").length,
       darTalibaCount: institutions.filter((i) => i.institutionType === "DAR_TALIBA").length,
       mixedCount: institutions.filter((i) => i.institutionType === "DAR_TALIB_TALIBA" || i.institutionType === "MIXED").length,
@@ -46,13 +47,17 @@ export async function GET(request: NextRequest) {
       unlicensedCount: 0,
       byRegion: [],
       byPrefecture: [],
+      totalStaffCount: 0,
+      averageCapacity: totalInstitutions > 0 ? Math.round((totalCapacity / totalInstitutions) * 100) / 100 : 0,
+      institutionsWithHousing: 0,
+      institutionsWithMeals: 0,
     };
 
     // Group by region
-    const regionMap = new Map<number, { name?: string; count: number; capacity: number }>();
+    const regionMap = new Map<number, { name?: string; count: number; capacity: number; beneficiaries: number }>();
     institutions.forEach((inst) => {
       if (inst.regionId) {
-        const existing = regionMap.get(inst.regionId) || { name: inst.regionName, count: 0, capacity: 0 };
+        const existing = regionMap.get(inst.regionId) || { name: inst.regionName, count: 0, capacity: 0, beneficiaries: 0 };
         existing.count++;
         existing.capacity += inst.totalCapacity || 0;
         if (inst.regionName) existing.name = inst.regionName;
@@ -66,14 +71,15 @@ export async function GET(request: NextRequest) {
         regionName: data.name,
         count: data.count,
         capacity: data.capacity,
+        beneficiaries: data.beneficiaries,
       }))
       .sort((a, b) => b.count - a.count);
 
     // Group by prefecture
-    const prefectureMap = new Map<number, { name?: string; count: number; capacity: number }>();
+    const prefectureMap = new Map<number, { name?: string; count: number; capacity: number; beneficiaries: number }>();
     institutions.forEach((inst) => {
       if (inst.prefectureId) {
-        const existing = prefectureMap.get(inst.prefectureId) || { name: inst.prefectureName, count: 0, capacity: 0 };
+        const existing = prefectureMap.get(inst.prefectureId) || { name: inst.prefectureName, count: 0, capacity: 0, beneficiaries: 0 };
         existing.count++;
         existing.capacity += inst.totalCapacity || 0;
         if (inst.prefectureName) existing.name = inst.prefectureName;
@@ -87,6 +93,7 @@ export async function GET(request: NextRequest) {
         prefectureName: data.name,
         count: data.count,
         capacity: data.capacity,
+        beneficiaries: data.beneficiaries,
       }))
       .sort((a, b) => b.count - a.count);
 

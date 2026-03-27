@@ -49,4 +49,29 @@ public interface InstitutionRepository extends JpaRepository<Institution, Long> 
 
     @Query("SELECT DISTINCT i.commune FROM Institution i WHERE i.region = :region AND i.commune IS NOT NULL ORDER BY i.commune")
     List<String> findCommunesByRegion(@Param("region") String region);
+
+    // Statistics queries
+    @Query("SELECT COUNT(i) FROM Institution i WHERE i.isDeleted = false")
+    long countActiveInstitutions();
+
+    @Query("SELECT COUNT(i) FROM Institution i WHERE i.isDeleted = false AND i.institutionType = :type")
+    long countByInstitutionType(@Param("type") InstitutionType type);
+
+    @Query("SELECT COUNT(i) FROM Institution i WHERE i.isDeleted = false AND i.milieu = :milieu")
+    long countByMilieu(@Param("milieu") Milieu milieu);
+
+    @Query("SELECT COUNT(i) FROM Institution i WHERE i.isDeleted = false AND i.legalStatus = :status")
+    long countByLegalStatus(@Param("status") LegalStatus status);
+
+    @Query("SELECT COALESCE(SUM(i.totalCapacity), 0) FROM Institution i WHERE i.isDeleted = false")
+    long sumTotalCapacity();
+
+    @Query("SELECT COUNT(i) FROM Institution i WHERE i.isDeleted = false AND i.housing = true")
+    long countWithHousing();
+
+    @Query("SELECT COUNT(i) FROM Institution i WHERE i.isDeleted = false AND i.meals = true")
+    long countWithMeals();
+
+    @Query("SELECT i FROM Institution i LEFT JOIN FETCH i.region LEFT JOIN FETCH i.prefecture LEFT JOIN FETCH i.housingMeals WHERE i.isDeleted = false")
+    List<Institution> findAllActiveWithRelations();
 }
