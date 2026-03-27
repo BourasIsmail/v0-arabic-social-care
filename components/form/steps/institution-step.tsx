@@ -50,8 +50,14 @@ export function InstitutionStep() {
 
   // Reset form when formVersion changes or formData changes (for edit mode and when user geo is pre-filled)
   useEffect(() => {
+    console.log("[v0] InstitutionStep resetting form with formData:", formData);
+    console.log("[v0] formData.regionId:", formData.regionId, "formData.prefectureId:", formData.prefectureId);
     reset(formData);
   }, [formVersion, reset, formData]);
+
+  const watchedRegionId = watch("regionId");
+  const watchedPrefectureId = watch("prefectureId");
+  console.log("[v0] InstitutionStep watched values - regionId:", watchedRegionId, "prefectureId:", watchedPrefectureId);
 
   const legalStatus = watch("legalStatus");
 
