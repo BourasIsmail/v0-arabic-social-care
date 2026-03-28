@@ -35,42 +35,42 @@ export function FinancingStep() {
   };
 
   const constructionSources = [
-    { key: "solidarityMinistry", label: "وزارة التضامن" },
+    { key: "solidarityMinistry", label: "وزارة التضامن والإدماج الاجتماعي والأسرة" },
     { key: "nationalEntraide", label: "التعاون الوطني" },
     { key: "indh", label: "المبادرة الوطنية للتنمية البشرية" },
     { key: "commune", label: "الجماعة" },
     { key: "fondationMohammed5", label: "مؤسسة محمد الخامس للتضامن" },
     { key: "nationalRevival", label: "الإنعاش الوطني" },
-    { key: "association", label: "الجمعية" },
-    { key: "otherConstruction", label: "أخرى" },
+    { key: "association", label: "الجمعية/مؤسسة" },
+    { key: "otherConstruction", label: "آخر (للتحديد)" },
   ];
 
   const equipmentSources = [
-    { key: "equipmentSolidarityMinistry", label: "وزارة التضامن" },
+    { key: "equipmentSolidarityMinistry", label: "وزارة التضامن والإدماج الاجتماعي والأسرة" },
     { key: "equipmentNationalEntraide", label: "التعاون الوطني" },
     { key: "equipmentIndh", label: "المبادرة الوطنية للتنمية البشرية" },
     { key: "equipmentCommune", label: "الجماعة" },
     { key: "equipmentFondationMohammed5", label: "مؤسسة محمد الخامس للتضامن" },
-    { key: "equipmentAssociation", label: "الجمعية" },
-    { key: "equipmentOther", label: "أخرى" },
+    { key: "equipmentAssociation", label: "الجمعية/مؤسسة" },
+    { key: "equipmentOther", label: "آخر (للتحديد)" },
   ];
 
   const operatingSources = [
     { key: "operatingIndh", label: "المبادرة الوطنية للتنمية البشرية" },
     { key: "operatingNationalEntraide", label: "التعاون الوطني" },
-    { key: "operatingNationalEducation", label: "التربية الوطنية" },
+    { key: "operatingNationalEducation", label: "قطاع التربية الوطنية" },
     { key: "operatingCommune", label: "الجماعة" },
-    { key: "operatingParentContributions", label: "مساهمات أولياء الأمور" },
-    { key: "operatingDonors", label: "المحسنون" },
-    { key: "operatingAssociationOwnSources", label: "موارد الجمعية الذاتية" },
-    { key: "operatingOther", label: "أخرى" },
+    { key: "operatingParentContributions", label: "اشتراكات الآباء" },
+    { key: "operatingDonors", label: "المحسنون (هبات وغيرها)" },
+    { key: "operatingAssociationOwnSources", label: "مصادر ذاتية للجمعية المسيرة" },
+    { key: "operatingOther", label: "آخر (للتحديد)" },
   ];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>مصادر تمويل البناء</CardTitle>
+          <CardTitle>تمويل بناء المؤسسة</CardTitle>
           <CardDescription>حدد مصادر تمويل بناء المؤسسة</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -117,7 +117,7 @@ export function FinancingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>مصادر تمويل التجهيز</CardTitle>
+          <CardTitle>تمويل تجهيز المؤسسة</CardTitle>
           <CardDescription>حدد مصادر تمويل تجهيز المؤسسة</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -153,7 +153,7 @@ export function FinancingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>مصادر تمويل التسيير</CardTitle>
+          <CardTitle>مصادر تمويل تسيير المؤسسة</CardTitle>
           <CardDescription>حدد مصادر تمويل تسيير المؤسسة</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -189,11 +189,11 @@ export function FinancingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>التكاليف الإضافية</CardTitle>
+          <CardTitle>التكاليف السنوية</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="annualHRCost">التكلفة السنوية للموارد البشرية (درهم)</Label>
+            <Label htmlFor="annualHRCost">الكلفة السنوية المخصصة للموارد البشرية (درهم)</Label>
             <Input
               id="annualHRCost"
               type="number"
@@ -204,7 +204,7 @@ export function FinancingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="annualMealsCost">التكلفة السنوية للإطعام (درهم)</Label>
+            <Label htmlFor="annualMealsCost">الكلفة السنوية المخصصة للإطعام (درهم)</Label>
             <Input
               id="annualMealsCost"
               type="number"
@@ -215,7 +215,7 @@ export function FinancingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="totalMealsAmount">المبلغ الإجمالي للوجبات (درهم)</Label>
+            <Label htmlFor="totalMealsAmount">المبلغ الإجمالي (درهم)</Label>
             <Input
               id="totalMealsAmount"
               type="number"
@@ -226,7 +226,7 @@ export function FinancingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="annualOtherExpenses">المصاريف الأخرى السنوية (درهم)</Label>
+            <Label htmlFor="annualOtherExpenses">الكلفة السنوية المخصصة لباقي النفقات (الماء، الكهرباء، الغاز، مواد النظافة...) (درهم)</Label>
             <Input
               id="annualOtherExpenses"
               type="number"
@@ -237,7 +237,7 @@ export function FinancingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="individualAnnualCost">التكلفة السنوية للفرد (درهم)</Label>
+            <Label htmlFor="individualAnnualCost">الكلفة السنوية للتكفل بكل مستفيد داخل المؤسسة (الكلفة الفردية) (درهم)</Label>
             <Input
               id="individualAnnualCost"
               type="number"
@@ -251,11 +251,11 @@ export function FinancingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>توزيع الحصص (%)</CardTitle>
+          <CardTitle>نسب المساهمة في تمويل الإطعام (%)</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-3">
           <div className="space-y-2">
-            <Label htmlFor="associationShare">حصة الجمعية</Label>
+            <Label htmlFor="associationShare">نسبة مساهمة الجمعية المسيرة</Label>
             <Input
               id="associationShare"
               type="number"
@@ -267,7 +267,7 @@ export function FinancingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="educationShare">حصة التربية الوطنية</Label>
+            <Label htmlFor="educationShare">نسبة مساهمة قطاع التربية الوطنية</Label>
             <Input
               id="educationShare"
               type="number"
@@ -279,7 +279,7 @@ export function FinancingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="otherShare">حصص أخرى</Label>
+            <Label htmlFor="otherShare">نسبة مساهمة أخرى (للتحديد)</Label>
             <Input
               id="otherShare"
               type="number"

@@ -54,7 +54,7 @@ export function BuildingStep() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>معلومات البناية</CardTitle>
+          <CardTitle>معطيات حول البناية المخصصة للمؤسسة</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
@@ -77,7 +77,7 @@ export function BuildingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="buildingCondition">حالة البناية</Label>
+            <Label htmlFor="buildingCondition">الحالة العامة للبناية</Label>
             <Select
               value={watch("buildingCondition") || ""}
               onValueChange={(value) => setValue("buildingCondition", value as BuildingCondition)}
@@ -96,13 +96,13 @@ export function BuildingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="renovationCapacity">القدرة على التجديد</Label>
+            <Label htmlFor="renovationCapacity">قابلية البناية للترميم والإصلاح</Label>
             <Select
               value={watch("renovationCapacity") || ""}
               onValueChange={(value) => setValue("renovationCapacity", value as RenovationCapacity)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="اختر القدرة على التجديد" />
+                <SelectValue placeholder="اختر قابلية الترميم" />
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(renovationCapacityLabels).map(([value, label]) => (
@@ -115,7 +115,7 @@ export function BuildingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="ownerType">نوع المالك</Label>
+            <Label htmlFor="ownerType">تحديد مالك الوعاء العقاري</Label>
             <Select
               value={watch("ownerType") || ""}
               onValueChange={(value) => setValue("ownerType", value as OwnerType)}
@@ -142,7 +142,7 @@ export function BuildingStep() {
               }
             />
             <Label htmlFor="hasPartnershipAgreement" className="cursor-pointer">
-              هل توجد اتفاقية شراكة؟
+              وضع البناية رهن إشارة المؤسسة بموجب اتفاقية شراكة
             </Label>
           </div>
         </CardContent>

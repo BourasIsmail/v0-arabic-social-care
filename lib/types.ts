@@ -434,39 +434,39 @@ export const distanceLabels: Record<Distance, string> = {
 };
 
 export const buildingStatusLabels: Record<BuildingStatus, string> = {
-  [BuildingStatus.RENTAL]: "مكترى",
-  [BuildingStatus.OWNED]: "ملك الجمعية",
-  [BuildingStatus.AT_DISPOSAL]: "رهن إشارة الجمعية",
+  [BuildingStatus.RENTAL]: "إيجار",
+  [BuildingStatus.OWNED]: "ملكية",
+  [BuildingStatus.AT_DISPOSAL]: "وضع رهن إشارة المؤسسة",
   [BuildingStatus.OTHER]: "أخرى",
 };
 
 export const buildingConditionLabels: Record<BuildingCondition, string> = {
   [BuildingCondition.GOOD]: "جيدة",
-  [BuildingCondition.SOME_DEGRADATION]: "بعض التدهور",
-  [BuildingCondition.BAD]: "سيئة",
+  [BuildingCondition.SOME_DEGRADATION]: "بعض علامات التدهور",
+  [BuildingCondition.BAD]: "متردية",
 };
 
 export const renovationCapacityLabels: Record<RenovationCapacity, string> = {
   [RenovationCapacity.EASY]: "سهلة",
   [RenovationCapacity.DIFFICULT]: "صعبة",
-  [RenovationCapacity.NEEDS_RECONSTRUCTION]: "تحتاج إعادة بناء",
+  [RenovationCapacity.NEEDS_RECONSTRUCTION]: "تتطلب إعادة البناء",
 };
 
 export const ownerTypeLabels: Record<OwnerType, string> = {
-  [OwnerType.STATE_DOMAIN]: "الملك العمومي للدولة",
+  [OwnerType.STATE_DOMAIN]: "أملاك الدولة",
   [OwnerType.COMMUNAL]: "ملك جماعي",
-  [OwnerType.PRIVATE]: "ملك خاص",
+  [OwnerType.PRIVATE]: "ملك خصوصي",
   [OwnerType.OTHER]: "أخرى",
 };
 
 export const selectionBodyLabels: Record<SelectionBody, string> = {
-  [SelectionBody.ASSOCIATION_ALONE]: "الجمعية لوحدها",
+  [SelectionBody.ASSOCIATION_ALONE]: "الجمعية بمفردها",
   [SelectionBody.MIXED_COMMITTEE]: "لجنة مختلطة",
 };
 
 export const tariffTypeLabels: Record<TariffType, string> = {
-  [TariffType.UNIFORM]: "موحد",
-  [TariffType.NON_UNIFORM]: "حسب الشرائح",
+  [TariffType.UNIFORM]: "تعريفة موحدة",
+  [TariffType.NON_UNIFORM]: "تعريفة غير موحدة",
 };
 
 export const tariffBracketLabels: Record<TariffBracket, string> = {
@@ -477,24 +477,24 @@ export const tariffBracketLabels: Record<TariffBracket, string> = {
 };
 
 export const mealServiceTypeLabels: Record<MealServiceType, string> = {
-  [MealServiceType.INSTITUTION_KITCHEN]: "مطبخ المؤسسة",
+  [MealServiceType.INSTITUTION_KITCHEN]: "إعداد الوجبات في مطبخ المؤسسة",
   [MealServiceType.READY_MEALS]: "وجبات جاهزة",
-  [MealServiceType.OTHER]: "أخرى",
+  [MealServiceType.OTHER]: "آخر (للتحديد)",
 };
 
 export const staffTypeLabels: Record<StaffType, string> = {
   [StaffType.DIRECTOR]: "المدير(ة)",
-  [StaffType.FINANCIAL_MANAGER]: "المسؤول(ة) المالي(ة)",
-  [StaffType.GENERAL_GUARD]: "الحارس(ة) العام(ة)",
-  [StaffType.SOCIAL_WORKER]: "المساعد(ة) الاجتماعي(ة)",
-  [StaffType.DOCTOR]: "الطبيب(ة)",
-  [StaffType.NURSE]: "الممرض(ة)",
-  [StaffType.PSYCHOLOGIST]: "الأخصائي(ة) النفسي(ة)",
-  [StaffType.EDUCATORS]: "المربون/المربيات",
-  [StaffType.KITCHEN_MANAGER]: "مسؤول(ة) المطبخ",
-  [StaffType.KITCHEN_AGENTS]: "عمال المطبخ",
-  [StaffType.STORAGE_MANAGER]: "مسؤول(ة) المخزن",
-  [StaffType.SECURITY]: "الحراسة والأمن",
+  [StaffType.FINANCIAL_MANAGER]: "المسؤول المالي",
+  [StaffType.GENERAL_GUARD]: "حارس عام",
+  [StaffType.SOCIAL_WORKER]: "مساعد اجتماعي",
+  [StaffType.DOCTOR]: "طبيب",
+  [StaffType.NURSE]: "ممرض",
+  [StaffType.PSYCHOLOGIST]: "أخصائي نفسي",
+  [StaffType.EDUCATORS]: "المربون",
+  [StaffType.KITCHEN_MANAGER]: "مسؤول عن المطبخ",
+  [StaffType.KITCHEN_AGENTS]: "أعوان المطبخ",
+  [StaffType.STORAGE_MANAGER]: "مسؤول عن المخزن",
+  [StaffType.SECURITY]: "الحراسة",
   [StaffType.SERVICE_AGENTS]: "أعوان الخدمة",
-  [StaffType.OTHER]: "أخرى",
+  [StaffType.OTHER]: "آخر",
 };

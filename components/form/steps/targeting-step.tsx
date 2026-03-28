@@ -50,11 +50,11 @@ export function TargetingStep() {
   };
 
   const selectionCriteria = [
-    { key: "socialSituation", label: "الوضعية الاجتماعية" },
-    { key: "distance", label: "البعد عن المؤسسة التعليمية" },
-    { key: "schoolResults", label: "النتائج الدراسية" },
-    { key: "scholarship", label: "الحصول على منحة" },
-    { key: "otherCriteria", label: "أخرى" },
+    { key: "socialSituation", label: "الوضعية الاجتماعية للأسرة" },
+    { key: "distance", label: "المسافة بين المدرسة ومحل سكن المستفيد" },
+    { key: "schoolResults", label: "النتائج المدرسية للمستفيد" },
+    { key: "scholarship", label: "الاستفادة من المنحة الدراسية" },
+    { key: "otherCriteria", label: "آخر (للتحديد)" },
   ];
 
   const committeeMembers = [
@@ -63,7 +63,7 @@ export function TargetingStep() {
     { key: "committeeNationalEducation", label: "التربية الوطنية" },
     { key: "committeeCommune", label: "الجماعة" },
     { key: "committeeLocalAuthorities", label: "السلطات المحلية" },
-    { key: "otherMember", label: "أخرى" },
+    { key: "otherMember", label: "آخر (للتحديد)" },
   ];
 
   const tariffType = watch("tariffType");
@@ -74,7 +74,7 @@ export function TargetingStep() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>معايير الاختيار</CardTitle>
+          <CardTitle>المعايير المعتمدة في الاستهداف</CardTitle>
           <CardDescription>حدد المعايير المستخدمة لاختيار المستفيدين</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -110,7 +110,7 @@ export function TargetingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>ترتيب الأولويات</CardTitle>
+          <CardTitle>تصنيف المعايير المعتمدة حسب الأولوية في الاستهداف</CardTitle>
           <CardDescription>رتب الأولويات من 1 إلى 5</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
@@ -129,11 +129,11 @@ export function TargetingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>جهة الانتقاء</CardTitle>
+          <CardTitle>الجهة التي تقوم بعملية انتقاء المستفيدين</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="selectionBody">جهة الانتقاء</Label>
+            <Label htmlFor="selectionBody">الجهة التي تقوم بعملية انتقاء المستفيدين</Label>
             <Select
               value={watch("selectionBody") || ""}
               onValueChange={(value) => setValue("selectionBody", value as SelectionBody)}
@@ -153,7 +153,7 @@ export function TargetingStep() {
 
           {selectionBody === SelectionBody.MIXED_COMMITTEE && (
             <div className="space-y-4">
-              <Label>أعضاء اللجنة</Label>
+              <Label>تضم اللجنة المختلطة</Label>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {committeeMembers.map((member) => (
                   <div key={member.key} className="flex items-center gap-2">
@@ -188,7 +188,7 @@ export function TargetingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>التعريفة</CardTitle>
+          <CardTitle>خدمات المؤسسة</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-2">
@@ -198,14 +198,14 @@ export function TargetingStep() {
               onCheckedChange={(checked) => setValue("servicesAreFree", checked as boolean)}
             />
             <Label htmlFor="servicesAreFree" className="cursor-pointer">
-              الخدمات مجانية
+              مجانية
             </Label>
           </div>
 
           {!servicesAreFree && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="tariffType">نوع التعريفة</Label>
+                <Label htmlFor="tariffType">مبلغ الاشتراك الشهري لكل مستفيد (بالدرهم)</Label>
                 <Select
                   value={tariffType || ""}
                   onValueChange={(value) => setValue("tariffType", value as TariffType)}
@@ -225,7 +225,7 @@ export function TargetingStep() {
 
               {tariffType === TariffType.UNIFORM && (
                 <div className="space-y-2">
-                  <Label htmlFor="uniformAmount">المبلغ الموحد (درهم)</Label>
+                  <Label htmlFor="uniformAmount">قيمتها (درهم)</Label>
                   <Input
                     id="uniformAmount"
                     type="number"
@@ -238,7 +238,7 @@ export function TargetingStep() {
 
               {tariffType === TariffType.NON_UNIFORM && (
                 <div className="space-y-2">
-                  <Label htmlFor="tariffBracket">شريحة التعريفة</Label>
+                  <Label htmlFor="tariffBracket">قيمتها</Label>
                   <Select
                     value={watch("tariffBracket") || ""}
                     onValueChange={(value) => setValue("tariffBracket", value as TariffBracket)}
@@ -263,11 +263,11 @@ export function TargetingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>معلومات إضافية</CardTitle>
+          <CardTitle>الطلبات غير الملباة</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="unsatisfiedRequestsCount">عدد الطلبات غير الملباة</Label>
+            <Label htmlFor="unsatisfiedRequestsCount">عدد الطلبات التي لم تتم الاستجابة لها برسم الموسم الدراسي الحالي</Label>
             <Input
               id="unsatisfiedRequestsCount"
               type="number"

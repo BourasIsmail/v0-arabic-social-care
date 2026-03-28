@@ -90,7 +90,7 @@ export function InstitutionStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="associationName">اسم الجمعية *</Label>
+            <Label htmlFor="associationName">اسم الجمعية المشرفة *</Label>
             <Input
               id="associationName"
               {...register("associationName", { required: true })}
@@ -114,7 +114,7 @@ export function InstitutionStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="creationYear">سنة التأسيس</Label>
+            <Label htmlFor="creationYear">سنة إحداث المؤسسة</Label>
             <Input
               id="creationYear"
               type="number"
@@ -149,13 +149,13 @@ export function InstitutionStep() {
           />
 
           <div className="space-y-2">
-            <Label htmlFor="milieu">الوسط</Label>
+            <Label htmlFor="milieu">المجال</Label>
             <Select
               value={watch("milieu") || ""}
               onValueChange={(value) => setValue("milieu", value as Milieu)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="اختر الوسط" />
+                <SelectValue placeholder="اختر المجال" />
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(milieuLabels).map(([value, label]) => (
@@ -195,18 +195,18 @@ export function InstitutionStep() {
 
           {legalStatus === LegalStatus.LICENSED && (
             <div className="space-y-2">
-              <Label htmlFor="licenseNumber">رقم الترخيص</Label>
+              <Label htmlFor="licenseNumber">رقم وتاريخ الرخصة</Label>
               <Input
                 id="licenseNumber"
                 {...register("licenseNumber")}
-                placeholder="أدخل رقم الترخيص"
+                placeholder="أدخل رقم وتاريخ الرخصة"
               />
             </div>
           )}
 
           {legalStatus === LegalStatus.UNLICENSED && (
             <div className="space-y-2">
-              <Label htmlFor="unlicensedReason">سبب عدم الترخيص</Label>
+              <Label htmlFor="unlicensedReason">أسباب عدم الترخيص</Label>
               <Input
                 id="unlicensedReason"
                 {...register("unlicensedReason")}
@@ -216,7 +216,7 @@ export function InstitutionStep() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="serviceStartDate">تاريخ بدء الخدمة</Label>
+            <Label htmlFor="serviceStartDate">تاريخ شروع المؤسسة في تقديم خدماتها</Label>
             <Input
               id="serviceStartDate"
               type="date"
@@ -234,11 +234,11 @@ export function InstitutionStep() {
           {[
             { key: "housing", label: "الإيواء" },
             { key: "meals", label: "الإطعام" },
-            { key: "educationalSupport", label: "الدعم التربوي" },
-            { key: "culturalActivities", label: "الأنشطة الثقافية" },
-            { key: "healthCare", label: "الرعاية الصحية" },
+            { key: "educationalSupport", label: "التتبع التربوي والمواكبة الاجتماعية" },
+            { key: "culturalActivities", label: "التنشيط الثقافي والرياضي والترفيهي" },
+            { key: "healthCare", label: "العلاجات الصحية الأولية" },
             { key: "insurance", label: "التأمين" },
-            { key: "psychologicalSupport", label: "الدعم النفسي" },
+            { key: "psychologicalSupport", label: "الدعم والمواكبة الطبية والنفسية" },
           ].map((service) => (
             <div key={service.key} className="flex items-center gap-2">
               <Checkbox
@@ -258,11 +258,11 @@ export function InstitutionStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>الطاقة الاستيعابية</CardTitle>
+          <CardTitle>الطاقة الاستيعابية المرخصة</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-3">
           <div className="space-y-2">
-            <Label htmlFor="totalCapacity">الطاقة الإجمالية</Label>
+            <Label htmlFor="totalCapacity">الطاقة الاستيعابية الإجمالية</Label>
             <Input
               id="totalCapacity"
               type="number"
@@ -272,7 +272,7 @@ export function InstitutionStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="maleCapacity">طاقة الذكور</Label>
+            <Label htmlFor="maleCapacity">الطاقة الاستيعابية المرخصة ذكور</Label>
             <Input
               id="maleCapacity"
               type="number"
@@ -282,7 +282,7 @@ export function InstitutionStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="femaleCapacity">طاقة الإناث</Label>
+            <Label htmlFor="femaleCapacity">الطاقة الاستيعابية المرخصة إناث</Label>
             <Input
               id="femaleCapacity"
               type="number"
@@ -295,15 +295,15 @@ export function InstitutionStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>المستويات الدراسية المستهدفة</CardTitle>
+          <CardTitle>المستوى التعليمي للفئة المستهدفة</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { key: "primary", label: "الابتدائي" },
-              { key: "middleSchool", label: "الإعدادي" },
-              { key: "highSchool", label: "الثانوي" },
-              { key: "other", label: "أخرى" },
+              { key: "primary", label: "ابتدائي" },
+              { key: "middleSchool", label: "ثانوي إعدادي" },
+              { key: "highSchool", label: "ثانوي تأهيلي" },
+              { key: "other", label: "آخر (للتحديد)" },
             ].map((level) => (
               <div key={level.key} className="flex items-center gap-2">
                 <Checkbox
@@ -335,11 +335,11 @@ export function InstitutionStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>المسافة</CardTitle>
+          <CardTitle>البعد الجغرافي</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="distanceToSchool">المسافة إلى أقرب مدرسة</Label>
+            <Label htmlFor="distanceToSchool">البعد الجغرافي عن أقرب مؤسسة تعليمية مستقبلة للمستفيدين</Label>
             <Select
               value={watch("distanceToSchool") || ""}
               onValueChange={(value) => setValue("distanceToSchool", value as Distance)}
@@ -359,7 +359,7 @@ export function InstitutionStep() {
 
           <div className="space-y-2">
             <Label htmlFor="distanceToNationalBoardingSchool">
-              المسافة إلى أقرب داخلية وطنية
+              البعد الجغرافي عن أقرب داخلية تابعة لقطاع التربية الوطنية
             </Label>
             <Select
               value={watch("distanceToNationalBoardingSchool") || ""}

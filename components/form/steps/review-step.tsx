@@ -131,35 +131,35 @@ export function ReviewStep() {
       {/* Institution Info */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">معلومات المؤسسة</CardTitle>
+          <CardTitle className="text-base">معطيات حول المؤسسة</CardTitle>
         </CardHeader>
         <CardContent className="space-y-1">
           <InfoRow
-            label="نوع المؤسسة"
+            label="نوعية المؤسسة"
             value={formData.institutionType && institutionTypeLabels[formData.institutionType]}
           />
-          <InfoRow label="اسم الجمعية" value={formData.associationName} />
+          <InfoRow label="اسم الجمعية المشرفة" value={formData.associationName} />
           <InfoRow label="اسم المؤسسة" value={formData.institutionName} />
           <InfoRow label="العنوان" value={formData.address} />
           <InfoRow label="الجهة" value={geoNames.region} />
-          <InfoRow label="العمالة/الإقليم" value={geoNames.prefecture} />
+          <InfoRow label="العمالة أو الإقليم" value={geoNames.prefecture} />
           <InfoRow label="الجماعة" value={geoNames.commune} />
-          <InfoRow label="الوسط" value={formData.milieu && milieuLabels[formData.milieu]} />
-          <InfoRow label="سنة التأسيس" value={formData.creationYear} />
+          <InfoRow label="المجال" value={formData.milieu && milieuLabels[formData.milieu]} />
+          <InfoRow label="سنة إحداث المؤسسة" value={formData.creationYear} />
           <InfoRow
-            label="الوضعية القانونية"
+            label="الوضعية القانونية للمؤسسة"
             value={formData.legalStatus && legalStatusLabels[formData.legalStatus]}
           />
-          <InfoRow label="الطاقة الإجمالية" value={formData.totalCapacity} />
-          <InfoRow label="طاقة الذكور" value={formData.maleCapacity} />
-          <InfoRow label="طاقة الإناث" value={formData.femaleCapacity} />
+          <InfoRow label="الطاقة الاستيعابية الإجمالية" value={formData.totalCapacity} />
+          <InfoRow label="الطاقة الاستيعابية المرخصة ذكور" value={formData.maleCapacity} />
+          <InfoRow label="الطاقة الاستيعابية المرخصة إناث" value={formData.femaleCapacity} />
         </CardContent>
       </Card>
 
       {/* Services */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">الخدمات المقدمة</CardTitle>
+          <CardTitle className="text-base">الخدمات المقدمة بالمؤسسة</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
@@ -175,17 +175,17 @@ export function ReviewStep() {
             )}
             {formData.educationalSupport && (
               <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                الدعم التربوي
+                التتبع التربوي والمواكبة الاجتماعية
               </span>
             )}
             {formData.culturalActivities && (
               <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                الأنشطة الثقافية
+                التنشيط الثقافي والرياضي والترفيهي
               </span>
             )}
             {formData.healthCare && (
               <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                الرعاية الصحية
+                العلاجات الصحية الأولية
               </span>
             )}
             {formData.insurance && (
@@ -195,7 +195,7 @@ export function ReviewStep() {
             )}
             {formData.psychologicalSupport && (
               <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                الدعم النفسي
+                الدعم والمواكبة الطبية والنفسية
               </span>
             )}
           </div>
@@ -206,7 +206,7 @@ export function ReviewStep() {
       {formData.building && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">معلومات البناية</CardTitle>
+            <CardTitle className="text-base">معطيات حول البناية المخصصة للمؤسسة</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
             <InfoRow
@@ -217,27 +217,27 @@ export function ReviewStep() {
               }
             />
             <InfoRow
-              label="حالة البناية"
+              label="الحالة العامة للبناية"
               value={
                 formData.building.buildingCondition &&
                 buildingConditionLabels[formData.building.buildingCondition]
               }
             />
             <InfoRow
-              label="القدرة على التجديد"
+              label="قابلية البناية للترميم والإصلاح"
               value={
                 formData.building.renovationCapacity &&
                 renovationCapacityLabels[formData.building.renovationCapacity]
               }
             />
             <InfoRow
-              label="نوع المالك"
+              label="تحديد مالك الوعاء العقاري"
               value={
                 formData.building.ownerType && ownerTypeLabels[formData.building.ownerType]
               }
             />
             <InfoRow
-              label="اتفاقية شراكة"
+              label="وضع البناية رهن إشارة المؤسسة بموجب اتفاقية شراكة"
               value={formData.building.hasPartnershipAgreement ? "نعم" : "لا"}
             />
           </CardContent>
@@ -248,32 +248,32 @@ export function ReviewStep() {
       {formData.financing && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">معلومات التمويل</CardTitle>
+            <CardTitle className="text-base">معطيات حول تمويل المؤسسة</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
             <InfoRow
-              label="التكلفة الإجمالية للبناء"
+              label="الكلفة الإجمالية لبناء المؤسسة"
               value={
                 formData.financing.totalConstructionCost &&
                 `${formData.financing.totalConstructionCost.toLocaleString()} درهم`
               }
             />
             <InfoRow
-              label="التكلفة السنوية للتسيير"
+              label="الكلفة السنوية لتسيير المؤسسة"
               value={
                 formData.financing.annualManagementCost &&
                 `${formData.financing.annualManagementCost.toLocaleString()} درهم`
               }
             />
             <InfoRow
-              label="التكلفة السنوية للموارد البشرية"
+              label="الكلفة السنوية المخصصة للموارد البشرية"
               value={
                 formData.financing.annualHRCost &&
                 `${formData.financing.annualHRCost.toLocaleString()} درهم`
               }
             />
             <InfoRow
-              label="التكلفة السنوية للإطعام"
+              label="الكلفة السنوية المخصصة للإطعام"
               value={
                 formData.financing.annualMealsCost &&
                 `${formData.financing.annualMealsCost.toLocaleString()} درهم`
@@ -287,31 +287,31 @@ export function ReviewStep() {
       {formData.targeting && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">معلومات الاستهداف</CardTitle>
+            <CardTitle className="text-base">معطيات حول الاستهداف وتوسعة الخدمات</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
             <InfoRow
-              label="جهة الانتقاء"
+              label="الجهة التي تقوم بعملية انتقاء المستفيدين"
               value={
                 formData.targeting.selectionBody &&
                 selectionBodyLabels[formData.targeting.selectionBody]
               }
             />
             <InfoRow
-              label="الخدمات مجانية"
+              label="خدمات المؤسسة مجانية"
               value={formData.targeting.servicesAreFree ? "نعم" : "لا"}
             />
             {!formData.targeting.servicesAreFree && (
               <>
                 <InfoRow
-                  label="نوع التعريفة"
+                  label="مبلغ الاشتراك الشهري"
                   value={
                     formData.targeting.tariffType &&
                     tariffTypeLabels[formData.targeting.tariffType]
                   }
                 />
                 <InfoRow
-                  label="المبلغ الموحد"
+                  label="قيمتها"
                   value={
                     formData.targeting.uniformAmount &&
                     `${formData.targeting.uniformAmount} درهم`
@@ -320,7 +320,7 @@ export function ReviewStep() {
               </>
             )}
             <InfoRow
-              label="عدد الطلبات غير الملباة"
+              label="عدد الطلبات التي لم تتم الاستجابة لها"
               value={formData.targeting.unsatisfiedRequestsCount}
             />
           </CardContent>
@@ -331,8 +331,8 @@ export function ReviewStep() {
       {formData.staffMembers && formData.staffMembers.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">الموارد البشرية</CardTitle>
-            <CardDescription>{formData.staffMembers.length} موظف(ين)</CardDescription>
+            <CardTitle className="text-base">معطيات حول الموارد البشرية العاملة بالمؤسسة</CardTitle>
+            <CardDescription>{formData.staffMembers.length} صنف من التأطير</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">

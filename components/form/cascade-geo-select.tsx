@@ -165,14 +165,14 @@ export function CascadeGeoSelect({
 
       {/* Prefecture Select */}
       <div className="space-y-2">
-        <Label htmlFor="prefectureId">العمالة / الإقليم</Label>
+        <Label htmlFor="prefectureId">العمالة أو الإقليم</Label>
         <Select
           value={prefectureId ? String(prefectureId) : ""}
           onValueChange={handlePrefectureChange}
           disabled={!regionId || loadingPrefectures || disabled}
         >
           <SelectTrigger className="relative">
-            <SelectValue placeholder={regionId ? "اختر العمالة / الإقليم" : "اختر الجهة أولاً"} />
+            <SelectValue placeholder={regionId ? "اختر العمالة أو الإقليم" : "اختر الجهة أولاً"} />
             {loadingPrefectures && (
               <Loader2 className="absolute left-3 h-4 w-4 animate-spin text-muted-foreground" />
             )}
@@ -197,7 +197,7 @@ export function CascadeGeoSelect({
             disabled={!prefectureId || loadingCommunes}
           >
             <SelectTrigger className="relative">
-              <SelectValue placeholder={prefectureId ? "اختر الجماعة" : "اختر العمالة / الإقليم أولاً"} />
+              <SelectValue placeholder={prefectureId ? "اختر الجماعة" : "اختر العمالة أو الإقليم أولاً"} />
               {loadingCommunes && (
                 <Loader2 className="absolute left-3 h-4 w-4 animate-spin text-muted-foreground" />
               )}

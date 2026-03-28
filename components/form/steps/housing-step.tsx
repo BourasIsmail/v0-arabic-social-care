@@ -38,7 +38,7 @@ function SeasonFields({
       </CardHeader>
       <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-2">
-          <Label htmlFor={`${seasonKey}.totalBeneficiaries`}>العدد الإجمالي</Label>
+          <Label htmlFor={`${seasonKey}.totalBeneficiaries`}>العدد الإجمالي للمستفيدين فعليا</Label>
           <Input
             id={`${seasonKey}.totalBeneficiaries`}
             type="number"
@@ -47,7 +47,7 @@ function SeasonFields({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`${seasonKey}.maleBeneficiaries`}>الذكور</Label>
+          <Label htmlFor={`${seasonKey}.maleBeneficiaries`}>توزيعه حسب الذكور</Label>
           <Input
             id={`${seasonKey}.maleBeneficiaries`}
             type="number"
@@ -56,7 +56,7 @@ function SeasonFields({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`${seasonKey}.femaleBeneficiaries`}>الإناث</Label>
+          <Label htmlFor={`${seasonKey}.femaleBeneficiaries`}>توزيعه حسب الإناث</Label>
           <Input
             id={`${seasonKey}.femaleBeneficiaries`}
             type="number"
@@ -74,7 +74,7 @@ function SeasonFields({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`${seasonKey}.middleSchoolBeneficiaries`}>الإعدادي</Label>
+          <Label htmlFor={`${seasonKey}.middleSchoolBeneficiaries`}>الثانوي الإعدادي</Label>
           <Input
             id={`${seasonKey}.middleSchoolBeneficiaries`}
             type="number"
@@ -83,7 +83,7 @@ function SeasonFields({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`${seasonKey}.highSchoolBeneficiaries`}>الثانوي</Label>
+          <Label htmlFor={`${seasonKey}.highSchoolBeneficiaries`}>الثانوي التأهيلي</Label>
           <Input
             id={`${seasonKey}.highSchoolBeneficiaries`}
             type="number"
@@ -92,7 +92,7 @@ function SeasonFields({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`${seasonKey}.orphans`}>اليتامى</Label>
+          <Label htmlFor={`${seasonKey}.orphans`}>اخر يحدد (التكوين المهني، مدارس الفرصة الثانية...)</Label>
           <Input
             id={`${seasonKey}.orphans`}
             type="number"
@@ -146,17 +146,17 @@ export function HousingStep() {
   };
 
   const improvementSuggestions = [
-    { key: "increaseProducts", label: "زيادة المنتجات الغذائية" },
-    { key: "externalCaterer", label: "الاستعانة بمتعهد خارجي" },
-    { key: "otherSuggestion", label: "أخرى" },
+    { key: "increaseProducts", label: "زيادة المواد الغذائية وتجويدها" },
+    { key: "externalCaterer", label: "اللجوء إلى ممون خارجي لتقديم وجبات جاهزة" },
+    { key: "otherSuggestion", label: "آخر (للتحديد)" },
   ];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>المستفيدون حسب الموسم الدراسي</CardTitle>
-          <CardDescription>أدخل بيانات المستفيدين لكل موسم دراسي</CardDescription>
+          <CardTitle>عدد المستفيدين من خدمتي الإيواء والإطعام بالمؤسسة</CardTitle>
+          <CardDescription>بالنسبة لخدمة الإيواء - أدخل بيانات المستفيدين لكل موسم دراسي</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <SeasonFields
@@ -182,25 +182,27 @@ export function HousingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>ملاحظات حول الطاقة الاستيعابية</CardTitle>
+          <CardTitle>توضيحات حول استقبال المؤسسة</CardTitle>
         </CardHeader>
         <CardContent>
+          <Label htmlFor="capacityRemarks">المرجو إعطاء توضيحات مركزة حول استقبال المؤسسة لعدد أقل أو أكثر من طاقتها الاستيعابية المرخصة</Label>
           <Textarea
             {...register("capacityRemarks")}
-            placeholder="أدخل ملاحظاتك هنا..."
+            placeholder="أدخل توضيحاتك هنا..."
             rows={4}
+            className="mt-2"
           />
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>الإطعام</CardTitle>
+          <CardTitle>بالنسبة لخدمة الإطعام خلال الموسم الدراسي 2025-2026</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="totalMealBeneficiaries2526">
-              إجمالي المستفيدين من الإطعام 2025-2026
+              العدد الإجمالي للمستفيدين فعليا من هذه الخدمة
             </Label>
             <Input
               id="totalMealBeneficiaries2526"
@@ -211,7 +213,7 @@ export function HousingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="associationMealBeneficiaries">مستفيدون من الجمعية</Label>
+            <Label htmlFor="associationMealBeneficiaries">العدد الإجمالي للمستفيدين فعليا من خدمة الإطعام الممول من طرف الجمعية</Label>
             <Input
               id="associationMealBeneficiaries"
               type="number"
@@ -221,7 +223,7 @@ export function HousingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="educationMealBeneficiaries">مستفيدون من التربية الوطنية</Label>
+            <Label htmlFor="educationMealBeneficiaries">العدد الإجمالي للمستفيدين فعليا من خدمة الإطعام التي يؤمنها قطاع التربية الوطنية</Label>
             <Input
               id="educationMealBeneficiaries"
               type="number"
@@ -231,7 +233,7 @@ export function HousingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="fullGrantCount">عدد المنح الكاملة</Label>
+            <Label htmlFor="fullGrantCount">عدد المستفيدين من منحة كاملة</Label>
             <Input
               id="fullGrantCount"
               type="number"
@@ -241,7 +243,7 @@ export function HousingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="halfGrantCount">عدد نصف المنح</Label>
+            <Label htmlFor="halfGrantCount">عدد المستفيدين من نصف منحة (وجبة غذاء)</Label>
             <Input
               id="halfGrantCount"
               type="number"
@@ -251,7 +253,7 @@ export function HousingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="mealServiceType">نوع خدمة الإطعام</Label>
+            <Label htmlFor="mealServiceType">نوعية خدمة الإطعام المقدمة</Label>
             <Select
               value={watch("mealServiceType") || ""}
               onValueChange={(value) => setValue("mealServiceType", value as MealServiceType)}
@@ -273,7 +275,7 @@ export function HousingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>مقترحات التحسين</CardTitle>
+          <CardTitle>ما هي مقترحاتكم من أجل تحسين جودة الإطعام بالمؤسسة</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-3">
