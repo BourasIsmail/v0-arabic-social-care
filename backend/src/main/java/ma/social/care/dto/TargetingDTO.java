@@ -52,4 +52,14 @@ public class TargetingDTO {
     private BigDecimal uniformAmount;
 
     private TariffBracket tariffBracket;
+
+    // Tariff Determination Body
+    private SelectionBody tariffDeterminationBody;
+    private Boolean tariffCommitteeAssociation;
+    private Boolean tariffCommitteeNationalEntraide;
+    private Boolean tariffCommitteeNationalEducation;
+    private Boolean tariffCommitteeCommune;
+    private Boolean tariffCommitteeLocalAuthorities;
+    private Boolean tariffOtherMember;
+    private String tariffOtherMemberDetail;
 }

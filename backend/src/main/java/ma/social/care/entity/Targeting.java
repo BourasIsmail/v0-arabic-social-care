@@ -99,4 +99,30 @@ public class Targeting extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "tariff_bracket")
     private TariffBracket tariffBracket;
+
+    // === Tariff Determination Body ===
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tariff_determination_body")
+    private SelectionBody tariffDeterminationBody;
+
+    @Column(name = "tariff_committee_association")
+    private Boolean tariffCommitteeAssociation;
+
+    @Column(name = "tariff_committee_national_entraide")
+    private Boolean tariffCommitteeNationalEntraide;
+
+    @Column(name = "tariff_committee_national_education")
+    private Boolean tariffCommitteeNationalEducation;
+
+    @Column(name = "tariff_committee_commune")
+    private Boolean tariffCommitteeCommune;
+
+    @Column(name = "tariff_committee_local_authorities")
+    private Boolean tariffCommitteeLocalAuthorities;
+
+    @Column(name = "tariff_committee_other_member")
+    private Boolean tariffOtherMember;
+
+    @Column(name = "tariff_committee_other_member_detail")
+    private String tariffOtherMemberDetail;
 }

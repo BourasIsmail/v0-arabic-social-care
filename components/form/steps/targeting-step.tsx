@@ -66,9 +66,19 @@ export function TargetingStep() {
     { key: "otherMember", label: "آخر (للتحديد)" },
   ];
 
+  const tariffCommitteeMembers = [
+    { key: "tariffCommitteeAssociation", label: "الجمعية" },
+    { key: "tariffCommitteeNationalEntraide", label: "التعاون الوطني" },
+    { key: "tariffCommitteeNationalEducation", label: "قطاع التربية الوطنية" },
+    { key: "tariffCommitteeCommune", label: "الجماعة" },
+    { key: "tariffCommitteeLocalAuthorities", label: "السلطات المحلية" },
+    { key: "tariffOtherMember", label: "آخر (للتحديد)" },
+  ];
+
   const tariffType = watch("tariffType");
   const servicesAreFree = watch("servicesAreFree");
   const selectionBody = watch("selectionBody");
+  const tariffDeterminationBody = watch("tariffDeterminationBody");
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -256,6 +266,56 @@ export function TargetingStep() {
                   </Select>
                 </div>
               )}
+
+              {/* Tariff Determination Body */}
+              <div className="space-y-4 pt-4 border-t">
+                <Label>من يحدد مبلغ الاشتراك الشهري لكل مستفيد</Label>
+                <Select
+                  value={tariffDeterminationBody || ""}
+                  onValueChange={(value) => setValue("tariffDeterminationBody", value as SelectionBody)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="اختر الجهة" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(selectionBodyLabels).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {tariffDeterminationBody === SelectionBody.MIXED_COMMITTEE && (
+                  <div className="space-y-4">
+                    <Label>تضم اللجنة المختلطة</Label>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {tariffCommitteeMembers.map((member) => (
+                        <div key={member.key} className="flex items-center gap-2">
+                          <Checkbox
+                            id={member.key}
+                            checked={
+                              (watch(member.key as keyof TargetingDTO) as boolean) || false
+                            }
+                            onCheckedChange={(checked) =>
+                              setValue(member.key as keyof TargetingDTO, !!checked)
+                            }
+                          />
+                          <Label htmlFor={member.key} className="cursor-pointer">
+                            {member.label}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                    {watch("tariffOtherMember") && (
+                      <Input
+                        {...register("tariffOtherMemberDetail")}
+                        placeholder="حدد العضو الآخر..."
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
             </>
           )}
         </CardContent>
