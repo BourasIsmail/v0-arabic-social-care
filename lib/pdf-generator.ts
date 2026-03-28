@@ -809,7 +809,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
               عدد المستفيدين من خدمتي الإيواء والإطعام بالمؤسسة
             </div>
             <div class="fields-container">
-              <div class="sub-section">المستفيدون ��ن الإيواء حسب المواسم</div>
+              <div class="sub-section">المستفيدون من الإيواء حسب المواسم</div>
               <table class="stats-table">
                 <thead>
                   <tr>
@@ -940,7 +940,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
             </div>
             <div class="visa-row">
               <div class="visa-box">
-                <h4>تأشيرة المدير الإقليمي للتعاون ا��وطني</h4>
+                <h4>تأشيرة المدير الإقليمي للتعاون الوطني</h4>
                 <div class="visa-space"></div>
               </div>
               <div class="visa-box">

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Building2, Home, LayoutDashboard, Users, FileText, Plus } from "lucide-react";
 import { UserMenu } from "@/components/auth/user-menu";
@@ -45,6 +46,18 @@ export function AppHeader({
   return (
     <header className="border-b border-border bg-card sticky top-0 z-50">
       <div className="container mx-auto px-4">
+        {/* Partners Logo Row - Centered */}
+        <div className="flex items-center justify-center py-3 border-b border-border/50">
+          <Image
+            src="/images/partners-banner.png"
+            alt="الشركاء المؤسساتيون"
+            width={800}
+            height={80}
+            className="object-contain h-16 md:h-20 w-auto"
+            priority
+          />
+        </div>
+
         {/* Main Header Row */}
         <div className="flex items-center justify-between py-4">
           <Link href="/" className="flex items-center gap-3">

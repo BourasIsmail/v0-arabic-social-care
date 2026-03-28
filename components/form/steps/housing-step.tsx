@@ -25,12 +25,18 @@ function SeasonFields({
   seasonLabel,
   register,
   watch,
+  setValue,
 }: {
   seasonKey: "season2324" | "season2425" | "season2526";
   seasonLabel: string;
   register: ReturnType<typeof useForm<HousingMealsDTO>>["register"];
   watch: ReturnType<typeof useForm<HousingMealsDTO>>["watch"];
+  setValue: ReturnType<typeof useForm<HousingMealsDTO>>["setValue"];
 }) {
+  const updateTotal = (males: number, females: number) => {
+    setValue(`${seasonKey}.totalBeneficiaries`, males + females);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -42,16 +48,26 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.totalBeneficiaries`}
             type="number"
-            {...register(`${seasonKey}.totalBeneficiaries`, { valueAsNumber: true })}
-            placeholder="0"
+            value={watch(`${seasonKey}.totalBeneficiaries`) || ""}
+            readOnly
+            className="bg-muted"
+            placeholder="يتم حسابه تلقائيا"
           />
+          <p className="text-xs text-muted-foreground">يتم حسابه تلقائيا</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor={`${seasonKey}.maleBeneficiaries`}>توزيعه حسب الذكور</Label>
           <Input
             id={`${seasonKey}.maleBeneficiaries`}
             type="number"
-            {...register(`${seasonKey}.maleBeneficiaries`, { valueAsNumber: true })}
+            {...register(`${seasonKey}.maleBeneficiaries`, { 
+              valueAsNumber: true,
+              onChange: (e) => {
+                const males = parseInt(e.target.value) || 0;
+                const females = watch(`${seasonKey}.femaleBeneficiaries`) || 0;
+                updateTotal(males, females);
+              }
+            })}
             placeholder="0"
           />
         </div>
@@ -60,7 +76,14 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.femaleBeneficiaries`}
             type="number"
-            {...register(`${seasonKey}.femaleBeneficiaries`, { valueAsNumber: true })}
+            {...register(`${seasonKey}.femaleBeneficiaries`, { 
+              valueAsNumber: true,
+              onChange: (e) => {
+                const females = parseInt(e.target.value) || 0;
+                const males = watch(`${seasonKey}.maleBeneficiaries`) || 0;
+                updateTotal(males, females);
+              }
+            })}
             placeholder="0"
           />
         </div>
@@ -164,18 +187,21 @@ export function HousingStep() {
             seasonLabel="الموسم 2023-2024"
             register={register}
             watch={watch}
+            setValue={setValue}
           />
           <SeasonFields
             seasonKey="season2425"
             seasonLabel="الموسم 2024-2025"
             register={register}
             watch={watch}
+            setValue={setValue}
           />
           <SeasonFields
             seasonKey="season2526"
             seasonLabel="الموسم 2025-2026"
             register={register}
             watch={watch}
+            setValue={setValue}
           />
         </CardContent>
       </Card>
