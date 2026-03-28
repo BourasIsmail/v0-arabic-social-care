@@ -586,10 +586,10 @@ export function generatePrintableHTML(data: InstitutionResponse): string {
                 <div class="field-label">وضعية البناية</div>
                 <div class="field-value">
                   <div class="checkbox-row">
-                    <span class="checkbox-item"><span class="check">${data.building?.ownership === 'RENTAL' || data.building?.buildingStatus === 'RENTAL' ? '☑' : '☐'}</span> إيجار</span>
-                    <span class="checkbox-item"><span class="check">${data.building?.ownership === 'OWNED' || data.building?.buildingStatus === 'OWNED' ? '☑' : '☐'}</span> ملكية</span>
-                    <span class="checkbox-item"><span class="check">${data.building?.ownership === 'LENT' || data.building?.buildingStatus === 'AT_DISPOSAL' ? '☑' : '☐'}</span> وضع رهن إشارة المؤسسة</span>
-                    <span class="checkbox-item"><span class="check">${data.building?.ownership === 'OTHER' || data.building?.buildingStatus === 'OTHER' ? '☑' : '☐'}</span> آخر</span>
+                    <span class="checkbox-item"><span class="check">${data.building?.buildingStatus === 'RENTAL' ? '☑' : '☐'}</span> إيجار</span>
+                    <span class="checkbox-item"><span class="check">${data.building?.buildingStatus === 'OWNED' ? '☑' : '☐'}</span> ملكية</span>
+                    <span class="checkbox-item"><span class="check">${data.building?.buildingStatus === 'AT_DISPOSAL' ? '☑' : '☐'}</span> وضع رهن إشارة المؤسسة</span>
+                    <span class="checkbox-item"><span class="check">${data.building?.buildingStatus === 'OTHER' ? '☑' : '☐'}</span> آخر</span>
                   </div>
                 </div>
               </div>
@@ -598,25 +598,35 @@ export function generatePrintableHTML(data: InstitutionResponse): string {
                 <div class="field-value">
                   <div class="checkbox-row">
                     <span class="checkbox-item"><span class="check">${data.building?.buildingCondition === 'GOOD' ? '☑' : '☐'}</span> جيدة</span>
-                    <span class="checkbox-item"><span class="check">${data.building?.buildingCondition === 'AVERAGE' || data.building?.buildingCondition === 'SOME_DEGRADATION' ? '☑' : '☐'}</span> بعض علامات التدهور</span>
-                    <span class="checkbox-item"><span class="check">${data.building?.buildingCondition === 'POOR' || data.building?.buildingCondition === 'BAD' ? '☑' : '☐'}</span> متردية</span>
+                    <span class="checkbox-item"><span class="check">${data.building?.buildingCondition === 'SOME_DEGRADATION' ? '☑' : '☐'}</span> بعض علامات التدهور</span>
+                    <span class="checkbox-item"><span class="check">${data.building?.buildingCondition === 'BAD' ? '☑' : '☐'}</span> متردية</span>
                   </div>
                 </div>
               </div>
               <div class="field-row">
-                <div class="field-label">المساحة الإجمالية (م²)</div>
-                <div class="field-value">${getDisplayValue(data.building?.totalArea)}</div>
-              </div>
-              <div class="sub-section">المرافق المتوفرة</div>
-              <div class="checkbox-group">
-                <div class="checkbox-row">
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.building?.hasKitchen)}</span> مطبخ</span>
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.building?.hasDiningHall)}</span> قاعة الأكل</span>
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.building?.hasStorage)}</span> مخزن</span>
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.building?.hasPlayground)}</span> ملعب</span>
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.building?.hasLibrary)}</span> مكتبة</span>
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.building?.hasComputerRoom)}</span> قاعة الإعلاميات</span>
+                <div class="field-label">نوع المالك</div>
+                <div class="field-value">
+                  <div class="checkbox-row">
+                    <span class="checkbox-item"><span class="check">${data.building?.ownerType === 'STATE_DOMAIN' ? '☑' : '☐'}</span> الملك العام للدولة</span>
+                    <span class="checkbox-item"><span class="check">${data.building?.ownerType === 'COMMUNAL' ? '☑' : '☐'}</span> جماعي</span>
+                    <span class="checkbox-item"><span class="check">${data.building?.ownerType === 'PRIVATE' ? '☑' : '☐'}</span> خاص</span>
+                    <span class="checkbox-item"><span class="check">${data.building?.ownerType === 'OTHER' ? '☑' : '☐'}</span> آخر</span>
+                  </div>
                 </div>
+              </div>
+              <div class="field-row">
+                <div class="field-label">إمكانية الترميم</div>
+                <div class="field-value">
+                  <div class="checkbox-row">
+                    <span class="checkbox-item"><span class="check">${data.building?.renovationCapacity === 'EASY' ? '☑' : '☐'}</span> سهل</span>
+                    <span class="checkbox-item"><span class="check">${data.building?.renovationCapacity === 'DIFFICULT' ? '☑' : '☐'}</span> صعب</span>
+                    <span class="checkbox-item"><span class="check">${data.building?.renovationCapacity === 'NEEDS_RECONSTRUCTION' ? '☑' : '☐'}</span> يتطلب إعادة بناء</span>
+                  </div>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field-label">وجود اتفاقية شراكة</div>
+                <div class="field-value">${data.building?.hasPartnershipAgreement ? 'نعم' : 'لا'}</div>
               </div>
             </div>
           </div>
@@ -628,21 +638,77 @@ export function generatePrintableHTML(data: InstitutionResponse): string {
               معطيات حول تمويل المؤسسة
             </div>
             <div class="fields-container">
-              <div class="field-row">
-                <div class="field-label">مساهمة التعاون الوطني</div>
-                <div class="field-value">${getDisplayValue(data.financing?.entraideContribution)} درهم</div>
+              <div class="sub-section">مصادر تمويل البناء</div>
+              <div class="checkbox-group">
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.solidarityMinistry)}</span> وزارة التضامن</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.nationalEntraide)}</span> التعاون الوطني</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.indh)}</span> المبادرة الوطنية للتنمية البشرية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.commune)}</span> الجماعة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.fondationMohammed5)}</span> مؤسسة محمد الخامس للتضامن</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.nationalRevival)}</span> الإنعاش الوطني</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.association)}</span> الجمعية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.otherConstruction)}</span> أخرى ${data.financing?.otherConstructionDetail ? `(${data.financing.otherConstructionDetail})` : ''}</span>
+                </div>
               </div>
               <div class="field-row">
-                <div class="field-label">مساهمة الجمعية</div>
-                <div class="field-value">${getDisplayValue(data.financing?.associationContribution)} درهم</div>
+                <div class="field-label">التكلفة الإجمالية للبناء</div>
+                <div class="field-value">${getDisplayValue(data.financing?.totalConstructionCost)} درهم</div>
+              </div>
+              <div class="sub-section">مصادر تمويل التجهيز</div>
+              <div class="checkbox-group">
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentSolidarityMinistry)}</span> وزارة التضامن</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentNationalEntraide)}</span> التعاون الوطني</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentIndh)}</span> المبادرة الوطنية للتنمية البشرية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentCommune)}</span> الجماعة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentFondationMohammed5)}</span> مؤسسة محمد الخامس للتضامن</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentAssociation)}</span> الجمعية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentOther)}</span> أخرى ${data.financing?.equipmentOtherDetail ? `(${data.financing.equipmentOtherDetail})` : ''}</span>
+                </div>
+              </div>
+              <div class="sub-section">مصادر تمويل التسيير</div>
+              <div class="checkbox-group">
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingIndh)}</span> المبادرة الوطنية للتنمية البشرية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingNationalEntraide)}</span> التعاون الوطني</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingNationalEducation)}</span> التربية الوطنية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingCommune)}</span> الجماعة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingParentContributions)}</span> مساهمات أولياء الأمور</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingDonors)}</span> المحسنون</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingAssociationOwnSources)}</span> موارد الجمعية الذاتية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingOther)}</span> أخرى</span>
+                </div>
+              </div>
+              <div class="sub-section">التكاليف</div>
+              <div class="field-row">
+                <div class="field-label">التكلفة السنوية للتسيير</div>
+                <div class="field-value">${getDisplayValue(data.financing?.annualManagementCost)} درهم</div>
               </div>
               <div class="field-row">
-                <div class="field-label">مساهمة السلطات المحلية</div>
-                <div class="field-value">${getDisplayValue(data.financing?.localAuthorityContribution)} درهم</div>
+                <div class="field-label">التكلفة السنوية للموارد البشرية</div>
+                <div class="field-value">${getDisplayValue(data.financing?.annualHRCost)} درهم</div>
               </div>
               <div class="field-row">
-                <div class="field-label">مساهمات أخرى</div>
-                <div class="field-value">${getDisplayValue(data.financing?.otherContribution)} درهم ${data.financing?.otherContributionSource ? `(${data.financing.otherContributionSource})` : ''}</div>
+                <div class="field-label">التكلفة السنوية للإطعام</div>
+                <div class="field-value">${getDisplayValue(data.financing?.annualMealsCost)} درهم</div>
+              </div>
+              <div class="field-row">
+                <div class="field-label">التكلفة السنوية للفرد</div>
+                <div class="field-value">${getDisplayValue(data.financing?.individualAnnualCost)} درهم</div>
+              </div>
+              <div class="sub-section">توزيع الحصص</div>
+              <div class="field-row">
+                <div class="field-label">حصة الجمعية</div>
+                <div class="field-value">${getDisplayValue(data.financing?.associationShare)}%</div>
+              </div>
+              <div class="field-row">
+                <div class="field-label">حصة التربية الوطنية</div>
+                <div class="field-value">${getDisplayValue(data.financing?.educationShare)}%</div>
+              </div>
+              <div class="field-row">
+                <div class="field-label">حصص أخرى</div>
+                <div class="field-value">${getDisplayValue(data.financing?.otherShare)}%</div>
               </div>
             </div>
           </div>
@@ -651,40 +717,88 @@ export function generatePrintableHTML(data: InstitutionResponse): string {
           <div class="section">
             <div class="section-title">
               <span class="section-number">IV</span>
-              معطيات حول الاستهداف وتوسعة الخدمات
+              معطيات حول الاستهداف
             </div>
             <div class="fields-container">
+              <div class="sub-section">معايير الانتقاء</div>
+              <div class="checkbox-group">
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.socialSituation)}</span> الوضعية الاجتماعية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.distance)}</span> البعد عن المؤسسة التعليمية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.schoolResults)}</span> النتائج الدراسية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.scholarship)}</span> الحصول على منحة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.otherCriteria)}</span> أخرى ${data.targeting?.otherCriteriaDetail ? `(${data.targeting.otherCriteriaDetail})` : ''}</span>
+                </div>
+              </div>
+              <div class="sub-section">ترتيب الأولويات</div>
               <div class="field-row">
-                <div class="field-label">العدد المستهدف ذكور</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.targetBoys)}</div>
+                <div class="field-label">الأولوية 1</div>
+                <div class="field-value">${getDisplayValue(data.targeting?.priority1)}</div>
               </div>
               <div class="field-row">
-                <div class="field-label">العدد المستهدف إناث</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.targetGirls)}</div>
+                <div class="field-label">الأولوية 2</div>
+                <div class="field-value">${getDisplayValue(data.targeting?.priority2)}</div>
               </div>
               <div class="field-row">
-                <div class="field-label">المسجلون ذكور</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.registeredBoys)}</div>
+                <div class="field-label">الأولوية 3</div>
+                <div class="field-value">${getDisplayValue(data.targeting?.priority3)}</div>
               </div>
               <div class="field-row">
-                <div class="field-label">المسجلات إناث</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.registeredGirls)}</div>
+                <div class="field-label">الأولوية 4</div>
+                <div class="field-value">${getDisplayValue(data.targeting?.priority4)}</div>
               </div>
               <div class="field-row">
-                <div class="field-label">لائحة الانتظار ذكور</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.waitlistBoys)}</div>
+                <div class="field-label">الأولوية 5</div>
+                <div class="field-value">${getDisplayValue(data.targeting?.priority5)}</div>
               </div>
+              <div class="sub-section">جهة الانتقاء</div>
               <div class="field-row">
-                <div class="field-label">لائحة الانتظار إناث</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.waitlistGirls)}</div>
+                <div class="field-label">جهة الانتقاء</div>
+                <div class="field-value">
+                  <div class="checkbox-row">
+                    <span class="checkbox-item"><span class="check">${data.targeting?.selectionBody === 'ASSOCIATION_ALONE' ? '☑' : '☐'}</span> الجمعية لوحدها</span>
+                    <span class="checkbox-item"><span class="check">${data.targeting?.selectionBody === 'MIXED_COMMITTEE' ? '☑' : '☐'}</span> لجنة مختلطة</span>
+                  </div>
+                </div>
               </div>
-              <div class="field-row">
-                <div class="field-label">ذوي الاحتياجات الخاصة ذكور</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.specialNeedsBoys)}</div>
+              ${data.targeting?.selectionBody === 'MIXED_COMMITTEE' ? `
+              <div class="sub-section">أعضاء اللجنة</div>
+              <div class="checkbox-group">
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.committeeAssociation)}</span> الجمعية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.committeeNationalEntraide)}</span> التعاون الوطني</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.committeeNationalEducation)}</span> التربية الوطنية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.committeeCommune)}</span> الجماعة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.committeeLocalAuthorities)}</span> السلطات المحلية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.otherMember)}</span> أخرى ${data.targeting?.otherMemberDetail ? `(${data.targeting.otherMemberDetail})` : ''}</span>
+                </div>
               </div>
+              ` : ''}
+              <div class="sub-section">التعريفة</div>
               <div class="field-row">
-                <div class="field-label">ذوي الاحتياجات الخاصة إناث</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.specialNeedsGirls)}</div>
+                <div class="field-label">الخدمات مجانية</div>
+                <div class="field-value">${data.targeting?.servicesAreFree ? 'نعم' : 'لا'}</div>
+              </div>
+              ${!data.targeting?.servicesAreFree ? `
+              <div class="field-row">
+                <div class="field-label">نوع التعريفة</div>
+                <div class="field-value">
+                  <div class="checkbox-row">
+                    <span class="checkbox-item"><span class="check">${data.targeting?.tariffType === 'UNIFORM' ? '☑' : '☐'}</span> موحد</span>
+                    <span class="checkbox-item"><span class="check">${data.targeting?.tariffType === 'NON_UNIFORM' ? '☑' : '☐'}</span> حسب الشرائح</span>
+                  </div>
+                </div>
+              </div>
+              ${data.targeting?.tariffType === 'UNIFORM' ? `
+              <div class="field-row">
+                <div class="field-label">المبلغ الموحد</div>
+                <div class="field-value">${getDisplayValue(data.targeting?.uniformAmount)} درهم</div>
+              </div>
+              ` : ''}
+              ` : ''}
+              <div class="field-row">
+                <div class="field-label">عدد الطلبات غير الملباة</div>
+                <div class="field-value">${getDisplayValue(data.targeting?.unsatisfiedRequestsCount)}</div>
               </div>
             </div>
           </div>
@@ -696,25 +810,98 @@ export function generatePrintableHTML(data: InstitutionResponse): string {
               عدد المستفيدين من خدمتي الإيواء والإطعام بالمؤسسة
             </div>
             <div class="fields-container">
+              <div class="sub-section">المستفيدون من الإيواء حسب المواسم</div>
+              <table class="stats-table">
+                <thead>
+                  <tr>
+                    <th>الموسم</th>
+                    <th>المجموع</th>
+                    <th>ذكور</th>
+                    <th>إناث</th>
+                    <th>ابتدائي</th>
+                    <th>إعدادي</th>
+                    <th>ثانوي</th>
+                    <th>أيتام</th>
+                    <th>في وضعية إعاقة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2023-2024</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.totalBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.maleBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.femaleBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.primaryBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.middleSchoolBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.highSchoolBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.orphans)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2324?.disabled)}</td>
+                  </tr>
+                  <tr>
+                    <td>2024-2025</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.totalBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.maleBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.femaleBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.primaryBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.middleSchoolBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.highSchoolBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.orphans)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2425?.disabled)}</td>
+                  </tr>
+                  <tr>
+                    <td>2025-2026</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.totalBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.maleBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.femaleBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.primaryBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.middleSchoolBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.highSchoolBeneficiaries)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.orphans)}</td>
+                    <td>${getDisplayValue(data.housingMeals?.season2526?.disabled)}</td>
+                  </tr>
+                </tbody>
+              </table>
               <div class="field-row">
-                <div class="field-label">عدد الأسرة المتوفرة</div>
-                <div class="field-value">${getDisplayValue(data.housingMeals?.bedsAvailable)}</div>
+                <div class="field-label">ملاحظات حول الطاقة الاستيعابية</div>
+                <div class="field-value">${getDisplayValue(data.housingMeals?.capacityRemarks)}</div>
+              </div>
+              <div class="sub-section">معطيات الإطعام</div>
+              <div class="field-row">
+                <div class="field-label">مجموع المستفيدين من الإطعام 2025-2026</div>
+                <div class="field-value">${getDisplayValue(data.housingMeals?.totalMealBeneficiaries2526)}</div>
               </div>
               <div class="field-row">
-                <div class="field-label">عدد الأسرة المشغولة</div>
-                <div class="field-value">${getDisplayValue(data.housingMeals?.bedsOccupied)}</div>
+                <div class="field-label">المستفيدون من الجمعية</div>
+                <div class="field-value">${getDisplayValue(data.housingMeals?.associationMealBeneficiaries)}</div>
               </div>
               <div class="field-row">
-                <div class="field-label">عدد الغرف</div>
-                <div class="field-value">${getDisplayValue(data.housingMeals?.roomsCount)}</div>
+                <div class="field-label">المستفيدون من التربية الوطنية</div>
+                <div class="field-value">${getDisplayValue(data.housingMeals?.educationMealBeneficiaries)}</div>
               </div>
               <div class="field-row">
-                <div class="field-label">عدد الوجبات في اليوم</div>
-                <div class="field-value">${getDisplayValue(data.housingMeals?.mealsPerDay)}</div>
+                <div class="field-label">عدد المستفيدين من المنحة الكاملة</div>
+                <div class="field-value">${getDisplayValue(data.housingMeals?.fullGrantCount)}</div>
               </div>
               <div class="field-row">
-                <div class="field-label">وجود مطعم</div>
-                <div class="field-value">${data.housingMeals?.hasCanteen ? 'نعم' : 'لا'}</div>
+                <div class="field-label">عدد المستفيدين من نصف المنحة</div>
+                <div class="field-value">${getDisplayValue(data.housingMeals?.halfGrantCount)}</div>
+              </div>
+              <div class="field-row">
+                <div class="field-label">نوع خدمة الإطعام</div>
+                <div class="field-value">
+                  <div class="checkbox-row">
+                    <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'INTERNAL' ? '☑' : '☐'}</span> داخلي</span>
+                    <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'EXTERNAL' ? '☑' : '☐'}</span> خارجي</span>
+                  </div>
+                </div>
+              </div>
+              <div class="sub-section">اقتراحات التحسين</div>
+              <div class="checkbox-group">
+                <div class="checkbox-row">
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.housingMeals?.increaseProducts)}</span> الرفع من المواد الغذائية</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.housingMeals?.externalCaterer)}</span> الاستعانة بمموّن خارجي</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.housingMeals?.otherSuggestion)}</span> أخرى ${data.housingMeals?.otherSuggestionDetail ? `(${data.housingMeals.otherSuggestionDetail})` : ''}</span>
+                </div>
               </div>
             </div>
           </div>

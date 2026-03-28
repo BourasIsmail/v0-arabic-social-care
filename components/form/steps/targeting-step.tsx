@@ -151,7 +151,7 @@ export function TargetingStep() {
             </Select>
           </div>
 
-          {selectionBody === SelectionBody.COMMITTEE && (
+          {selectionBody === SelectionBody.MIXED_COMMITTEE && (
             <div className="space-y-4">
               <Label>أعضاء اللجنة</Label>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -236,7 +236,7 @@ export function TargetingStep() {
                 </div>
               )}
 
-              {tariffType === TariffType.BRACKETED && (
+              {tariffType === TariffType.NON_UNIFORM && (
                 <div className="space-y-2">
                   <Label htmlFor="tariffBracket">شريحة التعريفة</Label>
                   <Select
