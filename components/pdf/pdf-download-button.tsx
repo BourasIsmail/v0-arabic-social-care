@@ -29,7 +29,7 @@ export function PDFDownloadButton({
         communeName: data.communeName || data.communeId?.toString(),
       };
 
-      const response = await fetch('/api/generate-pdf', {
+      const response = await fetch('/api/api/generate-pdf', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
