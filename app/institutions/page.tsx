@@ -235,7 +235,7 @@ export default function InstitutionsPage() {
               <div className="relative flex-1">
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="البحث ع�� مؤسسة..."
+                  placeholder="البحث عن مؤسسة..."
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -340,7 +340,7 @@ export default function InstitutionsPage() {
                                     <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
                                     <AlertDialogDescription>
                                       هل أنت متأكد من حذف هذه المؤسسة؟ لا يمكن التراجع عن هذا
-                                      ال��جراء.
+                                      الإجراء.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
@@ -377,7 +377,7 @@ export default function InstitutionsPage() {
                       السابق
                     </Button>
                     <span className="text-sm text-muted-foreground">
-                      ص��حة {data.number + 1} م�� {data.totalPages}
+                      صفحة {data.number + 1} من {data.totalPages}
                     </span>
                     <Button
                       variant="outline"

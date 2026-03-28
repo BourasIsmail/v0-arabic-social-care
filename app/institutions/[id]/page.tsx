@@ -23,6 +23,7 @@ import {
   tariffTypeLabels,
   mealServiceTypeLabels,
   staffTypeLabels,
+  distanceLabels,
 } from "@/lib/types";
 import type { InstitutionResponse } from "@/lib/types";
 
@@ -156,9 +157,9 @@ export default function InstitutionDetailPage({
               </CardHeader>
               <CardContent className="space-y-1">
                 <InfoRow label="العنوان" value={data.address} />
-                <InfoRow label="الجهة" value={data.region} />
-                <InfoRow label="العمالة/الإقليم" value={data.prefectureProvince} />
-                <InfoRow label="الجماعة" value={data.commune} />
+                <InfoRow label="الجهة" value={data.regionName} />
+                <InfoRow label="العمالة/الإقليم" value={data.prefectureName} />
+                <InfoRow label="الجماعة" value={data.communeName} />
                 <InfoRow label="الوسط" value={data.milieu && milieuLabels[data.milieu]} />
               </CardContent>
             </Card>
@@ -244,6 +245,54 @@ export default function InstitutionDetailPage({
               </Card>
             )}
 
+            {/* Targeting Card */}
+            {data.targeting && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>الاستهداف والتعرفة</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-1">
+                  <InfoRow
+                    label="جهة الاختيار"
+                    value={data.targeting.selectionBody && selectionBodyLabels[data.targeting.selectionBody]}
+                  />
+                  <InfoRow
+                    label="الخدمات مجانية"
+                    value={data.targeting.servicesAreFree ? "نعم" : "لا"}
+                  />
+                  {!data.targeting.servicesAreFree && data.targeting.tariffType && (
+                    <InfoRow
+                      label="نوع التعرفة"
+                      value={tariffTypeLabels[data.targeting.tariffType]}
+                    />
+                  )}
+                  {data.targeting.uniformAmount && (
+                    <InfoRow
+                      label="مبلغ موحد"
+                      value={`${data.targeting.uniformAmount} درهم`}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Distance Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle>البعد الجغرافي</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-1">
+                <InfoRow
+                  label="المسافة إلى أقرب مؤسسة تعليمية"
+                  value={data.distanceToSchool && distanceLabels[data.distanceToSchool]}
+                />
+                <InfoRow
+                  label="المسافة إلى أقرب داخلية عمومية"
+                  value={data.distanceToNationalBoardingSchool && distanceLabels[data.distanceToNationalBoardingSchool]}
+                />
+              </CardContent>
+            </Card>
+
             {/* Staff Card */}
             {data.staffMembers && data.staffMembers.length > 0 && (
               <Card>
@@ -324,19 +373,16 @@ export default function InstitutionDetailPage({
                     <Badge variant="secondary">الإطعام</Badge>
                   )}
                   {data.educationalSupport && (
-                    <Badge variant="secondary">الدعم التربوي</Badge>
+                    <Badge variant="secondary">التتبع التربوي والمواكبة الاجتماعية</Badge>
                   )}
                   {data.culturalActivities && (
-                    <Badge variant="secondary">الأنشطة الثقافية</Badge>
+                    <Badge variant="secondary">التنشيط الثقافي والرياضي والترفيهي</Badge>
                   )}
                   {data.healthCare && (
-                    <Badge variant="secondary">الرعاية الصحية</Badge>
-                  )}
-                  {data.insurance && (
-                    <Badge variant="secondary">التأمين</Badge>
+                    <Badge variant="secondary">العلاجات الصحية الأولية</Badge>
                   )}
                   {data.psychologicalSupport && (
-                    <Badge variant="secondary">الدعم النفسي</Badge>
+                    <Badge variant="secondary">الدعم والمواكبة الطبية والنفسية</Badge>
                   )}
                 </div>
               </CardContent>

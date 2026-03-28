@@ -371,11 +371,10 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
             {[
               { name: "housing", label: "الإيواء" },
               { name: "meals", label: "الإطعام" },
-              { name: "educationalSupport", label: "الدعم التربوي" },
-              { name: "culturalActivities", label: "الأنشطة الثقافية" },
-              { name: "healthCare", label: "الرعاية الصحية" },
-              { name: "insurance", label: "التأمين" },
-              { name: "psychologicalSupport", label: "الدعم النفسي" },
+              { name: "educationalSupport", label: "التتبع التربوي والمواكبة الاجتماعية" },
+              { name: "culturalActivities", label: "التنشيط الثقافي والرياضي والترفيهي" },
+              { name: "healthCare", label: "العلاجات الصحية الأولية" },
+              { name: "psychologicalSupport", label: "الدعم والمواكبة الطبية والنفسية" },
             ].map((service) => (
               <div key={service.name} className="flex items-center gap-2">
                 <Checkbox
@@ -403,21 +402,38 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
               <Label>الطاقة الإجمالية</Label>
               <Input
                 type="number"
-                {...register("totalCapacity", { valueAsNumber: true })}
+                value={watch("totalCapacity") || ""}
+                readOnly
+                className="bg-muted"
               />
+              <p className="text-xs text-muted-foreground">يتم حسابها تلقائيا</p>
             </div>
             <div className="space-y-2">
               <Label>طاقة الذكور</Label>
               <Input
                 type="number"
-                {...register("maleCapacity", { valueAsNumber: true })}
+                {...register("maleCapacity", { 
+                  valueAsNumber: true,
+                  onChange: (e) => {
+                    const males = parseInt(e.target.value) || 0;
+                    const females = watch("femaleCapacity") || 0;
+                    setValue("totalCapacity", males + females);
+                  }
+                })}
               />
             </div>
             <div className="space-y-2">
               <Label>طاقة الإناث</Label>
               <Input
                 type="number"
-                {...register("femaleCapacity", { valueAsNumber: true })}
+                {...register("femaleCapacity", { 
+                  valueAsNumber: true,
+                  onChange: (e) => {
+                    const females = parseInt(e.target.value) || 0;
+                    const males = watch("maleCapacity") || 0;
+                    setValue("totalCapacity", males + females);
+                  }
+                })}
               />
             </div>
           </div>
@@ -631,6 +647,7 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
           {/* Season data */}
           {["season2324", "season2425", "season2526"].map((season) => {
             const seasonLabel = season === "season2324" ? "2023-2024" : season === "season2425" ? "2024-2025" : "2025-2026";
+            const seasonKey = season as "season2324" | "season2425" | "season2526";
             return (
               <div key={season} className="border rounded-lg p-4 space-y-4">
                 <h4 className="font-medium">موسم {seasonLabel}</h4>
@@ -639,21 +656,38 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
                     <Label>إجمالي المستفيدين</Label>
                     <Input
                       type="number"
-                      {...register(`housingMeals.${season}.totalBeneficiaries` as keyof InstitutionRequest, { valueAsNumber: true })}
+                      value={watch(`housingMeals.${seasonKey}.totalBeneficiaries`) || ""}
+                      readOnly
+                      className="bg-muted"
                     />
+                    <p className="text-xs text-muted-foreground">يتم حسابه تلقائيا</p>
                   </div>
                   <div className="space-y-2">
                     <Label>المستفيدون (ذكور)</Label>
                     <Input
                       type="number"
-                      {...register(`housingMeals.${season}.maleBeneficiaries` as keyof InstitutionRequest, { valueAsNumber: true })}
+                      {...register(`housingMeals.${seasonKey}.maleBeneficiaries` as keyof InstitutionRequest, { 
+                        valueAsNumber: true,
+                        onChange: (e) => {
+                          const males = parseInt(e.target.value) || 0;
+                          const females = watch(`housingMeals.${seasonKey}.femaleBeneficiaries`) || 0;
+                          setValue(`housingMeals.${seasonKey}.totalBeneficiaries` as keyof InstitutionRequest, males + females);
+                        }
+                      })}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>المستفيدون (إناث)</Label>
                     <Input
                       type="number"
-                      {...register(`housingMeals.${season}.femaleBeneficiaries` as keyof InstitutionRequest, { valueAsNumber: true })}
+                      {...register(`housingMeals.${seasonKey}.femaleBeneficiaries` as keyof InstitutionRequest, { 
+                        valueAsNumber: true,
+                        onChange: (e) => {
+                          const females = parseInt(e.target.value) || 0;
+                          const males = watch(`housingMeals.${seasonKey}.maleBeneficiaries`) || 0;
+                          setValue(`housingMeals.${seasonKey}.totalBeneficiaries` as keyof InstitutionRequest, males + females);
+                        }
+                      })}
                     />
                   </div>
                   <div className="space-y-2">

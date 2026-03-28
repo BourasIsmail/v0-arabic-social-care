@@ -265,9 +265,12 @@ export function InstitutionStep() {
             <Input
               id="totalCapacity"
               type="number"
-              {...register("totalCapacity", { valueAsNumber: true, min: 0 })}
-              placeholder="العدد الإجمالي"
+              value={watch("totalCapacity") || ""}
+              readOnly
+              className="bg-muted"
+              placeholder="يتم حسابها تلقائيا"
             />
+            <p className="text-xs text-muted-foreground">يتم حسابها تلقائيا من مجموع الذكور والإناث</p>
           </div>
 
           <div className="space-y-2">
@@ -275,7 +278,15 @@ export function InstitutionStep() {
             <Input
               id="maleCapacity"
               type="number"
-              {...register("maleCapacity", { valueAsNumber: true, min: 0 })}
+              {...register("maleCapacity", { 
+                valueAsNumber: true, 
+                min: 0,
+                onChange: (e) => {
+                  const males = parseInt(e.target.value) || 0;
+                  const females = watch("femaleCapacity") || 0;
+                  setValue("totalCapacity", males + females);
+                }
+              })}
               placeholder="عدد الذكور"
             />
           </div>
@@ -285,7 +296,15 @@ export function InstitutionStep() {
             <Input
               id="femaleCapacity"
               type="number"
-              {...register("femaleCapacity", { valueAsNumber: true, min: 0 })}
+              {...register("femaleCapacity", { 
+                valueAsNumber: true, 
+                min: 0,
+                onChange: (e) => {
+                  const females = parseInt(e.target.value) || 0;
+                  const males = watch("maleCapacity") || 0;
+                  setValue("totalCapacity", males + females);
+                }
+              })}
               placeholder="عدد الإناث"
             />
           </div>
