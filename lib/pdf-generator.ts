@@ -111,7 +111,7 @@ function getLabelValue(category: keyof typeof labels, value: string | undefined)
   return categoryLabels[value] || value;
 }
 
-export function generatePrintableHTML(data: InstitutionResponse): string {
+export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: string): string {
   const now = new Date();
   const dateStr = now.toLocaleDateString('ar-MA', {
     year: 'numeric',
@@ -133,9 +133,8 @@ export function generatePrintableHTML(data: InstitutionResponse): string {
     </tr>
   `).join('');
 
-  // Logo as base64 data URL - embedded directly for PDF generation
-  // This is the official header logos image
-  const logoBase64 = 'LOGO_PLACEHOLDER';
+  // Logo URL - use base64 if provided, otherwise use relative path
+  const logoUrl = logoBase64 || '/images/header-logos.png';
 
   return `
     <!DOCTYPE html>
