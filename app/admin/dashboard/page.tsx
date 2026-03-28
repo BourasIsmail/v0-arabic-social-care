@@ -128,30 +128,34 @@ export default function AdminDashboardPage() {
 
   return (
     <ProtectedRoute requiredRole="ADMIN">
-      <div className="min-h-screen bg-background" dir="rtl">
+      <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background" dir="rtl">
         <AppHeader subtitle="لوحة التحكم - إحصائيات المؤسسات" />
 
         <main className="container mx-auto px-4 py-8">
           {/* Summary Cards - Row 1 */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
-            <Card>
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   إجمالي المؤسسات
                 </CardTitle>
-                <Building2 className="h-4 w-4 text-muted-foreground" />
+                <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Building2 className="h-5 w-5 text-primary" />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{stats?.totalInstitutions || 0}</div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   الطاقة الاستيعابية
                 </CardTitle>
-                <Home className="h-4 w-4 text-muted-foreground" />
+                <div className="h-9 w-9 rounded-lg bg-green-500/10 flex items-center justify-center">
+                  <Home className="h-5 w-5 text-green-600" />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{stats?.totalCapacity?.toLocaleString() || 0}</div>
@@ -163,27 +167,31 @@ export default function AdminDashboardPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   المستفيدون
                 </CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <div className="h-9 w-9 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <Users className="h-5 w-5 text-blue-600" />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{stats?.totalBeneficiaries?.toLocaleString() || 0}</div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   المؤسسات المرخصة
                 </CardTitle>
-                <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                <div className="h-9 w-9 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                  <CheckCircle className="h-5 w-5 text-emerald-600" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-green-600">{stats?.licensedCount || 0}</div>
+                <div className="text-3xl font-bold text-emerald-600">{stats?.licensedCount || 0}</div>
                 <p className="text-xs text-muted-foreground">
                   من أصل {stats?.totalInstitutions || 0} مؤسسة
                 </p>
@@ -193,24 +201,28 @@ export default function AdminDashboardPage() {
 
           {/* Summary Cards - Row 2 */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-            <Card>
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   إجمالي الموظفين
                 </CardTitle>
-                <UserCog className="h-4 w-4 text-muted-foreground" />
+                <div className="h-9 w-9 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                  <UserCog className="h-5 w-5 text-orange-600" />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{stats?.totalStaffCount?.toLocaleString() || 0}</div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   مؤسسات بالإيواء
                 </CardTitle>
-                <Home className="h-4 w-4 text-muted-foreground" />
+                <div className="h-9 w-9 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+                  <Home className="h-5 w-5 text-cyan-600" />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{stats?.institutionsWithHousing || 0}</div>
@@ -220,12 +232,14 @@ export default function AdminDashboardPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   مؤسسات بالإطعام
                 </CardTitle>
-                <Utensils className="h-4 w-4 text-muted-foreground" />
+                <div className="h-9 w-9 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                  <Utensils className="h-5 w-5 text-amber-600" />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{stats?.institutionsWithMeals || 0}</div>
@@ -235,12 +249,14 @@ export default function AdminDashboardPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   غير مرخصة
                 </CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                <div className="h-9 w-9 rounded-lg bg-red-500/10 flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-red-600" />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold text-red-600">{stats?.unlicensedCount || 0}</div>
@@ -253,7 +269,7 @@ export default function AdminDashboardPage() {
 
           {/* Type Distribution Cards */}
           <div className="grid gap-4 md:grid-cols-3 mb-8">
-            <Card className="border-r-4 border-r-blue-500">
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow border-r-4 border-r-blue-500">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-muted-foreground">دور الطالب</CardTitle>
               </CardHeader>
@@ -262,7 +278,7 @@ export default function AdminDashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-r-4 border-r-pink-500">
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow border-r-4 border-r-pink-500">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-muted-foreground">دور الطالبة</CardTitle>
               </CardHeader>
@@ -271,12 +287,12 @@ export default function AdminDashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-r-4 border-r-purple-500">
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow border-r-4 border-r-violet-500">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-muted-foreground">مختلطة</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-purple-600">{stats?.mixedCount || 0}</div>
+                <div className="text-2xl font-bold text-violet-600">{stats?.mixedCount || 0}</div>
               </CardContent>
             </Card>
           </div>
@@ -284,7 +300,7 @@ export default function AdminDashboardPage() {
           {/* Charts Row 1 */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
             {/* Institution Type Pie Chart */}
-            <Card>
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle>توزيع المؤسسات حسب النوع</CardTitle>
                 <CardDescription>دار الطالب، دار الطالبة، ومختلطة</CardDescription>
@@ -335,7 +351,7 @@ export default function AdminDashboardPage() {
             </Card>
 
             {/* Milieu Pie Chart */}
-            <Card>
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle>التوزيع حسب الوسط</CardTitle>
                 <CardDescription>حضري وقروي</CardDescription>
@@ -386,7 +402,7 @@ export default function AdminDashboardPage() {
             </Card>
 
             {/* Legal Status Pie Chart */}
-            <Card>
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle>الوضع القانوني</CardTitle>
                 <CardDescription>مرخصة وغير مرخصة</CardDescription>
@@ -438,7 +454,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Region Bar Chart */}
-          <Card className="mb-8">
+          <Card className="mb-8 border-border/50 bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>المؤسسات حسب الجهة</CardTitle>
               <CardDescription>
