@@ -49,10 +49,12 @@ export function UserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="gap-2">
-          <User className="h-4 w-4" />
-          <span>الملف الشخصي</span>
-        </DropdownMenuItem>
+        <Link href="/profile">
+          <DropdownMenuItem className="gap-2 cursor-pointer">
+            <User className="h-4 w-4" />
+            <span>الملف الشخصي</span>
+          </DropdownMenuItem>
+        </Link>
         {user.role === "ADMIN" && (
           <>
             <Link href="/admin/dashboard">

@@ -7,6 +7,7 @@ import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
 import { useAuth } from "@/lib/auth-context";
 import { useAuthSWR, useAuthMutate } from "@/lib/use-auth-swr";
+import { API_ENDPOINTS, buildApiUrl } from "@/lib/api-config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -79,13 +80,13 @@ export default function InstitutionsPage() {
 
   // Only fetch when user data is ready (prevents race condition for USER role)
   const { data: rawData, error, isLoading: isDataLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
-    shouldFetch ? `/api/api/v1/institutions?${queryParams.toString()}` : null
+    shouldFetch ? `${buildApiUrl(API_ENDPOINTS.institutions.list)}?${queryParams.toString()}` : null
   );
   
   // Fetch communes for user's prefecture (for USER role filtering)
   // Since backend doesn't return prefectureId in institution data, we filter by communeId
   const { data: prefectureCommunes } = useAuthSWR<Array<{ id: number; name: string }>>(
-    isUserRole && userPrefectureId ? `/api/api/v1/prefectures/${userPrefectureId}/communes` : null
+    isUserRole && userPrefectureId ? buildApiUrl(API_ENDPOINTS.geo.communesByPrefecture(userPrefectureId)) : null
   );
   
   // Combined loading state (auth loading OR data loading)
@@ -118,7 +119,7 @@ export default function InstitutionsPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await authFetch(`/api/api/v1/institutions/${id}`, {
+      const response = await authFetch(buildApiUrl(API_ENDPOINTS.institutions.delete(id)), {
         method: "DELETE",
       });
 
@@ -137,7 +138,7 @@ export default function InstitutionsPage() {
 
   const handleExport = async () => {
     try {
-      const response = await authFetch("/api/api/v1/institutions/export");
+      const response = await authFetch(buildApiUrl(API_ENDPOINTS.institutions.exportCsv));
       if (!response.ok) throw new Error("Export failed");
 
       const blob = await response.blob();
