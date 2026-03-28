@@ -40,8 +40,8 @@ export default function HomePage() {
 
               {/* Description */}
               <p className="text-xl text-muted-foreground text-center max-w-2xl mx-auto mb-10 leading-relaxed">
-                منصة رقمية متكاملة لجمع وإدارة وتحليل بيانات دور الطالب والطالبة 
-                ومؤسسات الرعاية الاجتماعية على المستوى الوطني
+                تشخيص مؤسسات الرعاية الاجتماعية التي تتكفل بالأطفال المتمدرسين
+                (دور الطالب والطالبة)
               </p>
 
               {/* CTA Buttons */}
@@ -61,21 +61,7 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Quick Stats */}
-              <div className="grid grid-cols-3 gap-6 mt-16 max-w-2xl mx-auto">
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">12</div>
-                  <div className="text-sm text-muted-foreground">جهة</div>
-                </div>
-                <div className="text-center border-x border-border">
-                  <div className="text-3xl md:text-4xl font-bold text-accent mb-1">75</div>
-                  <div className="text-sm text-muted-foreground">إقليم وعمالة</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">+1500</div>
-                  <div className="text-sm text-muted-foreground">مؤسسة</div>
-                </div>
-              </div>
+
             </div>
           </div>
         </section>
