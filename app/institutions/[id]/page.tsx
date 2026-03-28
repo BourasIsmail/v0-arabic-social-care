@@ -78,21 +78,21 @@ export default function InstitutionDetailPage({
   }
 
   const InfoRow = ({ label, value }: { label: string; value?: string | number | null }) => (
-    <div className="flex justify-between py-2 border-b border-border last:border-0">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium">{value || "-"}</span>
+    <div className="flex justify-between py-3 border-b border-border/50 last:border-0">
+      <span className="text-muted-foreground text-sm">{label}</span>
+      <span className="font-medium text-foreground">{value || "-"}</span>
     </div>
   );
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
         {/* Header */}
-        <header className="border-b border-border bg-card">
+        <header className="sticky top-0 z-50 glass border-b border-border/50">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
-              <Link href="/institutions" className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+              <Link href="/institutions" className="flex items-center gap-3 group">
+                <div className="w-11 h-11 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
                   <Building2 className="h-6 w-6 text-primary-foreground" />
                 </div>
                 <div>
@@ -102,16 +102,16 @@ export default function InstitutionDetailPage({
               </Link>
               <div className="flex items-center gap-2">
                 <Link href="/institutions">
-                  <Button variant="ghost" className="gap-2">
+                  <Button variant="ghost" className="gap-2 rounded-lg">
                     <ArrowRight className="h-4 w-4" />
-                    العودة
+                    <span className="hidden sm:inline">العودة</span>
                   </Button>
                 </Link>
                 <PDFDownloadButton data={data} variant="outline" />
                 <Link href={`/institutions/${id}/edit`}>
-                  <Button className="gap-2">
+                  <Button className="gap-2 rounded-lg shadow-md shadow-primary/20">
                     <Pencil className="h-4 w-4" />
-                    تعديل
+                    <span className="hidden sm:inline">تعديل</span>
                   </Button>
                 </Link>
                 <UserMenu />

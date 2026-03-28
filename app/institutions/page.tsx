@@ -42,6 +42,7 @@ import {
   InstitutionType,
   institutionTypeLabels,
 } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import type { InstitutionSummary, PageResponse } from "@/lib/types";
 import { toast } from "sonner";
 
@@ -194,36 +195,40 @@ export default function InstitutionsPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-4 mb-8">
-          <Card>
+          <Card className="card-hover overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-primary to-primary/50" />
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">إجمالي المؤسسات</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">إجمالي المؤسسات</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{stats?.total ?? data?.totalElements ?? 0}</p>
+              <p className="text-3xl font-bold text-foreground">{stats?.total ?? data?.totalElements ?? 0}</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="card-hover overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-primary" />
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">دور الطالب</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">دور الطالب</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-primary">{stats?.DAR_TALIB ?? "-"}</p>
+              <p className="text-3xl font-bold text-primary">{stats?.DAR_TALIB ?? "-"}</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="card-hover overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-accent" />
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">دور الطالبة</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">دور الطالبة</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-accent">{stats?.DAR_TALIBA ?? "-"}</p>
+              <p className="text-3xl font-bold text-accent">{stats?.DAR_TALIBA ?? "-"}</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="card-hover overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-primary to-accent" />
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">مختلطة</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">مختلطة</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{stats?.MIXED ?? "-"}</p>
+              <p className="text-3xl font-bold">{stats?.MIXED ?? "-"}</p>
             </CardContent>
           </Card>
         </div>
@@ -304,7 +309,12 @@ export default function InstitutionsPage() {
                           </TableCell>
                           <TableCell>{institution.associationName}</TableCell>
                           <TableCell>
-                            <span className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs">
+                            <span className={cn(
+                              "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium",
+                              institution.institutionType === "DAR_TALIB" && "bg-primary/10 text-primary",
+                              institution.institutionType === "DAR_TALIBA" && "bg-accent/10 text-accent",
+                              institution.institutionType === "MIXED" && "bg-secondary text-secondary-foreground"
+                            )}>
                               {institutionTypeLabels[institution.institutionType]}
                             </span>
                           </TableCell>
