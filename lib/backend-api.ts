@@ -1,5 +1,8 @@
-// Backend API configuration
-export const BACKEND_URL = process.env.BACKEND_URL || "https://enfance.entraide.ma/api";
+// Backend API configuration - re-exports from centralized config
+import { API_BASE_URL, buildApiUrl } from "./api-config";
+
+// Re-export for backward compatibility
+export const BACKEND_URL = API_BASE_URL;
 
 export async function backendFetch(
   path: string,
@@ -16,7 +19,7 @@ export async function backendFetch(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const url = `${BACKEND_URL}${path}`;
+  const url = buildApiUrl(path);
   
   return fetch(url, {
     ...options,

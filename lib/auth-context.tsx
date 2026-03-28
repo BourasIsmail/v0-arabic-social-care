@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useRef,
   type ReactNode,
 } from "react";
 import type {
@@ -15,14 +16,14 @@ import type {
   AuthResponse,
   AuthState,
 } from "./auth-types";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://enfance.entraide.ma/api";
+import { API_BASE_URL, API_ENDPOINTS, buildApiUrl } from "./api-config";
 
 interface AuthContextType extends AuthState {
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => void;
   refreshAccessToken: () => Promise<string | null>;
+  updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,7 +35,6 @@ const STORAGE_KEYS = {
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [mounted, setMounted] = useState(false);
   const [state, setState] = useState<AuthState>({
     user: null,
     accessToken: null,
@@ -43,16 +43,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading: true,
   });
 
-  // Track mount state
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Ref to track if refresh is in progress (prevents race conditions)
+  const refreshPromiseRef = useRef<Promise<string | null> | null>(null);
+  const isRefreshingRef = useRef(false);
 
   // Initialize auth state from localStorage (only on client)
   useEffect(() => {
     if (typeof window === "undefined") return;
     
-    // Use requestAnimationFrame to defer localStorage access
     const initAuth = () => {
       try {
         const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
@@ -72,13 +70,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setState((prev) => ({ ...prev, isLoading: false }));
         }
       } catch {
-        // Invalid stored data, clear it
         clearStorage();
         setState((prev) => ({ ...prev, isLoading: false }));
       }
     };
 
-    // Defer to next frame to avoid hydration issues
     requestAnimationFrame(initAuth);
   }, []);
 
@@ -103,11 +99,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (data: LoginRequest) => {
-    const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+    const response = await fetch(buildApiUrl(API_ENDPOINTS.auth.login), {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
 
@@ -121,11 +115,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (data: RegisterRequest) => {
-    const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
+    const response = await fetch(buildApiUrl(API_ENDPOINTS.auth.register), {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
 
@@ -147,13 +139,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: false,
       isLoading: false,
     });
-    // Use window.location for navigation to avoid router initialization issues
     if (typeof window !== "undefined") {
       window.location.href = "/login";
     }
   }, []);
 
+  const updateUser = useCallback((user: User) => {
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+    setState((prev) => ({ ...prev, user }));
+  }, []);
+
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
+    // If already refreshing, wait for that promise
+    if (isRefreshingRef.current && refreshPromiseRef.current) {
+      return refreshPromiseRef.current;
+    }
+
     const currentRefreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
     
     if (!currentRefreshToken) {
@@ -161,27 +162,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return null;
     }
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ refreshToken: currentRefreshToken }),
-      });
+    isRefreshingRef.current = true;
 
-      if (!response.ok) {
+    refreshPromiseRef.current = (async () => {
+      try {
+        const response = await fetch(buildApiUrl(API_ENDPOINTS.auth.refresh), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refreshToken: currentRefreshToken }),
+        });
+
+        if (!response.ok) {
+          logout();
+          return null;
+        }
+
+        const authResponse: AuthResponse = await response.json();
+        saveAuthData(authResponse);
+        return authResponse.accessToken;
+      } catch {
         logout();
         return null;
+      } finally {
+        isRefreshingRef.current = false;
+        refreshPromiseRef.current = null;
       }
+    })();
 
-      const authResponse: AuthResponse = await response.json();
-      saveAuthData(authResponse);
-      return authResponse.accessToken;
-    } catch {
-      logout();
-      return null;
-    }
+    return refreshPromiseRef.current;
   }, [logout]);
 
   return (
@@ -192,6 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         refreshAccessToken,
+        updateUser,
       }}
     >
       {children}
@@ -207,9 +216,10 @@ export function useAuth() {
   return context;
 }
 
-// Custom hook for authenticated API calls
+// Custom hook for authenticated API calls with automatic token refresh
 export function useAuthFetch() {
   const { accessToken, refreshAccessToken, logout } = useAuth();
+  const pendingRequestsRef = useRef<Map<string, Promise<Response>>>(new Map());
 
   const authFetch = useCallback(
     async (url: string, options: RequestInit = {}): Promise<Response> => {
@@ -218,22 +228,17 @@ export function useAuthFetch() {
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`);
       }
+      headers.set("Content-Type", "application/json");
 
-      let response = await fetch(url, {
-        ...options,
-        headers,
-      });
+      let response = await fetch(url, { ...options, headers });
 
-      // If unauthorized, try to refresh token
+      // If unauthorized, try to refresh token once
       if (response.status === 401) {
         const newToken = await refreshAccessToken();
         
         if (newToken) {
           headers.set("Authorization", `Bearer ${newToken}`);
-          response = await fetch(url, {
-            ...options,
-            headers,
-          });
+          response = await fetch(url, { ...options, headers });
         } else {
           logout();
         }
@@ -244,5 +249,13 @@ export function useAuthFetch() {
     [accessToken, refreshAccessToken, logout]
   );
 
-  return authFetch;
+  // Mutation helper that handles JSON responses
+  const authMutate = useCallback(
+    async (url: string, options: RequestInit = {}): Promise<Response> => {
+      return authFetch(url, options);
+    },
+    [authFetch]
+  );
+
+  return { authFetch, authMutate };
 }

@@ -25,11 +25,10 @@ import {
 import { useAuth } from "@/lib/auth-context";
 import { useAuthSWR } from "@/lib/use-auth-swr";
 import { ProtectedRoute } from "@/components/auth/protected-route";
-import { UserMenu } from "@/components/auth/user-menu";
+import { AppHeader } from "@/components/layout/app-header";
 import type { DashboardStats } from "@/lib/types";
-import { Building2, Users, MapPin, CheckCircle, Home, Loader2, UserCog, Utensils, TrendingUp, ArrowRight } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Building2, Users, MapPin, CheckCircle, Home, Loader2, UserCog, Utensils, TrendingUp } from "lucide-react";
+import { API_ENDPOINTS, buildApiUrl } from "@/lib/api-config";
 
 // Chart colors - computed values, not CSS variables
 const COLORS = {
@@ -58,7 +57,7 @@ export default function AdminDashboardPage() {
   }, [user, isAuthLoading, router]);
 
   const { data: stats, isLoading, error } = useAuthSWR<DashboardStats>(
-    user?.role === "ADMIN" ? "/api/api/v1/statistics/dashboard" : null
+    user?.role === "ADMIN" ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) : null
   );
 
   if (isAuthLoading || isLoading) {
@@ -128,44 +127,11 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute requiredRole="ADMIN">
       <div className="min-h-screen bg-background" dir="rtl">
-        {/* Header */}
-        <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/" className="flex items-center gap-2 text-primary">
-                <Building2 className="h-6 w-6" />
-                <span className="font-bold text-lg hidden sm:inline">
-                  نظام الرعاية الاجتماعية
-                </span>
-              </Link>
-            </div>
-            <UserMenu />
-          </div>
-        </header>
+        <AppHeader subtitle="لوحة التحكم - إحصائيات المؤسسات" />
 
         <main className="container mx-auto px-4 py-8">
-          {/* Back button and title */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <Link href="/">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <ArrowRight className="h-4 w-4" />
-                  الرئيسية
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold flex items-center gap-2">
-                  <MapPin className="h-6 w-6" />
-                  لوحة التحكم
-                </h1>
-                <p className="text-muted-foreground">
-                  إحصائيات المؤسسات
-                </p>
-              </div>
-            </div>
-          </div>
           {/* Summary Cards - Row 1 */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
             <Card>
