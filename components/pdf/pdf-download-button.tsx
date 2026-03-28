@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Printer, Loader2 } from "lucide-react";
 import type { InstitutionResponse } from "@/lib/types";
 import { toast } from "sonner";
+import { generatePrintableHTML } from "@/lib/pdf-generator";
 
 interface PDFDownloadButtonProps {
   data: InstitutionResponse;
@@ -19,9 +20,10 @@ export function PDFDownloadButton({
 }: PDFDownloadButtonProps) {
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const handlePrint = async () => {
+  const handlePrint = () => {
     setIsGenerating(true);
     try {
+      // Prepare data with geo names
       const pdfData = {
         ...data,
         regionName: data.regionName || data.regionId?.toString(),
@@ -29,20 +31,10 @@ export function PDFDownloadButton({
         communeName: data.communeName || data.communeId?.toString(),
       };
 
-      const response = await fetch('/api/api/generate-pdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: pdfData }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate PDF');
-      }
-
-      const html = await response.text();
+      // Generate HTML on client-side
+      const html = generatePrintableHTML(pdfData as InstitutionResponse);
       
+      // Open print window
       const printWindow = window.open('', '_blank', 'width=900,height=700');
       if (printWindow) {
         printWindow.document.write(html);
