@@ -237,7 +237,6 @@ export function InstitutionStep() {
             { key: "educationalSupport", label: "التتبع التربوي والمواكبة الاجتماعية" },
             { key: "culturalActivities", label: "التنشيط الثقافي والرياضي والترفيهي" },
             { key: "healthCare", label: "العلاجات الصحية الأولية" },
-            { key: "insurance", label: "التأمين" },
             { key: "psychologicalSupport", label: "الدعم والمواكبة الطبية والنفسية" },
           ].map((service) => (
             <div key={service.key} className="flex items-center gap-2">

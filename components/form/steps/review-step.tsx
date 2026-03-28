@@ -188,11 +188,6 @@ export function ReviewStep() {
                 العلاجات الصحية الأولية
               </span>
             )}
-            {formData.insurance && (
-              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                التأمين
-              </span>
-            )}
             {formData.psychologicalSupport && (
               <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
                 الدعم والمواكبة الطبية والنفسية

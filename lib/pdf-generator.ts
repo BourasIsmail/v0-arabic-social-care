@@ -536,7 +536,6 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.culturalActivities)}</span> التنشيط الثقافي والرياضي والترفيهي</span>
                 </div>
                 <div class="checkbox-row" style="margin-top: 5px;">
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.insurance)}</span> التأمين</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.healthCare)}</span> العلاجات الصحية الأولية</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.psychologicalSupport)}</span> الدعم والمواكبة الطبية والنفسية</span>
                 </div>
@@ -941,7 +940,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
             </div>
             <div class="visa-row">
               <div class="visa-box">
-                <h4>تأشيرة المدير الإقليمي للتعاون الوطني</h4>
+                <h4>تأشيرة المدير الإقليمي للتعاون ا��وطني</h4>
                 <div class="visa-space"></div>
               </div>
               <div class="visa-box">

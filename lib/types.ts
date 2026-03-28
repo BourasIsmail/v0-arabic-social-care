@@ -31,11 +31,12 @@ export enum BuildingStatus {
   OTHER = "OTHER",
 }
 
-// Backend: GOOD, SOME_DEGRADATION, BAD
+// Backend: GOOD, SOME_DEGRADATION, BAD, OTHER
 export enum BuildingCondition {
   GOOD = "GOOD",
   SOME_DEGRADATION = "SOME_DEGRADATION",
   BAD = "BAD",
+  OTHER = "OTHER",
 }
 
 // Backend: EASY, DIFFICULT, NEEDS_RECONSTRUCTION
@@ -198,6 +199,16 @@ export interface TargetingDTO {
   tariffType?: TariffType;
   uniformAmount?: number;
   tariffBracket?: TariffBracket;
+
+  // Tariff Determination Body (من يحدد مبلغ الاشتراك الشهري)
+  tariffDeterminationBody?: SelectionBody;
+  tariffCommitteeAssociation?: boolean;
+  tariffCommitteeNationalEntraide?: boolean;
+  tariffCommitteeNationalEducation?: boolean;
+  tariffCommitteeCommune?: boolean;
+  tariffCommitteeLocalAuthorities?: boolean;
+  tariffOtherMember?: boolean;
+  tariffOtherMemberDetail?: string;
 
   // Additional
   unsatisfiedRequestsCount?: number;
@@ -437,13 +448,14 @@ export const buildingStatusLabels: Record<BuildingStatus, string> = {
   [BuildingStatus.RENTAL]: "إيجار",
   [BuildingStatus.OWNED]: "ملكية",
   [BuildingStatus.AT_DISPOSAL]: "وضع رهن إشارة المؤسسة",
-  [BuildingStatus.OTHER]: "أخرى",
+  [BuildingStatus.OTHER]: "آخر (للتحديد)",
 };
 
 export const buildingConditionLabels: Record<BuildingCondition, string> = {
   [BuildingCondition.GOOD]: "جيدة",
   [BuildingCondition.SOME_DEGRADATION]: "بعض علامات التدهور",
   [BuildingCondition.BAD]: "متردية",
+  [BuildingCondition.OTHER]: "آخر (للتحديد)",
 };
 
 export const renovationCapacityLabels: Record<RenovationCapacity, string> = {
@@ -456,7 +468,7 @@ export const ownerTypeLabels: Record<OwnerType, string> = {
   [OwnerType.STATE_DOMAIN]: "أملاك الدولة",
   [OwnerType.COMMUNAL]: "ملك جماعي",
   [OwnerType.PRIVATE]: "ملك خصوصي",
-  [OwnerType.OTHER]: "أخرى",
+  [OwnerType.OTHER]: "آخر (للتحديد)",
 };
 
 export const selectionBodyLabels: Record<SelectionBody, string> = {
@@ -470,7 +482,7 @@ export const tariffTypeLabels: Record<TariffType, string> = {
 };
 
 export const tariffBracketLabels: Record<TariffBracket, string> = {
-  [TariffBracket.LT_50]: "أقل من 50 درهم",
+  [TariffBracket.LT_50]: "50 درهم أو أقل",
   [TariffBracket.BETWEEN_50_100]: "بين 50 و 100 درهم",
   [TariffBracket.BETWEEN_100_200]: "بين 100 و 200 درهم",
   [TariffBracket.GT_200]: "أكثر من 200 درهم",
