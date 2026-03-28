@@ -197,7 +197,7 @@ export default function LoginPage() {
       {/* Footer */}
       <div className="relative z-10 py-4 text-center border-t border-border/50 bg-card/80 backdrop-blur-sm">
         <p className="text-sm text-muted-foreground">
-          وزارة التضامن والإدماج الاجتماعي والأسرة - جميع الحقوق محفوظة {new Date().getFullYear()}
+          التعاون الوطني - جميع الحقوق محفوظة {new Date().getFullYear()}
         </p>
       </div>
     </div>

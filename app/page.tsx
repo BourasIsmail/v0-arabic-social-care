@@ -27,7 +27,7 @@ export default function HomePage() {
               <div className="flex justify-center mb-6">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
                   <Shield className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium text-primary">المملكة المغربية - وزارة التضامن والإدماج الاجتماعي والأسرة</span>
+                  <span className="text-sm font-medium text-primary">المملكة المغربية - التعاون الوطني</span>
                 </div>
               </div>
 
@@ -184,7 +184,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-foreground">نظام الرعاية الاجتماعية</h3>
-                  <p className="text-sm text-muted-foreground">وزارة التضامن والإدماج الاجتماعي والأسرة</p>
+                  <p className="text-sm text-muted-foreground">التعاون الوطني</p>
                 </div>
               </div>
               <div className="text-center md:text-left">
