@@ -83,13 +83,13 @@ export function StaffStep() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>إضافة موظف جديد</CardTitle>
+          <CardTitle>معطيات حول الموارد البشرية العاملة بالمؤسسة</CardTitle>
           <CardDescription>أدخل بيانات الموظف ثم اضغط على زر الإضافة</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-2">
-              <Label htmlFor="staffType">نوع الموظف *</Label>
+              <Label htmlFor="staffType">نوع التأطير *</Label>
               <Select
                 value={newMember.staffType || ""}
                 onValueChange={(value) =>
@@ -97,7 +97,7 @@ export function StaffStep() {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر نوع الموظف" />
+                  <SelectValue placeholder="اختر نوع التأطير" />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(staffTypeLabels).map(([value, label]) => (
@@ -110,7 +110,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="nbAssociation">عدد الجمعية</Label>
+              <Label htmlFor="nbAssociation">عدد المستخدمين بالجمعية</Label>
               <Input
                 id="nbAssociation"
                 type="number"
@@ -123,7 +123,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="nbDeployed">عدد المنتدبين</Label>
+              <Label htmlFor="nbDeployed">عدد الأطر الموضوعة رهن الإشارة</Label>
               <Input
                 id="nbDeployed"
                 type="number"
@@ -136,7 +136,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="nbVolunteers">عدد المتطوعين</Label>
+              <Label htmlFor="nbVolunteers">عدد الأطر المتطوعة</Label>
               <Input
                 id="nbVolunteers"
                 type="number"
@@ -149,7 +149,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="nbCNSS">عدد CNSS</Label>
+              <Label htmlFor="nbCNSS">عدد المستخدمين المستفيدين من الصندوق الوطني للضمان الاجتماعي (CNSS)</Label>
               <Input
                 id="nbCNSS"
                 type="number"
@@ -162,7 +162,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="nbSMIG">عدد SMIG</Label>
+              <Label htmlFor="nbSMIG">عدد المستخدمين المستفيدين من الحد الأدنى للأجر المهني المضمون (SMIG)</Label>
               <Input
                 id="nbSMIG"
                 type="number"
@@ -175,7 +175,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="monthlyCost">التكلفة الشهرية (درهم)</Label>
+              <Label htmlFor="monthlyCost">الكلفة الشهرية (بالدرهم)</Label>
               <Input
                 id="monthlyCost"
                 type="number"
@@ -189,7 +189,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="annualCost">التكلفة السنوية (درهم)</Label>
+              <Label htmlFor="annualCost">الكلفة السنوية (بالدرهم)</Label>
               <Input
                 id="annualCost"
                 type="number"
@@ -230,14 +230,14 @@ export function StaffStep() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>نوع الموظف</TableHead>
-                    <TableHead>الجمعية</TableHead>
-                    <TableHead>المنتدبون</TableHead>
-                    <TableHead>المتطوعون</TableHead>
+                    <TableHead>نوع التأطير</TableHead>
+                    <TableHead>عدد المستخدمين بالجمعية</TableHead>
+                    <TableHead>الأطر رهن الإشارة</TableHead>
+                    <TableHead>الأطر المتطوعة</TableHead>
                     <TableHead>CNSS</TableHead>
                     <TableHead>SMIG</TableHead>
-                    <TableHead>الشهري</TableHead>
-                    <TableHead>السنوي</TableHead>
+                    <TableHead>الكلفة الشهرية</TableHead>
+                    <TableHead>الكلفة السنوية</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
