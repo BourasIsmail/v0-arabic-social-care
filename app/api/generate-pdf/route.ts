@@ -753,7 +753,7 @@ export async function POST(request: Request) {
                   <div class="field-value">${getDisplayValue(data.targeting?.uniformAmount)}</div>
                 </div>
                 ` : ''}
-                ${data.targeting?.tariffType === 'BRACKETED' ? `
+                ${data.targeting?.tariffType === 'NON_UNIFORM' ? `
                 <div class="field-row">
                   <div class="field-label">شريحة التعريفة</div>
                   <div class="field-value">${getLabelValue('tariffBracket', data.targeting?.tariffBracket)}</div>

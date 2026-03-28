@@ -80,7 +80,7 @@ export enum MealServiceType {
   OTHER = "OTHER",
 }
 
-// Backend: DIRECTOR, FINANCIAL_MANAGER, GENERAL_GUARD, SOCIAL_WORKER, DOCTOR, NURSE, PSYCHOLOGIST, EDUCATORS, KITCHEN_MANAGER, KITCHEN_AGENTS, STORAGE_MANAGER, SECURITY, SERVICE_AGENTS, OTHER
+// Staff Types matching backend
 export enum StaffType {
   DIRECTOR = "DIRECTOR",
   FINANCIAL_MANAGER = "FINANCIAL_MANAGER",
@@ -120,89 +120,123 @@ export interface BuildingDTO {
 
 export interface FinancingDTO {
   // Construction Funding Sources
-  constructionByAssociation?: boolean;
-  constructionByMinistry?: boolean;
-  constructionByINDH?: boolean;
-  constructionByCouncil?: boolean;
-  constructionByDonors?: boolean;
-  constructionByOther?: boolean;
+  solidarityMinistry?: boolean;
+  nationalEntraide?: boolean;
+  indh?: boolean;
+  commune?: boolean;
+  fondationMohammed5?: boolean;
+  nationalRevival?: boolean;
+  association?: boolean;
+  otherConstruction?: boolean;
+  otherConstructionDetail?: string;
+  totalConstructionCost?: number;
 
   // Equipment Funding Sources
-  equipmentByAssociation?: boolean;
-  equipmentByMinistry?: boolean;
-  equipmentByINDH?: boolean;
-  equipmentByCouncil?: boolean;
-  equipmentByDonors?: boolean;
-  equipmentByOther?: boolean;
+  equipmentSolidarityMinistry?: boolean;
+  equipmentNationalEntraide?: boolean;
+  equipmentIndh?: boolean;
+  equipmentCommune?: boolean;
+  equipmentFondationMohammed5?: boolean;
+  equipmentAssociation?: boolean;
+  equipmentOther?: boolean;
+  equipmentOtherDetail?: string;
 
   // Operating Funding Sources
-  operatingByAssociation?: boolean;
-  operatingByMinistry?: boolean;
-  operatingByINDH?: boolean;
-  operatingByCouncil?: boolean;
-  operatingByDonors?: boolean;
-  operatingByOther?: boolean;
+  operatingIndh?: boolean;
+  operatingNationalEntraide?: boolean;
+  operatingNationalEducation?: boolean;
+  operatingCommune?: boolean;
+  operatingParentContributions?: boolean;
+  operatingDonors?: boolean;
+  operatingAssociationOwnSources?: boolean;
+  operatingOther?: boolean;
 
-  // Budget
-  annualBudget?: number;
-  ministryContribution?: number;
-  associationContribution?: number;
-  councilContribution?: number;
-  otherContribution?: number;
+  // Costs
+  annualManagementCost?: number;
+  annualHRCost?: number;
+  annualMealsCost?: number;
+  totalMealsAmount?: number;
+  annualOtherExpenses?: number;
+  individualAnnualCost?: number;
+
+  // Shares
+  associationShare?: number;
+  educationShare?: number;
+  otherShare?: number;
 }
 
 export interface TargetingDTO {
   // Selection Criteria
-  povertyBased?: boolean;
-  distanceBased?: boolean;
-  orphansBased?: boolean;
-  disabilityBased?: boolean;
+  socialSituation?: boolean;
+  distance?: boolean;
+  schoolResults?: boolean;
+  scholarship?: boolean;
   otherCriteria?: boolean;
+  otherCriteriaDetail?: string;
+
+  // Priorities
+  priority1?: string;
+  priority2?: string;
+  priority3?: string;
+  priority4?: string;
+  priority5?: string;
 
   // Selection Body
   selectionBody?: SelectionBody;
 
-  // Committee Members
-  committeeHasAssociation?: boolean;
-  committeeHasAuthority?: boolean;
-  committeeHasEducation?: boolean;
-  committeeHasSocial?: boolean;
-  committeeHasOther?: boolean;
+  // Committee Members (when selectionBody is COMMITTEE)
+  committeeAssociation?: boolean;
+  committeeNationalEntraide?: boolean;
+  committeeNationalEducation?: boolean;
+  committeeCommune?: boolean;
+  committeeLocalAuthorities?: boolean;
+  otherMember?: boolean;
+  otherMemberDetail?: string;
 
   // Tariff
   servicesAreFree?: boolean;
   tariffType?: TariffType;
-  fixedTariffAmount?: number;
+  uniformAmount?: number;
   tariffBracket?: TariffBracket;
+
+  // Additional
+  unsatisfiedRequestsCount?: number;
 }
 
 export interface HousingMealsDTO {
-  totalRooms?: number;
-  totalBeds?: number;
-  bedsPerRoom?: number;
-  hasRefectory?: boolean;
-  refectoryCapacity?: number;
-  mealServiceType?: MealServiceType;
-
-  // Improvement Suggestions
-  suggestBuildingRenovation?: boolean;
-  suggestNewBuilding?: boolean;
-  suggestEquipment?: boolean;
-  suggestCapacityIncrease?: boolean;
-  suggestStaffTraining?: boolean;
-
   // Season Data
   season2324?: SeasonBeneficiaries;
   season2425?: SeasonBeneficiaries;
   season2526?: SeasonBeneficiaries;
+
+  // Capacity remarks
+  capacityRemarks?: string;
+
+  // Meals
+  totalMealBeneficiaries2526?: number;
+  associationMealBeneficiaries?: number;
+  educationMealBeneficiaries?: number;
+  fullGrantCount?: number;
+  halfGrantCount?: number;
+  mealServiceType?: MealServiceType;
+
+  // Improvement Suggestions
+  increaseProducts?: boolean;
+  externalCaterer?: boolean;
+  otherSuggestion?: boolean;
+  otherSuggestionDetail?: string;
 }
 
 export interface StaffMemberDTO {
   id?: number;
   staffType: StaffType;
-  count?: number;
-  isCertified?: boolean;
-  monthlySalary?: number;
+  nbAssociation?: number;
+  nbDeployed?: number;
+  nbVolunteers?: number;
+  nbCNSS?: number;
+  nbSMIG?: number;
+  monthlyCost?: number;
+  annualCost?: number;
 }
 
 // Geo DTOs
@@ -359,7 +393,6 @@ export interface DashboardStats {
   unlicensedCount: number;
   byRegion: RegionStats[];
   byPrefecture: PrefectureStats[];
-  // Additional stats from backend
   totalStaffCount?: number;
   averageCapacity?: number;
   institutionsWithHousing?: number;
@@ -394,22 +427,22 @@ export const legalStatusLabels: Record<LegalStatus, string> = {
 };
 
 export const distanceLabels: Record<Distance, string> = {
-  [Distance.INSIDE]: "داخل المؤسسة",
-  [Distance.LT_1KM]: "أقل من 1 كم",
-  [Distance.BETWEEN_1_5KM]: "بين 1 و 5 كم",
-  [Distance.GT_5KM]: "أكثر من 5 كم",
+  [Distance.INSIDE]: "داخل المؤسسة التعليمية",
+  [Distance.LT_1KM]: "أقل من 1 كلم",
+  [Distance.BETWEEN_1_5KM]: "بين 1 و 5 كلم",
+  [Distance.GT_5KM]: "أكثر من 5 كلم",
 };
 
 export const buildingStatusLabels: Record<BuildingStatus, string> = {
   [BuildingStatus.RENTAL]: "مكترى",
-  [BuildingStatus.OWNED]: "ملك",
-  [BuildingStatus.AT_DISPOSAL]: "رهن الإشارة",
+  [BuildingStatus.OWNED]: "ملك الجمعية",
+  [BuildingStatus.AT_DISPOSAL]: "رهن إشارة الجمعية",
   [BuildingStatus.OTHER]: "أخرى",
 };
 
 export const buildingConditionLabels: Record<BuildingCondition, string> = {
   [BuildingCondition.GOOD]: "جيدة",
-  [BuildingCondition.SOME_DEGRADATION]: "متوسطة",
+  [BuildingCondition.SOME_DEGRADATION]: "بعض التدهور",
   [BuildingCondition.BAD]: "سيئة",
 };
 
@@ -420,9 +453,9 @@ export const renovationCapacityLabels: Record<RenovationCapacity, string> = {
 };
 
 export const ownerTypeLabels: Record<OwnerType, string> = {
-  [OwnerType.STATE_DOMAIN]: "ملك الدولة",
-  [OwnerType.COMMUNAL]: "جماعي",
-  [OwnerType.PRIVATE]: "خاص",
+  [OwnerType.STATE_DOMAIN]: "الملك العمومي للدولة",
+  [OwnerType.COMMUNAL]: "ملك جماعي",
+  [OwnerType.PRIVATE]: "ملك خاص",
   [OwnerType.OTHER]: "أخرى",
 };
 
@@ -433,7 +466,7 @@ export const selectionBodyLabels: Record<SelectionBody, string> = {
 
 export const tariffTypeLabels: Record<TariffType, string> = {
   [TariffType.UNIFORM]: "موحد",
-  [TariffType.NON_UNIFORM]: "غير موحد",
+  [TariffType.NON_UNIFORM]: "حسب الشرائح",
 };
 
 export const tariffBracketLabels: Record<TariffBracket, string> = {
@@ -450,18 +483,18 @@ export const mealServiceTypeLabels: Record<MealServiceType, string> = {
 };
 
 export const staffTypeLabels: Record<StaffType, string> = {
-  [StaffType.DIRECTOR]: "مدير",
-  [StaffType.FINANCIAL_MANAGER]: "مسؤول مالي",
-  [StaffType.GENERAL_GUARD]: "حارس عام",
-  [StaffType.SOCIAL_WORKER]: "مساعد اجتماعي",
-  [StaffType.DOCTOR]: "طبيب",
-  [StaffType.NURSE]: "ممرض",
-  [StaffType.PSYCHOLOGIST]: "أخصائي نفسي",
-  [StaffType.EDUCATORS]: "مربين",
-  [StaffType.KITCHEN_MANAGER]: "مسؤول المطبخ",
+  [StaffType.DIRECTOR]: "المدير(ة)",
+  [StaffType.FINANCIAL_MANAGER]: "المسؤول(ة) المالي(ة)",
+  [StaffType.GENERAL_GUARD]: "الحارس(ة) العام(ة)",
+  [StaffType.SOCIAL_WORKER]: "المساعد(ة) الاجتماعي(ة)",
+  [StaffType.DOCTOR]: "الطبيب(ة)",
+  [StaffType.NURSE]: "الممرض(ة)",
+  [StaffType.PSYCHOLOGIST]: "الأخصائي(ة) النفسي(ة)",
+  [StaffType.EDUCATORS]: "المربون/المربيات",
+  [StaffType.KITCHEN_MANAGER]: "مسؤول(ة) المطبخ",
   [StaffType.KITCHEN_AGENTS]: "عمال المطبخ",
-  [StaffType.STORAGE_MANAGER]: "مسؤول المخزن",
-  [StaffType.SECURITY]: "الأمن",
-  [StaffType.SERVICE_AGENTS]: "عمال الخدمة",
+  [StaffType.STORAGE_MANAGER]: "مسؤول(ة) المخزن",
+  [StaffType.SECURITY]: "الحراسة والأمن",
+  [StaffType.SERVICE_AGENTS]: "أعوان الخدمة",
   [StaffType.OTHER]: "أخرى",
 };
