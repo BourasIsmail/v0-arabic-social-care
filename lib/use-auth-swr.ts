@@ -22,14 +22,19 @@ export function useAuthFetcher() {
 
       let response = await fetch(url, { headers });
       
-      // Handle 401 - try to refresh token
-      if (response.status === 401 && !isRefreshingRef.current) {
+      // Handle 401 or 403 - try to refresh token
+      if ((response.status === 401 || response.status === 403) && !isRefreshingRef.current) {
         isRefreshingRef.current = true;
         try {
           const newToken = await refreshAccessToken();
           if (newToken) {
             headers["Authorization"] = `Bearer ${newToken}`;
             response = await fetch(url, { headers });
+            // If still 403 after refresh, logout
+            if (response.status === 403) {
+              logout();
+              throw new Error("Access denied. Please login again.");
+            }
           } else {
             logout();
             throw new Error("Session expired");
@@ -90,14 +95,18 @@ export function useAuthMutate() {
 
       let response = await fetch(url, { ...options, headers });
 
-      // Handle 401 - try to refresh token
-      if (response.status === 401 && !isRefreshingRef.current) {
+      // Handle 401 or 403 - try to refresh token
+      if ((response.status === 401 || response.status === 403) && !isRefreshingRef.current) {
         isRefreshingRef.current = true;
         try {
           const newToken = await refreshAccessToken();
           if (newToken) {
             headers.set("Authorization", `Bearer ${newToken}`);
             response = await fetch(url, { ...options, headers });
+            // If still 403 after refresh, logout
+            if (response.status === 403) {
+              logout();
+            }
           } else {
             logout();
           }
