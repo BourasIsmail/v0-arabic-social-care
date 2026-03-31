@@ -289,28 +289,28 @@ export default function InstitutionsPage() {
             ) : data?.content && data.content.length > 0 ? (
               <>
                 <div className="overflow-x-auto">
-                  <Table>
+                  <Table className="table-fixed w-full">
                     <TableHeader>
                       <TableRow>
-                        <TableHead>اسم المؤسسة</TableHead>
-                        <TableHead>الجمعية</TableHead>
-                        <TableHead>النوع</TableHead>
-                        <TableHead>الجهة</TableHead>
-                        <TableHead>الطاقة</TableHead>
-                        <TableHead>تاريخ الإنشاء</TableHead>
-                        <TableHead></TableHead>
+                        <TableHead className="w-[20%] text-right">اسم المؤسسة</TableHead>
+                        <TableHead className="w-[18%] text-right">الجمعية</TableHead>
+                        <TableHead className="w-[12%] text-right">النوع</TableHead>
+                        <TableHead className="w-[15%] text-right">الجهة</TableHead>
+                        <TableHead className="w-[10%] text-center">الطاقة</TableHead>
+                        <TableHead className="w-[12%] text-center">تاريخ الإنشاء</TableHead>
+                        <TableHead className="w-[13%] text-left"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {data.content.map((institution) => (
                         <TableRow key={institution.id}>
-                          <TableCell className="font-medium">
+                          <TableCell className="font-medium text-right">
                             {institution.institutionName}
                           </TableCell>
-                          <TableCell>{institution.associationName}</TableCell>
-                          <TableCell>
+                          <TableCell className="text-right">{institution.associationName}</TableCell>
+                          <TableCell className="text-right">
                             <span className={cn(
-                              "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium",
+                              "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap",
                               institution.institutionType === "DAR_TALIB" && "bg-primary/10 text-primary",
                               institution.institutionType === "DAR_TALIBA" && "bg-accent/10 text-accent",
                               institution.institutionType === "MIXED" && "bg-secondary text-secondary-foreground"
@@ -318,13 +318,13 @@ export default function InstitutionsPage() {
                               {institutionTypeLabels[institution.institutionType]}
                             </span>
                           </TableCell>
-                          <TableCell>{institution.regionName || "-"}</TableCell>
-                          <TableCell>{institution.totalCapacity || "-"}</TableCell>
-                          <TableCell>
+                          <TableCell className="text-right">{institution.regionName || "-"}</TableCell>
+                          <TableCell className="text-center">{institution.totalCapacity || "-"}</TableCell>
+                          <TableCell className="text-center">
                             {new Date(institution.createdAt).toLocaleDateString("ar-MA")}
                           </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-1">
+                          <TableCell className="text-left">
+                            <div className="flex items-center justify-end gap-1">
                               <Link href={`/institutions/${institution.id}`}>
                                 <Button variant="ghost" size="sm">
                                   <Eye className="h-4 w-4" />
