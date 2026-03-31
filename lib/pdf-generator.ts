@@ -640,7 +640,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
               <div class="sub-section">مصادر تمويل البناء</div>
               <div class="checkbox-group">
                 <div class="checkbox-row">
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.solidarityMinistry)}</span> وزارة التضامن</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.solidarityMinistry)}</span> وزارة التضامن والإدماج الإجتماعي والأُسْرَة</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.nationalEntraide)}</span> التعاون الوطني</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.indh)}</span> المبادرة الوطنية للتنمية البشرية</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.commune)}</span> الجماعة</span>
@@ -657,7 +657,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
               <div class="sub-section">مصادر تمويل التجهيز</div>
               <div class="checkbox-group">
                 <div class="checkbox-row">
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentSolidarityMinistry)}</span> وزارة التضامن</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentSolidarityMinistry)}</span> وزارة التضامن والإدماج الإجتماعي والأُسْرَة</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentNationalEntraide)}</span> التعاون الوطني</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentIndh)}</span> المبادرة الوطنية للتنمية البشرية</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.equipmentCommune)}</span> الجماعة</span>
