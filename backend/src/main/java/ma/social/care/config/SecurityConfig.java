@@ -44,6 +44,7 @@ public class SecurityConfig {
                                 "/api/v1/auth/**",
                                 "/api/v1/regions/**",
                                 "/api/v1/prefectures/**",
+                                "/uploads/**",
                                 "/error"
                         ).permitAll()
                         .anyRequest().authenticated()
