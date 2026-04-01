@@ -324,6 +324,8 @@ export interface InstitutionResponse {
   communeId?: number;
   communeName?: string;
   milieu?: Milieu;
+  latitude?: number;
+  longitude?: number;
   creationYear?: number;
   legalStatus?: LegalStatus;
   unlicensedReason?: string;
@@ -366,6 +368,8 @@ export interface InstitutionSummary {
   prefectureName?: string;
   communeId?: number;
   communeName?: string;
+  latitude?: number;
+  longitude?: number;
   totalCapacity?: number;
   createdAt: string;
 }
