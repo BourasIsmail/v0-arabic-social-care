@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import dynamic from "next/dynamic";
 
 interface LocationPickerProps {
   latitude?: number;
@@ -24,7 +25,7 @@ const MOROCCO_CENTER: [number, number] = [31.7917, -7.0926];
 const DEFAULT_ZOOM = 6;
 const SELECTED_ZOOM = 14;
 
-export function LocationPicker({
+function LocationPickerInner({
   latitude,
   longitude,
   onLocationChange,
@@ -34,17 +35,35 @@ export function LocationPicker({
   const markerRef = useRef<L.Marker | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [mapReady, setMapReady] = useState(false);
   const [manualLat, setManualLat] = useState<string>(latitude?.toString() || "");
   const [manualLng, setManualLng] = useState<string>(longitude?.toString() || "");
+
+  // Load Leaflet CSS when component mounts
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    link.integrity = "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=";
+    link.crossOrigin = "";
+    document.head.appendChild(link);
+
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, []);
 
   // Initialize map when dialog opens
   useEffect(() => {
     if (!isOpen || !mapContainerRef.current) return;
 
+    let isMounted = true;
+
     // Dynamic import of Leaflet
     const initMap = async () => {
       const L = (await import("leaflet")).default;
-      await import("leaflet/dist/leaflet.css");
+
+      if (!isMounted || !mapContainerRef.current) return;
 
       // Fix default marker icon issue
       const DefaultIcon = L.icon({
@@ -81,6 +100,7 @@ export function LocationPicker({
       // Add tile layer (OpenStreetMap)
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
       }).addTo(map);
 
       // Add marker if location exists
@@ -114,21 +134,30 @@ export function LocationPicker({
       });
 
       mapRef.current = map;
+      setMapReady(true);
 
-      // Fix map rendering issue by invalidating size after a short delay
+      // Fix map rendering issue by invalidating size after dialog animation
       setTimeout(() => {
-        map.invalidateSize();
-      }, 100);
+        if (mapRef.current) {
+          mapRef.current.invalidateSize();
+        }
+      }, 300);
     };
 
-    initMap();
+    // Small delay to ensure dialog is fully rendered
+    const timer = setTimeout(() => {
+      initMap();
+    }, 100);
 
     return () => {
+      isMounted = false;
+      clearTimeout(timer);
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
         markerRef.current = null;
       }
+      setMapReady(false);
     };
   }, [isOpen, latitude, longitude]);
 
@@ -179,6 +208,11 @@ export function LocationPicker({
     
     if (isNaN(lat) || isNaN(lng)) {
       alert("يرجى إدخال إحداثيات صحيحة");
+      return;
+    }
+
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      alert("الإحداثيات خارج النطاق المسموح");
       return;
     }
 
@@ -250,7 +284,7 @@ export function LocationPicker({
               تحديد على الخريطة
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-3xl max-h-[90vh]">
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden">
             <DialogHeader>
               <DialogTitle>تحديد الموقع على الخريطة</DialogTitle>
             </DialogHeader>
@@ -284,9 +318,15 @@ export function LocationPicker({
               {/* Map container */}
               <div
                 ref={mapContainerRef}
-                className="h-[400px] w-full rounded-lg border"
+                className="h-[400px] w-full rounded-lg border bg-muted relative"
                 style={{ zIndex: 0 }}
-              />
+              >
+                {!mapReady && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-muted-foreground">جاري تحميل الخريطة...</span>
+                  </div>
+                )}
+              </div>
 
               {/* Action buttons */}
               <div className="flex justify-between">
@@ -326,3 +366,9 @@ export function LocationPicker({
     </div>
   );
 }
+
+// Export with dynamic to avoid SSR issues
+export const LocationPicker = dynamic(
+  () => Promise.resolve(LocationPickerInner),
+  { ssr: false }
+);
