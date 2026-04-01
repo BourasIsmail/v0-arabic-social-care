@@ -45,6 +45,7 @@ public class SecurityConfig {
                                 "/api/v1/regions/**",
                                 "/api/v1/prefectures/**",
                                 "/api/v1/uploads/**",
+                                "/api/v1/institutions/*/signed-pdf/download",
                                 "/error"
                         ).permitAll()
                         .anyRequest().authenticated()
