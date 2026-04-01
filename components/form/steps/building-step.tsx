@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useFormContext } from "@/lib/form-context";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -74,6 +75,13 @@ export function BuildingStep() {
                 ))}
               </SelectContent>
             </Select>
+            {watch("buildingStatus") === "OTHER" && (
+              <Input
+                placeholder="حدد وضعية البناية"
+                value={watch("buildingStatusOther") || ""}
+                onChange={(e) => setValue("buildingStatusOther", e.target.value)}
+              />
+            )}
           </div>
 
           <div className="space-y-2">
@@ -93,6 +101,13 @@ export function BuildingStep() {
                 ))}
               </SelectContent>
             </Select>
+            {watch("buildingCondition") === "OTHER" && (
+              <Input
+                placeholder="حدد حالة البناية"
+                value={watch("buildingConditionOther") || ""}
+                onChange={(e) => setValue("buildingConditionOther", e.target.value)}
+              />
+            )}
           </div>
 
           <div className="space-y-2">
@@ -131,6 +146,13 @@ export function BuildingStep() {
                 ))}
               </SelectContent>
             </Select>
+            {watch("ownerType") === "OTHER" && (
+              <Input
+                placeholder="حدد نوع المالك"
+                value={watch("ownerTypeOther") || ""}
+                onChange={(e) => setValue("ownerTypeOther", e.target.value)}
+              />
+            )}
           </div>
 
           <div className="flex items-center gap-2 sm:col-span-2">
