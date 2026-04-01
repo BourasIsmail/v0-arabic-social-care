@@ -123,8 +123,8 @@ export function InstitutionStep() {
                 valueAsNumber: true, 
                 min: 1900, 
                 max: {
-                  value: 2025,
-                  message: "سنة إحداث المؤسسة يجب أن تكون أصغر من 2026"
+                  value: 2026,
+                  message: "سنة إحداث المؤسسة يجب أن تكون أصغر أو تساوي 2026"
                 }
               })}
               placeholder="مثال: 2010"

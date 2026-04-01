@@ -331,8 +331,8 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
                 {...register("creationYear", { 
                   valueAsNumber: true,
                   max: {
-                    value: 2025,
-                    message: "سنة إحداث المؤسسة يجب أن تكون أصغر من 2026"
+                    value: 2026,
+                    message: "سنة إحداث المؤسسة يجب أن تكون أصغر أو تساوي 2026"
                   }
                 })}
               />
