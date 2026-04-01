@@ -2,6 +2,7 @@ package ma.social.care.service;
 
 import ma.social.care.dto.*;
 import ma.social.care.entity.enums.*;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,4 +43,6 @@ public interface InstitutionService {
     InstitutionResponseDTO uploadSignedPdf(Long id, MultipartFile file);
 
     void deleteSignedPdf(Long id);
+
+    Resource getSignedPdfResource(Long id);
 }

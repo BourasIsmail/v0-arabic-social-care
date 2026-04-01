@@ -10,6 +10,8 @@ import ma.social.care.mapper.InstitutionMapper;
 import ma.social.care.repository.*;
 import ma.social.care.service.InstitutionService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -393,6 +395,36 @@ public class InstitutionServiceImpl implements InstitutionService {
             institution.setSignedPdfUrl(null);
             institutionRepository.save(institution);
             log.info("Signed PDF deleted successfully");
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Resource getSignedPdfResource(Long id) {
+        log.info("Getting signed PDF resource for institution: {}", id);
+
+        Institution institution = institutionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", "id", id));
+
+        if (institution.getSignedPdfUrl() == null) {
+            throw new ResourceNotFoundException("SignedPdf", "institutionId", id);
+        }
+
+        try {
+            Path uploadPath = Paths.get(uploadDir, "signed-pdfs");
+            String filename = institution.getSignedPdfUrl().replace(uploadBaseUrl + "/signed-pdfs/", "");
+            Path filePath = uploadPath.resolve(filename);
+            
+            Resource resource = new UrlResource(filePath.toUri());
+            
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new ResourceNotFoundException("SignedPdf file", "path", filePath.toString());
+            }
+        } catch (IOException e) {
+            log.error("Failed to read signed PDF file", e);
+            throw new RuntimeException("Failed to read signed PDF: " + e.getMessage());
         }
     }
 }

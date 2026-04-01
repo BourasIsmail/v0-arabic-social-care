@@ -516,12 +516,12 @@ export default function InstitutionDetailPage({
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm">الاستبيان الموقع</p>
                         <a 
-                          href={`/api${data.signedPdfUrl}`} 
+                          href={`/api/api/v1/institutions/${id}/signed-pdf/download`} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="text-xs text-primary hover:underline truncate block"
                         >
-                          عرض الملف
+                          تحميل الملف
                         </a>
                       </div>
                     </div>
