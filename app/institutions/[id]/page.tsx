@@ -1,9 +1,9 @@
 "use client";
 
-import { use } from "react";
+import { use, useState, useRef } from "react";
 import Link from "next/link";
-import { Building2, ArrowRight, Pencil, Calendar, MapPin, Users, FileDown } from "lucide-react";
-import { useAuthSWR } from "@/lib/use-auth-swr";
+import { Building2, ArrowRight, Pencil, Calendar, MapPin, Users, FileDown, Upload, FileText, X, Loader2 } from "lucide-react";
+import { useAuthSWR, useAuthMutate } from "@/lib/use-auth-swr";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
 import { PDFDownloadButton } from "@/components/pdf/pdf-download-button";
@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import {
   institutionTypeLabels,
   milieuLabels,
@@ -33,9 +36,74 @@ export default function InstitutionDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const { data, error, isLoading } = useAuthSWR<InstitutionResponse>(
+  const { data, error, isLoading, mutate } = useAuthSWR<InstitutionResponse>(
     `/api/api/v1/institutions/${id}`
   );
+  const authFetch = useAuthMutate();
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // PDF upload handler
+  const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      toast.error("يرجى اختيار ملف PDF فقط");
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      toast.error("حجم الملف يجب أن لا يتجاوز 10 ميغابايت");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      // Create FormData for file upload
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", file);
+      uploadFormData.append("institutionId", id);
+
+      // Upload to API
+      const response = await authFetch("/api/api/v1/institutions/" + id + "/signed-pdf", {
+        method: "POST",
+        body: uploadFormData,
+        headers: {}, // Let browser set content-type for FormData
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      toast.success("تم تحميل الملف بنجاح");
+      mutate(); // Refresh data
+    } catch (error) {
+      toast.error("فشل تحميل الملف");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleRemovePdf = async () => {
+    try {
+      const response = await authFetch("/api/api/v1/institutions/" + id + "/signed-pdf", {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Delete failed");
+      }
+
+      toast.success("تم حذف الملف");
+      mutate(); // Refresh data
+    } catch (error) {
+      toast.error("فشل حذف الملف");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -428,6 +496,102 @@ export default function InstitutionDetailPage({
                   label="آخر تحديث"
                   value={new Date(data.updatedAt).toLocaleDateString("ar-MA")}
                 />
+              </CardContent>
+            </Card>
+
+            {/* Signed PDF Upload Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  الاستبيان الموقع
+                </CardTitle>
+                <CardDescription>قم بتحميل نسخة PDF من الاستبيان بعد توقيعه</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {data.signedPdfUrl ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/50">
+                      <FileText className="h-8 w-8 text-primary" />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm">الاستبيان الموقع</p>
+                        <a 
+                          href={data.signedPdfUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary hover:underline truncate block"
+                        >
+                          عرض الملف
+                        </a>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                      >
+                        {isUploading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <>
+                            <Upload className="h-4 w-4 ml-1" />
+                            تغيير
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRemovePdf}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <Input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".pdf"
+                      onChange={handlePdfUpload}
+                      disabled={isUploading}
+                      className="hidden"
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".pdf"
+                      onChange={handlePdfUpload}
+                      disabled={isUploading}
+                      className="hidden"
+                      id="pdf-upload"
+                    />
+                    <Label
+                      htmlFor="pdf-upload"
+                      className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    >
+                      {isUploading ? (
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                          <span className="text-sm text-muted-foreground">جاري التحميل...</span>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                          <Upload className="h-6 w-6" />
+                          <span className="text-sm">اضغط لتحميل PDF</span>
+                          <span className="text-xs">(الحد الأقصى 10 ميغابايت)</span>
+                        </div>
+                      )}
+                    </Label>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

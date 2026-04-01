@@ -68,6 +68,9 @@ public class InstitutionResponseDTO {
     private HousingMealsDTO housingMeals;
     private List<StaffMemberDTO> staffMembers;
 
+    // Signed PDF
+    private String signedPdfUrl;
+
     // === Audit Fields ===
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

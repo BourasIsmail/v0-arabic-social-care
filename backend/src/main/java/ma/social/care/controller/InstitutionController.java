@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -154,5 +155,28 @@ public class InstitutionController {
             return ResponseEntity.ok(institutionService.getCommunesByRegion(region));
         }
         return ResponseEntity.ok(institutionService.getAllCommunes());
+    }
+
+    /**
+     * Upload signed PDF for an institution
+     */
+    @PostMapping("/{id}/signed-pdf")
+    public ResponseEntity<InstitutionResponseDTO> uploadSignedPdf(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        log.info("POST /api/v1/institutions/{}/signed-pdf - Uploading signed PDF", id);
+        InstitutionResponseDTO updated = institutionService.uploadSignedPdf(id, file);
+        return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * Delete signed PDF for an institution
+     */
+    @DeleteMapping("/{id}/signed-pdf")
+    public ResponseEntity<Void> deleteSignedPdf(@PathVariable Long id) {
+        log.info("DELETE /api/v1/institutions/{}/signed-pdf - Deleting signed PDF", id);
+        institutionService.deleteSignedPdf(id);
+        return ResponseEntity.noContent().build();
     }
 }

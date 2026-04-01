@@ -9,19 +9,26 @@ import ma.social.care.exception.ResourceNotFoundException;
 import ma.social.care.mapper.InstitutionMapper;
 import ma.social.care.repository.*;
 import ma.social.care.service.InstitutionService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class InstitutionServiceImpl implements InstitutionService {
 
@@ -31,6 +38,28 @@ public class InstitutionServiceImpl implements InstitutionService {
     private final PrefectureRepository prefectureRepository;
     private final CommuneRepository communeRepository;
     private final InstitutionMapper mapper;
+
+    @Value("${app.upload.dir:./uploads}")
+    private String uploadDir;
+
+    @Value("${app.upload.base-url:/uploads}")
+    private String uploadBaseUrl;
+
+    public InstitutionServiceImpl(
+            InstitutionRepository institutionRepository,
+            StaffMemberRepository staffMemberRepository,
+            RegionRepository regionRepository,
+            PrefectureRepository prefectureRepository,
+            CommuneRepository communeRepository,
+            InstitutionMapper mapper
+    ) {
+        this.institutionRepository = institutionRepository;
+        this.staffMemberRepository = staffMemberRepository;
+        this.regionRepository = regionRepository;
+        this.prefectureRepository = prefectureRepository;
+        this.communeRepository = communeRepository;
+        this.mapper = mapper;
+    }
 
     @Override
     public InstitutionResponseDTO createInstitution(InstitutionRequestDTO request) {
@@ -292,5 +321,78 @@ public class InstitutionServiceImpl implements InstitutionService {
     @Transactional(readOnly = true)
     public List<String> getCommunesByRegion(String region) {
         return institutionRepository.findCommunesByRegion(region);
+    }
+
+    @Override
+    public InstitutionResponseDTO uploadSignedPdf(Long id, MultipartFile file) {
+        log.info("Uploading signed PDF for institution: {}", id);
+
+        Institution institution = institutionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", "id", id));
+
+        try {
+            // Create upload directory if it doesn't exist
+            Path uploadPath = Paths.get(uploadDir, "signed-pdfs");
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Generate unique filename
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename != null && originalFilename.contains(".") 
+                    ? originalFilename.substring(originalFilename.lastIndexOf(".")) 
+                    : ".pdf";
+            String filename = "institution_" + id + "_" + UUID.randomUUID().toString() + extension;
+
+            // Save file
+            Path filePath = uploadPath.resolve(filename);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // Delete old file if exists
+            if (institution.getSignedPdfUrl() != null) {
+                try {
+                    String oldFilename = institution.getSignedPdfUrl().replace(uploadBaseUrl + "/signed-pdfs/", "");
+                    Path oldFilePath = uploadPath.resolve(oldFilename);
+                    Files.deleteIfExists(oldFilePath);
+                } catch (Exception e) {
+                    log.warn("Failed to delete old signed PDF: {}", e.getMessage());
+                }
+            }
+
+            // Update institution
+            String fileUrl = uploadBaseUrl + "/signed-pdfs/" + filename;
+            institution.setSignedPdfUrl(fileUrl);
+            institution = institutionRepository.save(institution);
+
+            log.info("Signed PDF uploaded successfully: {}", fileUrl);
+            return mapper.toResponseDTO(institution);
+
+        } catch (IOException e) {
+            log.error("Failed to upload signed PDF", e);
+            throw new RuntimeException("Failed to upload signed PDF: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteSignedPdf(Long id) {
+        log.info("Deleting signed PDF for institution: {}", id);
+
+        Institution institution = institutionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", "id", id));
+
+        if (institution.getSignedPdfUrl() != null) {
+            try {
+                Path uploadPath = Paths.get(uploadDir, "signed-pdfs");
+                String filename = institution.getSignedPdfUrl().replace(uploadBaseUrl + "/signed-pdfs/", "");
+                Path filePath = uploadPath.resolve(filename);
+                Files.deleteIfExists(filePath);
+            } catch (Exception e) {
+                log.warn("Failed to delete signed PDF file: {}", e.getMessage());
+            }
+
+            institution.setSignedPdfUrl(null);
+            institutionRepository.save(institution);
+            log.info("Signed PDF deleted successfully");
+        }
     }
 }
