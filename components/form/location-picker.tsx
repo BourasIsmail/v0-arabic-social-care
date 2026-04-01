@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import dynamic from "next/dynamic";
 
 interface LocationPickerProps {
   latitude?: number;
@@ -25,48 +24,32 @@ const MOROCCO_CENTER: [number, number] = [31.7917, -7.0926];
 const DEFAULT_ZOOM = 6;
 const SELECTED_ZOOM = 14;
 
-function LocationPickerInner({
+export function LocationPicker({
   latitude,
   longitude,
   onLocationChange,
 }: LocationPickerProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<L.Map | null>(null);
-  const markerRef = useRef<L.Marker | null>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markerInstanceRef = useRef<any>(null);
+  const leafletRef = useRef<any>(null);
+  
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const [manualLat, setManualLat] = useState<string>(latitude?.toString() || "");
   const [manualLng, setManualLng] = useState<string>(longitude?.toString() || "");
 
-  // Load Leaflet CSS when component mounts
-  useEffect(() => {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-    link.integrity = "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=";
-    link.crossOrigin = "";
-    document.head.appendChild(link);
+  const initializeMap = useCallback(async () => {
+    if (!mapContainerRef.current || mapInstanceRef.current) return;
 
-    return () => {
-      document.head.removeChild(link);
-    };
-  }, []);
+    try {
+      // Dynamically import Leaflet
+      const L = await import("leaflet");
+      leafletRef.current = L.default || L;
 
-  // Initialize map when dialog opens
-  useEffect(() => {
-    if (!isOpen || !mapContainerRef.current) return;
-
-    let isMounted = true;
-
-    // Dynamic import of Leaflet
-    const initMap = async () => {
-      const L = (await import("leaflet")).default;
-
-      if (!isMounted || !mapContainerRef.current) return;
-
-      // Fix default marker icon issue
-      const DefaultIcon = L.icon({
+      // Fix default marker icon
+      const DefaultIcon = leafletRef.current.icon({
         iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
         iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
         shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
@@ -75,91 +58,108 @@ function LocationPickerInner({
         popupAnchor: [1, -34],
         shadowSize: [41, 41],
       });
-      L.Marker.prototype.options.icon = DefaultIcon;
-
-      // Clean up previous map if exists
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-        markerRef.current = null;
-      }
+      leafletRef.current.Marker.prototype.options.icon = DefaultIcon;
 
       // Determine initial position
-      const hasExistingLocation = latitude && longitude;
+      const hasExistingLocation = latitude !== undefined && longitude !== undefined;
       const initialCenter: [number, number] = hasExistingLocation
         ? [latitude, longitude]
         : MOROCCO_CENTER;
       const initialZoom = hasExistingLocation ? SELECTED_ZOOM : DEFAULT_ZOOM;
 
       // Create map
-      const map = L.map(mapContainerRef.current!, {
+      const map = leafletRef.current.map(mapContainerRef.current, {
         center: initialCenter,
         zoom: initialZoom,
       });
 
-      // Add tile layer (ArcGIS World Street Map)
-      L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
-        attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
-        maxZoom: 19,
-      }).addTo(map);
+      // Add tile layer
+      leafletRef.current.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
+          maxZoom: 19,
+        }
+      ).addTo(map);
 
       // Add marker if location exists
       if (hasExistingLocation) {
-        markerRef.current = L.marker([latitude, longitude], { draggable: true }).addTo(map);
-        markerRef.current.on("dragend", () => {
-          const pos = markerRef.current!.getLatLng();
+        const marker = leafletRef.current.marker([latitude, longitude], { draggable: true }).addTo(map);
+        marker.on("dragend", () => {
+          const pos = marker.getLatLng();
           setManualLat(pos.lat.toFixed(6));
           setManualLng(pos.lng.toFixed(6));
         });
+        markerInstanceRef.current = marker;
       }
 
       // Handle map click
-      map.on("click", (e: L.LeafletMouseEvent) => {
+      map.on("click", (e: any) => {
         const { lat, lng } = e.latlng;
         
-        // Update or create marker
-        if (markerRef.current) {
-          markerRef.current.setLatLng([lat, lng]);
+        if (markerInstanceRef.current) {
+          markerInstanceRef.current.setLatLng([lat, lng]);
         } else {
-          markerRef.current = L.marker([lat, lng], { draggable: true }).addTo(map);
-          markerRef.current.on("dragend", () => {
-            const pos = markerRef.current!.getLatLng();
+          const marker = leafletRef.current.marker([lat, lng], { draggable: true }).addTo(map);
+          marker.on("dragend", () => {
+            const pos = marker.getLatLng();
             setManualLat(pos.lat.toFixed(6));
             setManualLng(pos.lng.toFixed(6));
           });
+          markerInstanceRef.current = marker;
         }
         
         setManualLat(lat.toFixed(6));
         setManualLng(lng.toFixed(6));
       });
 
-      mapRef.current = map;
+      mapInstanceRef.current = map;
       setMapReady(true);
 
-      // Fix map rendering issue by invalidating size after dialog animation
+      // Invalidate size after a short delay
       setTimeout(() => {
-        if (mapRef.current) {
-          mapRef.current.invalidateSize();
-        }
-      }, 300);
-    };
+        map.invalidateSize();
+      }, 250);
+    } catch (error) {
+      console.error("Error initializing map:", error);
+    }
+  }, [latitude, longitude]);
 
-    // Small delay to ensure dialog is fully rendered
-    const timer = setTimeout(() => {
-      initMap();
-    }, 100);
+  // Load Leaflet CSS
+  useEffect(() => {
+    const existingLink = document.querySelector('link[href*="leaflet.css"]');
+    if (!existingLink) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      document.head.appendChild(link);
+    }
+  }, []);
 
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-        markerRef.current = null;
-      }
+  // Initialize map when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      // Reset state
       setMapReady(false);
-    };
-  }, [isOpen, latitude, longitude]);
+      
+      // Wait for dialog to be fully rendered
+      const timer = setTimeout(() => {
+        initializeMap();
+      }, 200);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    } else {
+      // Cleanup when dialog closes
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+        markerInstanceRef.current = null;
+        setMapReady(false);
+      }
+    }
+  }, [isOpen, initializeMap]);
 
   // Get current location
   const getCurrentLocation = () => {
@@ -170,24 +170,24 @@ function LocationPickerInner({
 
     setIsLoading(true);
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
+      (position) => {
         const { latitude: lat, longitude: lng } = position.coords;
         setManualLat(lat.toFixed(6));
         setManualLng(lng.toFixed(6));
 
-        if (mapRef.current) {
-          mapRef.current.setView([lat, lng], SELECTED_ZOOM);
+        if (mapInstanceRef.current && leafletRef.current) {
+          mapInstanceRef.current.setView([lat, lng], SELECTED_ZOOM);
           
-          const L = (await import("leaflet")).default;
-          if (markerRef.current) {
-            markerRef.current.setLatLng([lat, lng]);
+          if (markerInstanceRef.current) {
+            markerInstanceRef.current.setLatLng([lat, lng]);
           } else {
-            markerRef.current = L.marker([lat, lng], { draggable: true }).addTo(mapRef.current);
-            markerRef.current.on("dragend", () => {
-              const pos = markerRef.current!.getLatLng();
+            const marker = leafletRef.current.marker([lat, lng], { draggable: true }).addTo(mapInstanceRef.current);
+            marker.on("dragend", () => {
+              const pos = marker.getLatLng();
               setManualLat(pos.lat.toFixed(6));
               setManualLng(pos.lng.toFixed(6));
             });
+            markerInstanceRef.current = marker;
           }
         }
         setIsLoading(false);
@@ -202,7 +202,7 @@ function LocationPickerInner({
   };
 
   // Handle manual coordinate input
-  const handleManualUpdate = async () => {
+  const handleManualUpdate = () => {
     const lat = parseFloat(manualLat);
     const lng = parseFloat(manualLng);
     
@@ -216,19 +216,19 @@ function LocationPickerInner({
       return;
     }
 
-    if (mapRef.current) {
-      mapRef.current.setView([lat, lng], SELECTED_ZOOM);
+    if (mapInstanceRef.current && leafletRef.current) {
+      mapInstanceRef.current.setView([lat, lng], SELECTED_ZOOM);
       
-      const L = (await import("leaflet")).default;
-      if (markerRef.current) {
-        markerRef.current.setLatLng([lat, lng]);
+      if (markerInstanceRef.current) {
+        markerInstanceRef.current.setLatLng([lat, lng]);
       } else {
-        markerRef.current = L.marker([lat, lng], { draggable: true }).addTo(mapRef.current);
-        markerRef.current.on("dragend", () => {
-          const pos = markerRef.current!.getLatLng();
+        const marker = leafletRef.current.marker([lat, lng], { draggable: true }).addTo(mapInstanceRef.current);
+        marker.on("dragend", () => {
+          const pos = marker.getLatLng();
           setManualLat(pos.lat.toFixed(6));
           setManualLng(pos.lng.toFixed(6));
         });
+        markerInstanceRef.current = marker;
       }
     }
   };
@@ -251,9 +251,9 @@ function LocationPickerInner({
   const handleClear = () => {
     setManualLat("");
     setManualLng("");
-    if (markerRef.current && mapRef.current) {
-      mapRef.current.removeLayer(markerRef.current);
-      markerRef.current = null;
+    if (markerInstanceRef.current && mapInstanceRef.current) {
+      mapInstanceRef.current.removeLayer(markerInstanceRef.current);
+      markerInstanceRef.current = null;
     }
   };
 
@@ -316,13 +316,13 @@ function LocationPickerInner({
               </div>
 
               {/* Map container */}
-              <div
+              <div 
                 ref={mapContainerRef}
-                className="h-[400px] w-full rounded-lg border bg-muted relative"
-                style={{ zIndex: 0 }}
+                className="h-[400px] w-full rounded-lg border relative"
+                style={{ background: "#f0f0f0" }}
               >
                 {!mapReady && (
-                  <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-center justify-center z-10">
                     <span className="text-muted-foreground">جاري تحميل الخريطة...</span>
                   </div>
                 )}
@@ -366,9 +366,3 @@ function LocationPickerInner({
     </div>
   );
 }
-
-// Export with dynamic to avoid SSR issues
-export const LocationPicker = dynamic(
-  () => Promise.resolve(LocationPickerInner),
-  { ssr: false }
-);
