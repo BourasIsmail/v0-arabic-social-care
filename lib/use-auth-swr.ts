@@ -89,7 +89,9 @@ export function useAuthMutate() {
         headers.set("Authorization", `Bearer ${accessToken}`);
       }
       
-      if (!headers.has("Content-Type") && options.body) {
+      // Only set Content-Type for non-FormData bodies
+      // FormData needs the browser to set the Content-Type with the boundary
+      if (!headers.has("Content-Type") && options.body && !(options.body instanceof FormData)) {
         headers.set("Content-Type", "application/json");
       }
 
