@@ -270,6 +270,8 @@ export interface InstitutionRequest {
   prefectureId?: number | "";
   communeId?: number | "";
   milieu?: Milieu;
+  latitude?: number;
+  longitude?: number;
   creationYear?: number;
   legalStatus?: LegalStatus;
   unlicensedReason?: string;

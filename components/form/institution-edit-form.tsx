@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuthFetcher, useAuthMutate } from "@/lib/use-auth-swr";
+import { LocationPicker } from "@/components/form/location-picker";
 import useSWR from "swr";
 import type {
   InstitutionRequest,
@@ -296,20 +297,31 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
             <div className="space-y-2">
               <Label>الوسط</Label>
               <Select
-                value={watch("milieu") || ""}
-                onValueChange={(v) => setValue("milieu", v as Milieu)}
+              value={watch("milieu") || ""}
+              onValueChange={(v) => setValue("milieu", v as Milieu)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر الوسط" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(milieuLabels).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+              <SelectTrigger>
+              <SelectValue placeholder="اختر الوسط" />
+              </SelectTrigger>
+              <SelectContent>
+              {Object.entries(milieuLabels).map(([value, label]) => (
+              <SelectItem key={value} value={value}>
+              {label}
+              </SelectItem>
+              ))}
+              </SelectContent>
               </Select>
+            </div>
+
+            <div className="sm:col-span-2">
+              <LocationPicker
+                latitude={watch("latitude")}
+                longitude={watch("longitude")}
+                onLocationChange={(lat, lng) => {
+                  setValue("latitude", lat);
+                  setValue("longitude", lng);
+                }}
+              />
             </div>
 
             <div className="space-y-2">
@@ -810,7 +822,7 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label>جهة الاختيار</Label>
+            <Label>جه�� الاختيار</Label>
             <Select
               value={watch("targeting.selectionBody") || ""}
               onValueChange={(v) =>
