@@ -47,14 +47,20 @@ function SeasonFields({
   
   const schoolLevelTotal = primaryBeneficiaries + middleSchoolBeneficiaries + highSchoolBeneficiaries + orphans;
   const schoolLevelExceedsTotal = schoolLevelTotal > totalBeneficiaries && totalBeneficiaries > 0;
+  const schoolLevelNotEqual = schoolLevelTotal !== totalBeneficiaries && totalBeneficiaries > 0 && schoolLevelTotal > 0;
 
   return (
-    <Card className={schoolLevelExceedsTotal ? "border-destructive" : ""}>
+    <Card className={schoolLevelExceedsTotal ? "border-destructive" : schoolLevelNotEqual ? "border-amber-500" : ""}>
       <CardHeader>
         <CardTitle className="text-base">{seasonLabel}</CardTitle>
         {schoolLevelExceedsTotal && (
           <p className="text-sm text-destructive">
-            تحذير: مجموع التوزيع حسب المستوى الدراسي ({schoolLevelTotal}) يتجاوز العدد الإجمالي للمستفيدين ({totalBeneficiaries})
+            خطأ: مجموع التوزيع حسب المستوى الدراسي ({schoolLevelTotal}) يتجاوز العدد الإجمالي للمستفيدين ({totalBeneficiaries})
+          </p>
+        )}
+        {!schoolLevelExceedsTotal && schoolLevelNotEqual && (
+          <p className="text-sm text-amber-600">
+            تنبيه: مجموع التوزيع حسب المستوى الدراسي ({schoolLevelTotal}) لا يساوي العدد الإجمالي للمستفيدين ({totalBeneficiaries})
           </p>
         )}
       </CardHeader>

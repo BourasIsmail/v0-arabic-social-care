@@ -248,6 +248,13 @@ export function InstitutionStep() {
                   if (value && new Date(value) >= new Date()) {
                     return "تاريخ شروع المؤسسة يجب أن يكون أصغر من تاريخ اليوم";
                   }
+                  const creationYear = watch("creationYear");
+                  if (value && creationYear) {
+                    const serviceYear = new Date(value).getFullYear();
+                    if (serviceYear < creationYear) {
+                      return "سنة شروع المؤسسة في تقديم خدماتها يجب أن تكون أكبر أو تساوي سنة إحداث المؤسسة";
+                    }
+                  }
                   return true;
                 }
               })}
