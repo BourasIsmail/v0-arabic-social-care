@@ -26,21 +26,37 @@ function SeasonFields({
   register,
   watch,
   setValue,
+  errors,
 }: {
   seasonKey: "season2324" | "season2425" | "season2526";
   seasonLabel: string;
   register: ReturnType<typeof useForm<HousingMealsDTO>>["register"];
   watch: ReturnType<typeof useForm<HousingMealsDTO>>["watch"];
   setValue: ReturnType<typeof useForm<HousingMealsDTO>>["setValue"];
+  errors: Record<string, string>;
 }) {
   const updateTotal = (males: number, females: number) => {
     setValue(`${seasonKey}.totalBeneficiaries`, males + females);
   };
 
+  const totalBeneficiaries = watch(`${seasonKey}.totalBeneficiaries`) || 0;
+  const primaryBeneficiaries = watch(`${seasonKey}.primaryBeneficiaries`) || 0;
+  const middleSchoolBeneficiaries = watch(`${seasonKey}.middleSchoolBeneficiaries`) || 0;
+  const highSchoolBeneficiaries = watch(`${seasonKey}.highSchoolBeneficiaries`) || 0;
+  const orphans = watch(`${seasonKey}.orphans`) || 0;
+  
+  const schoolLevelTotal = primaryBeneficiaries + middleSchoolBeneficiaries + highSchoolBeneficiaries + orphans;
+  const schoolLevelExceedsTotal = schoolLevelTotal > totalBeneficiaries && totalBeneficiaries > 0;
+
   return (
-    <Card>
+    <Card className={schoolLevelExceedsTotal ? "border-destructive" : ""}>
       <CardHeader>
         <CardTitle className="text-base">{seasonLabel}</CardTitle>
+        {schoolLevelExceedsTotal && (
+          <p className="text-sm text-destructive">
+            تحذير: مجموع التوزيع حسب المستوى الدراسي ({schoolLevelTotal}) يتجاوز العدد الإجمالي للمستفيدين ({totalBeneficiaries})
+          </p>
+        )}
       </CardHeader>
       <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-2">
@@ -53,7 +69,7 @@ function SeasonFields({
             className="bg-muted"
             placeholder="يتم حسابه تلقائيا"
           />
-          <p className="text-xs text-muted-foreground">يتم حسابه تلقائيا</p>
+          <p className="text-xs text-muted-foreground">يتم حسابه تلقائيا (ذكور + إناث)</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor={`${seasonKey}.maleBeneficiaries`}>توزيعه حسب الذكور</Label>
@@ -92,6 +108,7 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.primaryBeneficiaries`}
             type="number"
+            className={schoolLevelExceedsTotal ? "border-destructive" : ""}
             {...register(`${seasonKey}.primaryBeneficiaries`, { valueAsNumber: true })}
             placeholder="0"
           />
@@ -101,6 +118,7 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.middleSchoolBeneficiaries`}
             type="number"
+            className={schoolLevelExceedsTotal ? "border-destructive" : ""}
             {...register(`${seasonKey}.middleSchoolBeneficiaries`, { valueAsNumber: true })}
             placeholder="0"
           />
@@ -110,6 +128,7 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.highSchoolBeneficiaries`}
             type="number"
+            className={schoolLevelExceedsTotal ? "border-destructive" : ""}
             {...register(`${seasonKey}.highSchoolBeneficiaries`, { valueAsNumber: true })}
             placeholder="0"
           />
@@ -119,6 +138,7 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.orphans`}
             type="number"
+            className={schoolLevelExceedsTotal ? "border-destructive" : ""}
             {...register(`${seasonKey}.orphans`, { valueAsNumber: true })}
             placeholder="0"
           />
@@ -159,6 +179,12 @@ export function HousingStep() {
     }
   }, [formVersion, reset, formData.housingMeals]);
 
+  // Scholarship validation
+  const totalMealBeneficiaries = watch("totalMealBeneficiaries2526") || 0;
+  const fullGrantCount = watch("fullGrantCount") || 0;
+  const halfGrantCount = watch("halfGrantCount") || 0;
+  const grantMismatch = totalMealBeneficiaries > 0 && (fullGrantCount + halfGrantCount) !== totalMealBeneficiaries;
+
   const onSubmit = (data: HousingMealsDTO) => {
     updateFormData({ housingMeals: data });
     setCurrentStep("staff");
@@ -188,6 +214,7 @@ export function HousingStep() {
             register={register}
             watch={watch}
             setValue={setValue}
+            errors={{}}
           />
           <SeasonFields
             seasonKey="season2425"
@@ -195,6 +222,7 @@ export function HousingStep() {
             register={register}
             watch={watch}
             setValue={setValue}
+            errors={{}}
           />
           <SeasonFields
             seasonKey="season2526"
@@ -202,6 +230,7 @@ export function HousingStep() {
             register={register}
             watch={watch}
             setValue={setValue}
+            errors={{}}
           />
         </CardContent>
       </Card>
@@ -263,6 +292,7 @@ export function HousingStep() {
             <Input
               id="fullGrantCount"
               type="number"
+              className={grantMismatch ? "border-destructive" : ""}
               {...register("fullGrantCount", { valueAsNumber: true })}
               placeholder="0"
             />
@@ -273,9 +303,15 @@ export function HousingStep() {
             <Input
               id="halfGrantCount"
               type="number"
+              className={grantMismatch ? "border-destructive" : ""}
               {...register("halfGrantCount", { valueAsNumber: true })}
               placeholder="0"
             />
+            {grantMismatch && (
+              <p className="text-sm text-destructive">
+                تحذير: مجموع المنح الكاملة ونصف المنح ({fullGrantCount + halfGrantCount}) لا يساوي العدد الإجمالي للمستفيدين من الإطعام ({totalMealBeneficiaries})
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
