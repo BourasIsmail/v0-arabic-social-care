@@ -233,6 +233,7 @@ export interface HousingMealsDTO {
   fullGrantCount?: number;
   halfGrantCount?: number;
   mealServiceType?: MealServiceType;
+  mealServiceTypeOther?: string;
 
   // Improvement Suggestions
   increaseProducts?: boolean;
