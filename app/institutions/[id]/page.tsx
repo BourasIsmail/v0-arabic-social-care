@@ -516,7 +516,7 @@ export default function InstitutionDetailPage({
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm">الاستبيان الموقع</p>
                         <a 
-                          href={data.signedPdfUrl} 
+                          href={`/api${data.signedPdfUrl}`} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="text-xs text-primary hover:underline truncate block"
