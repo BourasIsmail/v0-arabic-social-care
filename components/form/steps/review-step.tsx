@@ -22,8 +22,9 @@ import {
   staffTypeLabels,
 } from "@/lib/types";
 import type { InstitutionRequest } from "@/lib/types";
-import { ArrowRight, Check, Loader2 } from "lucide-react";
+import { ArrowRight, Check, Loader2, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { LocationMapDisplay } from "@/components/form/location-map-display";
 
 export function ReviewStep() {
   const { formData, setCurrentStep, resetForm, isEditMode, editId } = useFormContext();
@@ -155,6 +156,28 @@ export function ReviewStep() {
           <InfoRow label="الطاقة الاستيعابية المرخصة إناث" value={formData.femaleCapacity} />
         </CardContent>
       </Card>
+
+      {/* Location Map */}
+      {formData.latitude && formData.longitude && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              الموقع الجغرافي للمؤسسة
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              خط العرض: {formData.latitude.toFixed(6)} | خط الطول: {formData.longitude.toFixed(6)}
+            </p>
+          </CardHeader>
+          <CardContent>
+            <LocationMapDisplay
+              latitude={formData.latitude}
+              longitude={formData.longitude}
+              height="250px"
+            />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Services */}
       <Card>
