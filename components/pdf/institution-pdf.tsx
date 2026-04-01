@@ -308,7 +308,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
             </View>
             <View style={styles.logoBlock}>
               <Text style={styles.logoEmblem}>🏛️</Text>
-              <Text style={styles.logoText}>وزارة التربية الوطنية</Text>
+              <Text style={styles.logoText}>وزارة التربية الوطني��</Text>
               <Text style={styles.logoSub}>والتعليم الأولي والرياضة</Text>
             </View>
           </View>
@@ -370,7 +370,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Checkbox checked={data.primary || false} label="ابتدائي" />
               <Checkbox checked={data.middleSchool || false} label="ثانوي إعدادي" />
               <Checkbox checked={data.highSchool || false} label="ثانوي تأهيلي" />
-              <Checkbox checked={data.other || false} label="آخر" />
+              <Checkbox checked={data.other || false} label={data.other && data.otherDetail ? `آخر: ${data.otherDetail}` : "آخر"} />
             </View>
           </FormRow>
           <FormRow label="البعد الجغرافي عن أقرب مؤسسة تعليمية مستقبلة للمستفيدين">
@@ -643,7 +643,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
           </FormRow>
           <FormRow label="مقترحاتكم من أجل تحسين جودة الإطعام بالمؤسسة">
             <View style={styles.cbRow}>
-              <Checkbox checked={data.housingMeals?.improveByExternalSupplier || false} label="اللجوء إلى ممون خارجي" />
+              <Checkbox checked={data.housingMeals?.improveByExternalSupplier || false} label="ا��لجوء إلى ممون خارجي" />
               <Checkbox checked={data.housingMeals?.improveByMoreFood || false} label="زيادة المواد الغذائية وتجويدها" />
               <Checkbox checked={data.housingMeals?.improveByReadyMeals || false} label="تقديم وجبات جاهزة" />
               <Checkbox checked={data.housingMeals?.improveByOther || false} label="آخر" />
