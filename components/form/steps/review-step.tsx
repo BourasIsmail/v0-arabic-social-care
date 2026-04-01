@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useFormContext } from "@/lib/form-context";
 import { useAuthMutate, useAuthFetcher } from "@/lib/use-auth-swr";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import type { GeoDTO } from "@/lib/types";
 import {
@@ -22,12 +24,14 @@ import {
   staffTypeLabels,
 } from "@/lib/types";
 import type { InstitutionRequest } from "@/lib/types";
-import { ArrowRight, Check, Loader2 } from "lucide-react";
+import { ArrowRight, Check, Loader2, Upload, FileText, X } from "lucide-react";
 import { toast } from "sonner";
 
 export function ReviewStep() {
-  const { formData, setCurrentStep, resetForm, isEditMode, editId } = useFormContext();
+  const { formData, setCurrentStep, resetForm, isEditMode, editId, updateFormData } = useFormContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const authFetch = useAuthMutate();
   const fetcher = useAuthFetcher();
   const [geoNames, setGeoNames] = useState<{
@@ -35,6 +39,56 @@ export function ReviewStep() {
     prefecture?: string;
     commune?: string;
   }>({});
+
+  // PDF upload handler
+  const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      toast.error("يرجى اختيار ملف PDF فقط");
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      toast.error("حجم الملف يجب أن لا يتجاوز 10 ميغابايت");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      // Create FormData for file upload
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", file);
+
+      // Upload to API
+      const response = await authFetch("/api/api/v1/files/upload", {
+        method: "POST",
+        body: uploadFormData,
+        headers: {}, // Let browser set content-type for FormData
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const result = await response.json();
+      updateFormData({ signedPdfUrl: result.url || result.fileUrl });
+      toast.success("تم تحميل الملف بنجاح");
+    } catch (error) {
+      toast.error("فشل تحميل الملف");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleRemovePdf = () => {
+    updateFormData({ signedPdfUrl: undefined });
+    toast.success("تم حذف الملف");
+  };
 
   // Fetch geo names for display
   useEffect(() => {
@@ -190,7 +244,7 @@ export function ReviewStep() {
             )}
             {formData.psychologicalSupport && (
               <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                الدعم والمواكبة الطبية والنفسية
+                الدعم والمواكبة الطبية والنفسي��
               </span>
             )}
           </div>
@@ -349,6 +403,73 @@ export function ReviewStep() {
           </CardContent>
         </Card>
       )}
+
+      {/* Signed PDF Upload */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">تحميل الاستبيان الموقع</CardTitle>
+          <CardDescription>قم بتحميل نسخة PDF من الاستبيان بعد توقيعه</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {formData.signedPdfUrl ? (
+            <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/50">
+              <div className="flex items-center gap-3">
+                <FileText className="h-8 w-8 text-primary" />
+                <div>
+                  <p className="font-medium">الاستبيان الموقع</p>
+                  <a 
+                    href={formData.signedPdfUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary hover:underline"
+                  >
+                    عرض الملف
+                  </a>
+                </div>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleRemovePdf}
+                className="text-destructive hover:text-destructive"
+              >
+                <X className="h-4 w-4" />
+                <span className="mr-1">حذف</span>
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf"
+                onChange={handlePdfUpload}
+                disabled={isUploading}
+                className="hidden"
+                id="pdf-upload"
+              />
+              <Label
+                htmlFor="pdf-upload"
+                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+              >
+                {isUploading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                    <span className="text-muted-foreground">جاري التحميل...</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                    <Upload className="h-8 w-8" />
+                    <span>اضغط لتحميل ملف PDF</span>
+                    <span className="text-xs">(الحد الأقصى 10 ميغابايت)</span>
+                  </div>
+                )}
+              </Label>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="flex justify-between">
         <Button

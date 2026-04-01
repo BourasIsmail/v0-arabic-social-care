@@ -302,6 +302,9 @@ export interface InstitutionRequest {
   distanceToSchool?: Distance;
   distanceToNationalBoardingSchool?: Distance;
 
+  // Signed questionnaire PDF
+  signedPdfUrl?: string;
+
   // Nested sections
   building?: BuildingDTO;
   financing?: FinancingDTO;
