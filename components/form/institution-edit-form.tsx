@@ -316,8 +316,17 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
               <Label>سنة التأسيس</Label>
               <Input
                 type="number"
-                {...register("creationYear", { valueAsNumber: true })}
+                {...register("creationYear", { 
+                  valueAsNumber: true,
+                  max: {
+                    value: 2025,
+                    message: "سنة إحداث المؤسسة يجب أن تكون أصغر من 2026"
+                  }
+                })}
               />
+              {errors.creationYear && (
+                <p className="text-sm text-destructive">{errors.creationYear.message || "سنة إحداث المؤسسة غير صالحة"}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -355,7 +364,21 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
 
             <div className="space-y-2">
               <Label>تاريخ بداية الخدمة</Label>
-              <Input type="date" {...register("serviceStartDate")} />
+              <Input 
+                type="date" 
+                max={new Date().toISOString().split('T')[0]}
+                {...register("serviceStartDate", {
+                  validate: (value) => {
+                    if (value && new Date(value) >= new Date()) {
+                      return "تاريخ شروع المؤسسة يجب أن يكون أصغر من تاريخ اليوم";
+                    }
+                    return true;
+                  }
+                })}
+              />
+              {errors.serviceStartDate && (
+                <p className="text-sm text-destructive">{errors.serviceStartDate.message}</p>
+              )}
             </div>
           </div>
         </CardContent>
@@ -535,6 +558,12 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
                   ))}
                 </SelectContent>
               </Select>
+              {watch("building.buildingStatus") === "OTHER" && (
+                <Input
+                  placeholder="حدد وضعية البناية"
+                  {...register("building.buildingStatusOther")}
+                />
+              )}
             </div>
 
             <div className="space-y-2">
@@ -556,6 +585,12 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
                   ))}
                 </SelectContent>
               </Select>
+              {watch("building.buildingCondition") === "OTHER" && (
+                <Input
+                  placeholder="حدد حالة البناية"
+                  {...register("building.buildingConditionOther")}
+                />
+              )}
             </div>
 
             <div className="space-y-2">
@@ -596,6 +631,12 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
                   ))}
                 </SelectContent>
               </Select>
+              {watch("building.ownerType") === "OTHER" && (
+                <Input
+                  placeholder="حدد نوع المالك"
+                  {...register("building.ownerTypeOther")}
+                />
+              )}
             </div>
 
             <div className="flex items-center gap-2 col-span-full">
@@ -637,6 +678,12 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
                 ))}
               </SelectContent>
             </Select>
+            {watch("housingMeals.mealServiceType") === "OTHER" && (
+              <Input
+                placeholder="حدد نوعية خدمة الإطعام"
+                {...register("housingMeals.mealServiceTypeOther")}
+              />
+            )}
           </div>
 
           <div className="space-y-2">
@@ -888,7 +935,7 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
                 className="w-full"
               >
                 <Plus className="h-4 w-4 ml-2" />
-                إضافة
+                اضافة مستخدم
               </Button>
             </div>
           </div>

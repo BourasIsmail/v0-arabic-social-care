@@ -113,9 +113,12 @@ export interface SeasonBeneficiaries {
 
 export interface BuildingDTO {
   buildingStatus?: BuildingStatus;
+  buildingStatusOther?: string;
   buildingCondition?: BuildingCondition;
+  buildingConditionOther?: string;
   renovationCapacity?: RenovationCapacity;
   ownerType?: OwnerType;
+  ownerTypeOther?: string;
   hasPartnershipAgreement?: boolean;
 }
 
@@ -230,6 +233,7 @@ export interface HousingMealsDTO {
   fullGrantCount?: number;
   halfGrantCount?: number;
   mealServiceType?: MealServiceType;
+  mealServiceTypeOther?: string;
 
   // Improvement Suggestions
   increaseProducts?: boolean;

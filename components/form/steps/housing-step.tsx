@@ -295,6 +295,12 @@ export function HousingStep() {
                 ))}
               </SelectContent>
             </Select>
+            {watch("mealServiceType") === "OTHER" && (
+              <Input
+                placeholder="حدد نوعية خدمة الإطعام"
+                {...register("mealServiceTypeOther")}
+              />
+            )}
           </div>
         </CardContent>
       </Card>

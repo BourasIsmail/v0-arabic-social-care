@@ -118,9 +118,19 @@ export function InstitutionStep() {
             <Input
               id="creationYear"
               type="number"
-              {...register("creationYear", { valueAsNumber: true, min: 1900, max: 2100 })}
+              {...register("creationYear", { 
+                valueAsNumber: true, 
+                min: 1900, 
+                max: {
+                  value: 2025,
+                  message: "سنة إحداث المؤسسة يجب أن تكون أصغر من 2026"
+                }
+              })}
               placeholder="مثال: 2010"
             />
+            {errors.creationYear && (
+              <p className="text-sm text-destructive">{errors.creationYear.message || "سنة إحداث المؤسسة غير صالحة"}</p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -220,8 +230,19 @@ export function InstitutionStep() {
             <Input
               id="serviceStartDate"
               type="date"
-              {...register("serviceStartDate")}
+              max={new Date().toISOString().split('T')[0]}
+              {...register("serviceStartDate", {
+                validate: (value) => {
+                  if (value && new Date(value) >= new Date()) {
+                    return "تاريخ شروع المؤسسة يجب أن يكون أصغر من تاريخ اليوم";
+                  }
+                  return true;
+                }
+              })}
             />
+            {errors.serviceStartDate && (
+              <p className="text-sm text-destructive">{errors.serviceStartDate.message}</p>
+            )}
           </div>
         </CardContent>
       </Card>
