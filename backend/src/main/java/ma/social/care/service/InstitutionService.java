@@ -4,6 +4,7 @@ import ma.social.care.dto.*;
 import ma.social.care.entity.enums.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,4 +38,8 @@ public interface InstitutionService {
     List<String> getAllCommunes();
 
     List<String> getCommunesByRegion(String region);
+
+    InstitutionResponseDTO uploadSignedPdf(Long id, MultipartFile file);
+
+    void deleteSignedPdf(Long id);
 }

@@ -147,6 +147,10 @@ public class Institution extends BaseEntity {
     @Builder.Default
     private List<StaffMember> staffMembers = new ArrayList<>();
 
+    // Signed PDF URL
+    @Column(name = "signed_pdf_url")
+    private String signedPdfUrl;
+
     // === Soft Delete ===
     @Column(name = "is_deleted", nullable = false)
     @Builder.Default

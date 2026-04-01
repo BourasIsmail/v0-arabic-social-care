@@ -355,6 +355,7 @@ export interface InstitutionResponse {
   targeting?: TargetingDTO;
   housingMeals?: HousingMealsDTO;
   staffMembers?: StaffMemberDTO[];
+  signedPdfUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
