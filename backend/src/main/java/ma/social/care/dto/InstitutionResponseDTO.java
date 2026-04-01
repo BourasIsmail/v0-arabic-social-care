@@ -28,6 +28,8 @@ public class InstitutionResponseDTO {
     private Long communeId;
     private String communeName;
     private Milieu milieu;
+    private Double latitude;
+    private Double longitude;
     private Integer creationYear;
     private LegalStatus legalStatus;
     private String unlicensedReason;

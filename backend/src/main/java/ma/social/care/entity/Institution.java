@@ -51,6 +51,12 @@ public class Institution extends BaseEntity {
     @Column(name = "milieu")
     private Milieu milieu;
 
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
     @Column(name = "creation_year")
     private Integer creationYear;
 
