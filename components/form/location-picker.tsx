@@ -97,9 +97,9 @@ function LocationPickerInner({
         zoom: initialZoom,
       });
 
-      // Add tile layer (OpenStreetMap)
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      // Add tile layer (ArcGIS World Street Map)
+      L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+        attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
         maxZoom: 19,
       }).addTo(map);
 
