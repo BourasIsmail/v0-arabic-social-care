@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { LocationMapDisplay } from "@/components/form/location-map-display";
 import {
   institutionTypeLabels,
   milieuLabels,
@@ -223,12 +224,29 @@ export default function InstitutionDetailPage({
                   الموقع الجغرافي
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-1">
-                <InfoRow label="العنوان" value={data.address} />
-                <InfoRow label="الجهة" value={data.regionName} />
-                <InfoRow label="العمالة/الإقليم" value={data.prefectureName} />
-                <InfoRow label="الجماعة" value={data.communeName} />
-                <InfoRow label="الوسط" value={data.milieu && milieuLabels[data.milieu]} />
+              <CardContent className="space-y-4">
+                <div className="space-y-1">
+                  <InfoRow label="العنوان" value={data.address} />
+                  <InfoRow label="الجهة" value={data.regionName} />
+                  <InfoRow label="العمالة/الإقليم" value={data.prefectureName} />
+                  <InfoRow label="الجماعة" value={data.communeName} />
+                  <InfoRow label="الوسط" value={data.milieu && milieuLabels[data.milieu]} />
+                </div>
+                {data.latitude && data.longitude && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">الإحداثيات</span>
+                      <span className="font-mono text-xs">
+                        {data.latitude.toFixed(6)}, {data.longitude.toFixed(6)}
+                      </span>
+                    </div>
+                    <LocationMapDisplay
+                      latitude={data.latitude}
+                      longitude={data.longitude}
+                      height="200px"
+                    />
+                  </div>
+                )}
               </CardContent>
             </Card>
 
