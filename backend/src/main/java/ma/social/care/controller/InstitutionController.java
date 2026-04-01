@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -178,5 +179,19 @@ public class InstitutionController {
         log.info("DELETE /api/v1/institutions/{}/signed-pdf - Deleting signed PDF", id);
         institutionService.deleteSignedPdf(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Download signed PDF for an institution
+     */
+    @GetMapping("/{id}/signed-pdf/download")
+    public ResponseEntity<Resource> downloadSignedPdf(@PathVariable Long id) {
+        log.info("GET /api/v1/institutions/{}/signed-pdf/download - Downloading signed PDF", id);
+        Resource resource = institutionService.getSignedPdfResource(id);
+        
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"institution_" + id + "_signed.pdf\"")
+                .body(resource);
     }
 }
