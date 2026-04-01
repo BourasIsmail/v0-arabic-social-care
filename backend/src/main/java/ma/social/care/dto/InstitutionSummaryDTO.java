@@ -21,6 +21,8 @@ public class InstitutionSummaryDTO {
     private Long communeId;
     private String communeName;
     private Milieu milieu;
+    private Double latitude;
+    private Double longitude;
     private LegalStatus legalStatus;
     private Integer totalCapacity;
     private LocalDateTime createdAt;

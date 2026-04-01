@@ -38,6 +38,14 @@ public class InstitutionRequestDTO {
 
     private Milieu milieu;
 
+    @DecimalMin(value = "-90.0", message = "Latitude must be between -90 and 90")
+    @DecimalMax(value = "90.0", message = "Latitude must be between -90 and 90")
+    private Double latitude;
+
+    @DecimalMin(value = "-180.0", message = "Longitude must be between -180 and 180")
+    @DecimalMax(value = "180.0", message = "Longitude must be between -180 and 180")
+    private Double longitude;
+
     @Min(value = 1900, message = "Creation year must be at least 1900")
     @Max(value = 2100, message = "Creation year cannot exceed 2100")
     private Integer creationYear;

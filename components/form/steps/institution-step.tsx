@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CascadeGeoSelect } from "@/components/form/cascade-geo-select";
+import { LocationPicker } from "@/components/form/location-picker";
 import {
   InstitutionType,
   Milieu,
@@ -175,6 +176,17 @@ export function InstitutionStep() {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="sm:col-span-2">
+            <LocationPicker
+              latitude={watch("latitude")}
+              longitude={watch("longitude")}
+              onLocationChange={(lat, lng) => {
+                setValue("latitude", lat);
+                setValue("longitude", lng);
+              }}
+            />
           </div>
         </CardContent>
       </Card>
