@@ -370,7 +370,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Checkbox checked={data.primary || false} label="ابتدائي" />
               <Checkbox checked={data.middleSchool || false} label="ثانوي إعدادي" />
               <Checkbox checked={data.highSchool || false} label="ثانوي تأهيلي" />
-              <Checkbox checked={data.other || false} label="آخر" />
+              <Checkbox checked={data.other || false} label={data.other && data.otherDetail ? `آخر: ${data.otherDetail}` : "آخر"} />
             </View>
           </FormRow>
           <FormRow label="البعد الجغرافي عن أقرب مؤسسة تعليمية مستقبلة للمستفيدين">
@@ -403,7 +403,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Checkbox checked={data.building?.buildingStatus === "RENTAL"} label="إيجار" />
               <Checkbox checked={data.building?.buildingStatus === "OWNED"} label="ملكية" />
               <Checkbox checked={data.building?.buildingStatus === "AT_DISPOSAL"} label="وضع رهن إشارة المؤسسة" />
-              <Checkbox checked={data.building?.buildingStatus === "OTHER"} label="آخر" />
+              <Checkbox checked={data.building?.buildingStatus === "OTHER"} label={data.building?.buildingStatus === "OTHER" && data.building?.buildingStatusOther ? `آخر: ${data.building.buildingStatusOther}` : "آخر"} />
             </View>
           </FormRow>
           <FormRow label="الحالة العامة للبناية">
@@ -425,7 +425,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Checkbox checked={data.building?.ownerType === "STATE_DOMAIN"} label="أملاك الدولة" />
               <Checkbox checked={data.building?.ownerType === "COMMUNAL"} label="ملك جماعي" />
               <Checkbox checked={data.building?.ownerType === "PRIVATE"} label="ملك خصوصي" />
-              <Checkbox checked={data.building?.ownerType === "OTHER"} label="آخر" />
+              <Checkbox checked={data.building?.ownerType === "OTHER"} label={data.building?.ownerType === "OTHER" && data.building?.ownerTypeOther ? `آخر: ${data.building.ownerTypeOther}` : "آخر"} />
             </View>
           </FormRow>
           <FormRow label="وضع البناية رهن إشارة المؤسسة بموجب اتفاقية شراكة">
@@ -453,7 +453,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
             <View style={[styles.cbRow, { marginTop: 4 }]}>
               <Checkbox checked={data.financing?.constructionByPromotion || false} label="الإنعاش الوطني" />
               <Checkbox checked={data.financing?.constructionByAssociation || false} label="جمعية / مؤسسة" />
-              <Checkbox checked={data.financing?.constructionByOther || false} label="آخر" />
+              <Checkbox checked={data.financing?.constructionByOther || false} label={data.financing?.constructionByOther && data.financing?.otherConstructionDetail ? `آخر: ${data.financing.otherConstructionDetail}` : "آخر"} />
             </View>
           </FormRow>
           <FormRow label="تمويل تجهيز المؤسسة">
@@ -468,7 +468,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
             </View>
             <View style={[styles.cbRow, { marginTop: 4 }]}>
               <Checkbox checked={data.financing?.equipmentByAssociation || false} label="جمعية / مؤسسة" />
-              <Checkbox checked={data.financing?.equipmentByOther || false} label="آخر" />
+              <Checkbox checked={data.financing?.equipmentByOther || false} label={data.financing?.equipmentByOther && data.financing?.equipmentOtherDetail ? `آخر: ${data.financing.equipmentOtherDetail}` : "آخر"} />
             </View>
           </FormRow>
           <DataRow label="الكلفة الإجمالية لبناء المؤسسة" value={data.financing?.totalConstructionCost ? `${data.financing.totalConstructionCost} درهم` : "-"} />
@@ -486,7 +486,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
             </View>
             <View style={[styles.cbRow, { marginTop: 4 }]}>
               <Checkbox checked={data.financing?.operatingByAssociation || false} label="مصادر ذاتية للجمعية المسيرة" />
-              <Checkbox checked={data.financing?.operatingByOther || false} label="آخر" />
+              <Checkbox checked={data.financing?.operatingByOther || false} label={data.financing?.operatingByOther && data.financing?.operatingOtherDetail ? `آخر: ${data.financing.operatingOtherDetail}` : "آخر"} />
             </View>
           </FormRow>
           <DataRow label="الكلفة السنوية المخصصة للموارد البشرية" value={data.financing?.annualHRCost ? `${data.financing.annualHRCost} درهم` : "-"} />
@@ -518,7 +518,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
             <View style={[styles.cbRow, { marginTop: 4 }]}>
               <Checkbox checked={data.targeting?.resultsBased || false} label=".3 النتائج المدرسية للمستفيد" />
               <Checkbox checked={data.targeting?.scholarshipBased || false} label=".4 الاستفادة من المنحة الدراسية" />
-              <Checkbox checked={data.targeting?.otherCriteria || false} label=".5 آخر" />
+              <Checkbox checked={data.targeting?.otherCriteria || false} label={data.targeting?.otherCriteria && data.targeting?.otherCriteriaDetail ? `.5 آخر: ${data.targeting.otherCriteriaDetail}` : ".5 آخر"} />
             </View>
           </FormRow>
           <FormRow label="الجهة التي تقوم بعملية انتقاء المستفيدين">
@@ -638,7 +638,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
             <View style={styles.cbRow}>
               <Checkbox checked={data.housingMeals?.mealServiceType === "INSTITUTION_KITCHEN"} label="إعداد الوجبات في مطبخ المؤسسة" />
               <Checkbox checked={data.housingMeals?.mealServiceType === "READY_MEALS"} label="وجبات جاهزة" />
-              <Checkbox checked={data.housingMeals?.mealServiceType === "OTHER"} label="آخر" />
+              <Checkbox checked={data.housingMeals?.mealServiceType === "OTHER"} label={data.housingMeals?.mealServiceType === "OTHER" && data.housingMeals?.mealServiceTypeOther ? `آخر: ${data.housingMeals.mealServiceTypeOther}` : "آخر"} />
             </View>
           </FormRow>
           <FormRow label="مقترحاتكم من أجل تحسين جودة الإطعام بالمؤسسة">
@@ -646,7 +646,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Checkbox checked={data.housingMeals?.improveByExternalSupplier || false} label="اللجوء إلى ممون خارجي" />
               <Checkbox checked={data.housingMeals?.improveByMoreFood || false} label="زيادة المواد الغذائية وتجويدها" />
               <Checkbox checked={data.housingMeals?.improveByReadyMeals || false} label="تقديم وجبات جاهزة" />
-              <Checkbox checked={data.housingMeals?.improveByOther || false} label="آخر" />
+              <Checkbox checked={data.housingMeals?.improveByOther || false} label={data.housingMeals?.improveByOther && data.housingMeals?.otherSuggestionDetail ? `آخر: ${data.housingMeals.otherSuggestionDetail}` : "آخر"} />
             </View>
           </FormRow>
         </View>
