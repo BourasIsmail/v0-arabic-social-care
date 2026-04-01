@@ -159,7 +159,6 @@ export interface FinancingDTO {
   annualManagementCost?: number;
   annualHRCost?: number;
   annualMealsCost?: number;
-  totalMealsAmount?: number;
   annualOtherExpenses?: number;
   individualAnnualCost?: number;
 

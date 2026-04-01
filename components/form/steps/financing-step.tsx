@@ -215,17 +215,6 @@ export function FinancingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="totalMealsAmount">المبلغ الإجمالي (درهم)</Label>
-            <Input
-              id="totalMealsAmount"
-              type="number"
-              step="0.01"
-              {...register("totalMealsAmount", { valueAsNumber: true })}
-              placeholder="0.00"
-            />
-          </div>
-
-          <div className="space-y-2">
             <Label htmlFor="annualOtherExpenses">الكلفة السنوية المخصصة لباقي النفقات (الماء، الكهرباء، الغاز، مواد النظافة...) (درهم)</Label>
             <Input
               id="annualOtherExpenses"

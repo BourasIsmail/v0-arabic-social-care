@@ -121,17 +121,27 @@ export function TargetingStep() {
       <Card>
         <CardHeader>
           <CardTitle>تصنيف المعايير المعتمدة حسب الأولوية في الاستهداف</CardTitle>
-          <CardDescription>رتب الأولويات من 1 إلى 5</CardDescription>
+          <CardDescription>رتب الأولويات من 1 إلى 5 (اختر من المعايير المحددة أعلاه)</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {[1, 2, 3, 4, 5].map((num) => (
             <div key={num} className="space-y-2">
               <Label htmlFor={`priority${num}`}>الأولوية {num}</Label>
-              <Input
-                id={`priority${num}`}
-                {...register(`priority${num}` as keyof TargetingDTO)}
-                placeholder={`الأولوية ${num}`}
-              />
+              <Select
+                value={watch(`priority${num}` as keyof TargetingDTO) as string || ""}
+                onValueChange={(value) => setValue(`priority${num}` as keyof TargetingDTO, value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={`اختر الأولوية ${num}`} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="socialSituation">الوضعية الاجتماعية للأسرة</SelectItem>
+                  <SelectItem value="distance">المسافة بين المدرسة ومحل سكن المستفيد</SelectItem>
+                  <SelectItem value="schoolResults">النتائج المدرسية للمستفيد</SelectItem>
+                  <SelectItem value="scholarship">الاستفادة من المنحة الدراسية</SelectItem>
+                  <SelectItem value="other">آخر</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           ))}
         </CardContent>
