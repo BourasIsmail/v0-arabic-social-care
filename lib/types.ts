@@ -154,6 +154,7 @@ export interface FinancingDTO {
   operatingDonors?: boolean;
   operatingAssociationOwnSources?: boolean;
   operatingOther?: boolean;
+  operatingOtherDetail?: string;
 
   // Costs
   annualManagementCost?: number;
