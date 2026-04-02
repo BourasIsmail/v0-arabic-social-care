@@ -11,8 +11,11 @@ import ma.social.care.entity.enums.*;
 public class BuildingDTO {
 
     private BuildingStatus buildingStatus;
+    private String buildingStatusOther;
     private BuildingCondition buildingCondition;
+    private String buildingConditionOther;
     private RenovationCapacity renovationCapacity;
     private OwnerType ownerType;
+    private String ownerTypeOther;
     private Boolean hasPartnershipAgreement;
 }
