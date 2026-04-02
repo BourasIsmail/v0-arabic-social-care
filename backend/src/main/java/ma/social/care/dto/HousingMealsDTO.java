@@ -39,6 +39,7 @@ public class HousingMealsDTO {
     private Integer halfGrantCount;
 
     private MealServiceType mealServiceType;
+    private String mealServiceTypeOther;
 
     // Improvement Suggestions
     private Boolean increaseProducts;

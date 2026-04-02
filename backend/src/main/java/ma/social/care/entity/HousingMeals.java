@@ -82,6 +82,9 @@ public class HousingMeals extends BaseEntity {
     @Column(name = "meal_service_type")
     private MealServiceType mealServiceType;
 
+    @Column(name = "meal_service_type_other")
+    private String mealServiceTypeOther;
+
     // === Improvement Suggestions ===
     @Column(name = "suggestion_increase_products")
     private Boolean increaseProducts;

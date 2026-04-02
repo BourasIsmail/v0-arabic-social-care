@@ -104,6 +104,9 @@ public class Financing extends BaseEntity {
     @Column(name = "operating_other")
     private Boolean operatingOther;
 
+    @Column(name = "operating_other_detail")
+    private String operatingOtherDetail;
+
     // === Additional Costs ===
     @Column(name = "annual_hr_cost", precision = 15, scale = 2)
     private BigDecimal annualHRCost;

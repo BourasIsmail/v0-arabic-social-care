@@ -51,6 +51,7 @@ public class FinancingDTO {
     private Boolean operatingDonors;
     private Boolean operatingAssociationOwnSources;
     private Boolean operatingOther;
+    private String operatingOtherDetail;
 
     // Additional Costs
     @DecimalMin(value = "0.0", message = "Annual HR cost cannot be negative")
