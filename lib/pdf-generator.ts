@@ -140,6 +140,17 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
     </tr>
   `).join('');
 
+  // Calculate staff totals
+  const staffTotals = (data.staffMembers || []).reduce((acc: any, staff: any) => ({
+    nbAssociation: acc.nbAssociation + (staff.nbAssociation || staff.count || 1),
+    nbDeployed: acc.nbDeployed + (staff.nbDeployed || 0),
+    nbVolunteers: acc.nbVolunteers + (staff.nbVolunteers || 0),
+    nbCNSS: acc.nbCNSS + (staff.nbCNSS || 0),
+    nbSMIG: acc.nbSMIG + (staff.nbSMIG || 0),
+    monthlyCost: acc.monthlyCost + (staff.monthlyCost || 0),
+    annualCost: acc.annualCost + (staff.annualCost || 0),
+  }), { nbAssociation: 0, nbDeployed: 0, nbVolunteers: 0, nbCNSS: 0, nbSMIG: 0, monthlyCost: 0, annualCost: 0 });
+
   // Logo URL - use base64 if provided, otherwise use relative path
   const logoUrl = logoBase64 || '/images/header-logos.png';
 
@@ -892,15 +903,16 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                 <div class="field-label">عدد المستفيدين من نصف المنحة</div>
                 <div class="field-value">${getDisplayValue(data.housingMeals?.halfGrantCount)}</div>
               </div>
-              <div class="field-row">
-                <div class="field-label">نوع خدمة الإطعام</div>
-                <div class="field-value">
-                  <div class="checkbox-row">
-                    <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'INTERNAL' ? '☑' : '☐'}</span> داخلي</span>
-                    <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'EXTERNAL' ? '☑' : '☐'}</span> خارجي</span>
-                  </div>
-                </div>
-              </div>
+  <div class="field-row">
+  <div class="field-label">نوعية خدمة الإطعام المقدمة</div>
+  <div class="field-value">
+  <div class="checkbox-row">
+  <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'INSTITUTION_KITCHEN' ? '☑' : '☐'}</span> إعداد الوجبات في مطبخ المؤسسة</span>
+  <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'READY_MEALS' ? '☑' : '☐'}</span> وجبات جاهزة</span>
+  <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'OTHER' ? '☑' : '☐'}</span> آخر ${data.housingMeals?.mealServiceType === 'OTHER' && data.housingMeals?.mealServiceTypeOther ? `(${data.housingMeals.mealServiceTypeOther})` : ''}</span>
+  </div>
+  </div>
+  </div>
               <div class="sub-section">اقتراحات التحسين</div>
               <div class="checkbox-group">
                 <div class="checkbox-row">
@@ -935,6 +947,18 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
               <tbody>
                 ${staffRows}
               </tbody>
+              <tfoot>
+                <tr style="background-color: #f0f0f0; font-weight: bold;">
+                  <td>المجموع</td>
+                  <td>${staffTotals.nbAssociation}</td>
+                  <td>${staffTotals.nbDeployed}</td>
+                  <td>${staffTotals.nbVolunteers}</td>
+                  <td>${staffTotals.nbCNSS}</td>
+                  <td>${staffTotals.nbSMIG}</td>
+                  <td>${staffTotals.monthlyCost}</td>
+                  <td>${staffTotals.annualCost}</td>
+                </tr>
+              </tfoot>
             </table>
           </div>
           ` : ''}
