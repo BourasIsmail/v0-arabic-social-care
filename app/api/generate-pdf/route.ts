@@ -879,7 +879,7 @@ export async function POST(request: Request) {
               <table class="stats-table">
                 <thead>
                   <tr>
-                    <th>نوع الموظف</th>
+                    <th>نوع المستخدم</th>
                     <th>الجمعية</th>
                     <th>المنتدبون</th>
                     <th>المتطوعون</th>
@@ -893,7 +893,7 @@ export async function POST(request: Request) {
                   ${staffRows}
                 </tbody>
               </table>
-              ` : '<div class="fields-container"><div class="field-row"><div class="field-value" style="width:100%; text-align:center;">لا يوجد موظفون مسجلون</div></div></div>'}
+              ` : '<div class="fields-container"><div class="field-row"><div class="field-value" style="width:100%; text-align:center;">لا يوجد مستخدمون مسجلون</div></div></div>'}
             </div>
 
             <!-- Signatures -->

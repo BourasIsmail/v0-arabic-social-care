@@ -434,7 +434,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Checkbox checked={data.building?.renovationCapacity === "NEEDS_RECONSTRUCTION"} label="تتطلب إعادة البناء" />
             </View>
           </FormRow>
-          <FormRow label="تحديد مالك الوعاء العقاري">
+          <FormRow label="تحد��د مالك الوعاء العقاري">
             <View style={styles.cbRow}>
               <Checkbox checked={data.building?.ownerType === "STATE_DOMAIN"} label="أملاك الدولة" />
               <Checkbox checked={data.building?.ownerType === "COMMUNAL"} label="ملك جماعي" />
@@ -654,7 +654,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
           </View>
           <DataRow label="العدد الإجمالي للمستفيدين فعليا من هذه الخدمة" value={data.housingMeals?.totalMealBeneficiaries} />
           <DataRow label="العدد الإجمالي للمستفيدين من خدمة الإطعام الممول من طرف الجمعية" value={data.housingMeals?.associationMealBeneficiaries} />
-          <DataRow label="العدد الإجمالي للمستفيدين م�� خدمة الإطعام التي يؤمنها قطاع التربية الوطنية" value={data.housingMeals?.educationMealBeneficiaries} />
+          <DataRow label="العدد الإجمالي للمستفيدين من خدمة الإطعام التي يؤمنها قطاع التربية الوطنية" value={data.housingMeals?.educationMealBeneficiaries} />
           <DataRow label="عدد المستفيدين من منحة كاملة" value={data.housingMeals?.fullScholarshipCount} />
           <DataRow label="عدد المستفيدين من نصف منحة (وجبة غذاء)" value={data.housingMeals?.halfScholarshipCount} />
           <FormRow label="نوعية خدمة الإطعام المقدمة">

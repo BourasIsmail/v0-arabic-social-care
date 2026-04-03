@@ -204,7 +204,7 @@ export default function AdminDashboardPage() {
             <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  إجمالي الموظفين
+                  إجمالي المستخدمين
                 </CardTitle>
                 <div className="h-9 w-9 rounded-lg bg-orange-500/10 flex items-center justify-center">
                   <UserCog className="h-5 w-5 text-orange-600" />

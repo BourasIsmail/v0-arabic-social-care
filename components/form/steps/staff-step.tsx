@@ -84,7 +84,7 @@ export function StaffStep() {
       <Card>
         <CardHeader>
           <CardTitle>معطيات حول الموارد البشرية العاملة بالمؤسسة</CardTitle>
-          <CardDescription>أدخل بيانات الموظف ثم اضغط على زر الإضافة</CardDescription>
+          <CardDescription>أدخل بيانات المستخدم ثم اضغط على زر الإضافة</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -217,11 +217,11 @@ export function StaffStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>قائمة الموظفين</CardTitle>
+          <CardTitle>قائمة المستخدمين</CardTitle>
           <CardDescription>
             {staffMembers.length > 0
-              ? `تم إضافة ${staffMembers.length} موظف(ين)`
-              : "لم يتم إضافة أي موظف بعد"}
+              ? `تم إضافة ${staffMembers.length} مستخدم(ين)`
+              : "لم يتم إضافة أي مستخدم بعد"}
           </CardDescription>
         </CardHeader>
         <CardContent>
