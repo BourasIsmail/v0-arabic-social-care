@@ -1,7 +1,8 @@
-import { readFileSync, writeFileSync } from 'fs';
+const { readFileSync, writeFileSync } = require('fs');
+const { join } = require('path');
 
 // Read the CSV file
-const csvContent = readFileSync('./communes.csv', 'utf-8');
+const csvContent = readFileSync(join(__dirname, 'communes.csv'), 'utf-8');
 const lines = csvContent.trim().split('\n').slice(1); // Skip header
 
 // Arabic translations for regions
@@ -192,5 +193,5 @@ sql += communes
   .map(c => `('${c.name}', ${c.prefectureId})`)
   .join(',\n') + ';\n';
 
-writeFileSync('./complete-locations-from-csv.sql', sql, 'utf-8');
+writeFileSync(join(__dirname, 'complete-locations-from-csv.sql'), sql, 'utf-8');
 console.log(`Generated SQL with ${regions.size} regions, ${prefectures.size} prefectures, ${communes.length} communes`);
