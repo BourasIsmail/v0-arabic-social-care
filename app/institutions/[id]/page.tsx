@@ -261,14 +261,18 @@ export default function InstitutionDetailPage({
                     label="وضعية البناية"
                     value={
                       data.building.buildingStatus &&
-                      buildingStatusLabels[data.building.buildingStatus]
+                      (data.building.buildingStatus === 'OTHER' && data.building.buildingStatusOther
+                        ? `آخر: ${data.building.buildingStatusOther}`
+                        : buildingStatusLabels[data.building.buildingStatus])
                     }
                   />
                   <InfoRow
                     label="حالة البناية"
                     value={
                       data.building.buildingCondition &&
-                      buildingConditionLabels[data.building.buildingCondition]
+                      (data.building.buildingCondition === 'OTHER' && data.building.buildingConditionOther
+                        ? `آخر: ${data.building.buildingConditionOther}`
+                        : buildingConditionLabels[data.building.buildingCondition])
                     }
                   />
                   <InfoRow
@@ -281,7 +285,10 @@ export default function InstitutionDetailPage({
                   <InfoRow
                     label="نوع المالك"
                     value={
-                      data.building.ownerType && ownerTypeLabels[data.building.ownerType]
+                      data.building.ownerType &&
+                      (data.building.ownerType === 'OTHER' && data.building.ownerTypeOther
+                        ? `آخر: ${data.building.ownerTypeOther}`
+                        : ownerTypeLabels[data.building.ownerType])
                     }
                   />
                   <InfoRow
