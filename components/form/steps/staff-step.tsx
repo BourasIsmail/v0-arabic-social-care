@@ -272,7 +272,7 @@ export function StaffStep() {
             </div>
           ) : (
             <div className="text-center py-8 text-muted-foreground">
-              لا يوجد موظفون مضافون. استخدم النموذج أعلاه لإضافة موظفين.
+              لا يوجد مستخدمون مضافون. استخدم النموذج أعلاه لإضافة مستخدمين.
             </div>
           )}
         </CardContent>
