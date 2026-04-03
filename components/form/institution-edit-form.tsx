@@ -1454,7 +1454,7 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
           {/* Add new staff */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border rounded-lg">
             <div className="space-y-2">
-              <Label>نوع الموظف</Label>
+              <Label>نوع المستخدم</Label>
               <Select
                 value={newStaff.staffType || ""}
                 onValueChange={(v) =>
