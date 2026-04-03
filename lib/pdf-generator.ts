@@ -140,6 +140,17 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
     </tr>
   `).join('');
 
+  // Calculate staff totals
+  const staffTotals = (data.staffMembers || []).reduce((acc: any, staff: any) => ({
+    nbAssociation: acc.nbAssociation + (staff.nbAssociation || staff.count || 1),
+    nbDeployed: acc.nbDeployed + (staff.nbDeployed || 0),
+    nbVolunteers: acc.nbVolunteers + (staff.nbVolunteers || 0),
+    nbCNSS: acc.nbCNSS + (staff.nbCNSS || 0),
+    nbSMIG: acc.nbSMIG + (staff.nbSMIG || 0),
+    monthlyCost: acc.monthlyCost + (staff.monthlyCost || 0),
+    annualCost: acc.annualCost + (staff.annualCost || 0),
+  }), { nbAssociation: 0, nbDeployed: 0, nbVolunteers: 0, nbCNSS: 0, nbSMIG: 0, monthlyCost: 0, annualCost: 0 });
+
   // Logo URL - use base64 if provided, otherwise use relative path
   const logoUrl = logoBase64 || '/images/header-logos.png';
 
@@ -936,6 +947,18 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
               <tbody>
                 ${staffRows}
               </tbody>
+              <tfoot>
+                <tr style="background-color: #f0f0f0; font-weight: bold;">
+                  <td>المجموع</td>
+                  <td>${staffTotals.nbAssociation}</td>
+                  <td>${staffTotals.nbDeployed}</td>
+                  <td>${staffTotals.nbVolunteers}</td>
+                  <td>${staffTotals.nbCNSS}</td>
+                  <td>${staffTotals.nbSMIG}</td>
+                  <td>${staffTotals.monthlyCost}</td>
+                  <td>${staffTotals.annualCost}</td>
+                </tr>
+              </tfoot>
             </table>
           </div>
           ` : ''}
