@@ -364,7 +364,7 @@ export function ReviewStep() {
                     {(member.nbAssociation || 0) +
                       (member.nbDeployed || 0) +
                       (member.nbVolunteers || 0)}{" "}
-                    موظف
+                    مستخدم
                   </span>
                 </div>
               ))}

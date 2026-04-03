@@ -387,7 +387,7 @@ export default function InstitutionDetailPage({
                     <Users className="h-5 w-5 text-primary" />
                     الموارد البشرية
                   </CardTitle>
-                  <CardDescription>{data.staffMembers.length} موظف(ين)</CardDescription>
+                  <CardDescription>{data.staffMembers.length} مستخدم(ين)</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
@@ -401,7 +401,7 @@ export default function InstitutionDetailPage({
                           {(member.nbAssociation || 0) +
                             (member.nbDeployed || 0) +
                             (member.nbVolunteers || 0)}{" "}
-                          موظف
+                          مستخدم
                         </div>
                       </div>
                     ))}
