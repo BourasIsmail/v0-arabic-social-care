@@ -103,6 +103,13 @@ const labels = {
     READY_MEALS: 'وجبات جاهزة',
     OTHER: 'آخر',
   } as Record<string, string>,
+  priorityCriteria: {
+    socialSituation: 'الوضعية الاجتماعية للأسرة',
+    distance: 'المسافة بين المدرسة ومحل سكن المستفيد',
+    schoolResults: 'النتائج المدرسية للمستفيد',
+    scholarship: 'الاستفادة من المنحة الدراسية',
+    other: 'آخر',
+  } as Record<string, string>,
 };
 
 function getLabelValue(category: keyof typeof labels, value: string | undefined): string {
@@ -729,27 +736,27 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.otherCriteria)}</span> أخرى ${data.targeting?.otherCriteriaDetail ? `(${data.targeting.otherCriteriaDetail})` : ''}</span>
                 </div>
               </div>
-              <div class="sub-section">ترتيب الأولويات</div>
-              <div class="field-row">
-                <div class="field-label">الأولوية 1</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.priority1)}</div>
-              </div>
-              <div class="field-row">
-                <div class="field-label">الأولوية 2</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.priority2)}</div>
-              </div>
-              <div class="field-row">
-                <div class="field-label">الأولوية 3</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.priority3)}</div>
-              </div>
-              <div class="field-row">
-                <div class="field-label">الأولوية 4</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.priority4)}</div>
-              </div>
-              <div class="field-row">
-                <div class="field-label">الأولوية 5</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.priority5)}</div>
-              </div>
+  <div class="sub-section">ترتيب الأولويات</div>
+  <div class="field-row">
+  <div class="field-label">الأولوية 1</div>
+  <div class="field-value">${getLabelValue('priorityCriteria', data.targeting?.priority1)}</div>
+  </div>
+  <div class="field-row">
+  <div class="field-label">الأولوية 2</div>
+  <div class="field-value">${getLabelValue('priorityCriteria', data.targeting?.priority2)}</div>
+  </div>
+  <div class="field-row">
+  <div class="field-label">الأولوية 3</div>
+  <div class="field-value">${getLabelValue('priorityCriteria', data.targeting?.priority3)}</div>
+  </div>
+  <div class="field-row">
+  <div class="field-label">الأولوية 4</div>
+  <div class="field-value">${getLabelValue('priorityCriteria', data.targeting?.priority4)}</div>
+  </div>
+  <div class="field-row">
+  <div class="field-label">الأولوية 5</div>
+  <div class="field-value">${getLabelValue('priorityCriteria', data.targeting?.priority5)}</div>
+  </div>
               <div class="sub-section">جهة الانتقاء</div>
               <div class="field-row">
                 <div class="field-label">جهة الانتقاء</div>
