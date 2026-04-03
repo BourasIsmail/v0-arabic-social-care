@@ -10,6 +10,20 @@ import {
 } from "@react-pdf/renderer";
 import type { InstitutionResponse } from "@/lib/types";
 
+// Priority criteria labels mapping
+const priorityLabels: Record<string, string> = {
+  socialSituation: "الوضعية الاجتماعية للأسرة",
+  distance: "المسافة بين المدرسة ومحل سكن المستفيد",
+  schoolResults: "النتائج المدرسية للمستفيد",
+  scholarship: "الاستفادة من المنحة الدراسية",
+  other: "آخر",
+};
+
+const getPriorityLabel = (value: string | undefined): string => {
+  if (!value) return "—";
+  return priorityLabels[value] || value;
+};
+
 // Register Arabic fonts
 Font.register({
   family: "Amiri",
@@ -308,7 +322,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
             </View>
             <View style={styles.logoBlock}>
               <Text style={styles.logoEmblem}>🏛️</Text>
-              <Text style={styles.logoText}>وزارة التربية الوطنية</Text>
+              <Text style={styles.logoText}>وزارة التربية الوطني��</Text>
               <Text style={styles.logoSub}>والتعليم الأولي والرياضة</Text>
             </View>
           </View>
@@ -521,6 +535,15 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Checkbox checked={data.targeting?.otherCriteria || false} label={data.targeting?.otherCriteria && data.targeting?.otherCriteriaDetail ? `.5 آخر: ${data.targeting.otherCriteriaDetail}` : ".5 آخر"} />
             </View>
           </FormRow>
+          <FormRow label="تصنيف المعايير حسب الأولوية">
+            <View style={{ flexDirection: "row-reverse", justifyContent: "space-between", marginTop: 4 }}>
+              <Text style={{ fontSize: 9 }}>الأولوية 1: {getPriorityLabel(data.targeting?.priority1)}</Text>
+              <Text style={{ fontSize: 9 }}>الأولوية 2: {getPriorityLabel(data.targeting?.priority2)}</Text>
+              <Text style={{ fontSize: 9 }}>الأولوية 3: {getPriorityLabel(data.targeting?.priority3)}</Text>
+              <Text style={{ fontSize: 9 }}>الأولوية 4: {getPriorityLabel(data.targeting?.priority4)}</Text>
+              <Text style={{ fontSize: 9 }}>الأولوية 5: {getPriorityLabel(data.targeting?.priority5)}</Text>
+            </View>
+          </FormRow>
           <FormRow label="الجهة التي تقوم بعملية انتقاء المستفيدين">
             <View style={styles.cbRow}>
               <Checkbox checked={data.targeting?.selectionBody === "ASSOCIATION_ALONE"} label="-1 الجمعية بمفردها" />
@@ -631,7 +654,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
           </View>
           <DataRow label="العدد الإجمالي للمستفيدين فعليا من هذه الخدمة" value={data.housingMeals?.totalMealBeneficiaries} />
           <DataRow label="العدد الإجمالي للمستفيدين من خدمة الإطعام الممول من طرف الجمعية" value={data.housingMeals?.associationMealBeneficiaries} />
-          <DataRow label="العدد الإجمالي للمستفيدين من خدمة الإطعام التي يؤمنها قطاع التربية الوطنية" value={data.housingMeals?.educationMealBeneficiaries} />
+          <DataRow label="العدد الإجمالي للمستفيدين م�� خدمة الإطعام التي يؤمنها قطاع التربية الوطنية" value={data.housingMeals?.educationMealBeneficiaries} />
           <DataRow label="عدد المستفيدين من منحة كاملة" value={data.housingMeals?.fullScholarshipCount} />
           <DataRow label="عدد المستفيدين من نصف منحة (وجبة غذاء)" value={data.housingMeals?.halfScholarshipCount} />
           <FormRow label="نوعية خدمة الإطعام المقدمة">
