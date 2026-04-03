@@ -892,15 +892,16 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                 <div class="field-label">عدد المستفيدين من نصف المنحة</div>
                 <div class="field-value">${getDisplayValue(data.housingMeals?.halfGrantCount)}</div>
               </div>
-              <div class="field-row">
-                <div class="field-label">نوع خدمة الإطعام</div>
-                <div class="field-value">
-                  <div class="checkbox-row">
-                    <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'INTERNAL' ? '☑' : '☐'}</span> داخلي</span>
-                    <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'EXTERNAL' ? '☑' : '☐'}</span> خارجي</span>
-                  </div>
-                </div>
-              </div>
+  <div class="field-row">
+  <div class="field-label">نوعية خدمة الإطعام المقدمة</div>
+  <div class="field-value">
+  <div class="checkbox-row">
+  <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'INSTITUTION_KITCHEN' ? '☑' : '☐'}</span> إعداد الوجبات في مطبخ المؤسسة</span>
+  <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'READY_MEALS' ? '☑' : '☐'}</span> وجبات جاهزة</span>
+  <span class="checkbox-item"><span class="check">${data.housingMeals?.mealServiceType === 'OTHER' ? '☑' : '☐'}</span> آخر ${data.housingMeals?.mealServiceType === 'OTHER' && data.housingMeals?.mealServiceTypeOther ? `(${data.housingMeals.mealServiceTypeOther})` : ''}</span>
+  </div>
+  </div>
+  </div>
               <div class="sub-section">اقتراحات التحسين</div>
               <div class="checkbox-group">
                 <div class="checkbox-row">
