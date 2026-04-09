@@ -8,8 +8,8 @@ SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
 
 -- BCrypt hash for "Entraide2026"
--- Generated using BCrypt with strength 10
-SET @password_hash = '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqIuBBPuTHpFWr9pPHKjPSPEA5Vq6';
+-- Generated using BCrypt with strength 12
+SET @password_hash = '$2a$12$C9p2GVpO1GyMXufxUFglX.kWPqSe0RuGoEx8KC8c9Ee/0YL1IDbgS';
 
 -- ============================================================
 -- CREATE PREFECTURE USERS (75 prefectures)
