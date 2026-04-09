@@ -95,6 +95,9 @@ public class Financing extends BaseEntity {
     @Column(name = "operating_parent_contributions")
     private Boolean operatingParentContributions;
 
+    @Column(name = "parent_contribution_amount", precision = 15, scale = 2)
+    private BigDecimal parentContributionAmount;
+
     @Column(name = "operating_donors")
     private Boolean operatingDonors;
 

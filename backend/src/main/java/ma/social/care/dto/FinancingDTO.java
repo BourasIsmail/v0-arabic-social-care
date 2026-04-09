@@ -48,6 +48,10 @@ public class FinancingDTO {
     private Boolean operatingNationalEducation;
     private Boolean operatingCommune;
     private Boolean operatingParentContributions;
+    
+    @DecimalMin(value = "0.0", message = "Parent contribution amount cannot be negative")
+    private BigDecimal parentContributionAmount;
+    
     private Boolean operatingDonors;
     private Boolean operatingAssociationOwnSources;
     private Boolean operatingOther;
