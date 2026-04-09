@@ -28,18 +28,21 @@ export function StepIndicator({ currentStep, onStepClick }: StepIndicatorProps) 
         {steps.map((step, index) => {
           const isCompleted = index < currentIndex;
           const isCurrent = step.key === currentStep;
+          // Only allow clicking on completed (previous) steps, not future steps
+          const isClickable = isCompleted && onStepClick;
 
           return (
             <li key={step.key} className="flex-1">
               <button
                 type="button"
-                onClick={() => onStepClick?.(step.key)}
+                onClick={() => isClickable && onStepClick?.(step.key)}
                 className={cn(
                   "group flex w-full flex-col items-center gap-2 transition-colors",
-                  onStepClick && "cursor-pointer hover:opacity-80",
-                  !onStepClick && "cursor-default"
+                  isClickable && "cursor-pointer hover:opacity-80",
+                  !isClickable && "cursor-default"
                 )}
-                disabled={!onStepClick}
+                disabled={!isClickable}
+                title={!isClickable && !isCurrent ? "يجب إكمال الخطوات السابقة أولا" : undefined}
               >
                 <span
                   className={cn(
