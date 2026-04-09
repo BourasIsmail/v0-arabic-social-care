@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حسابات العمالات والأقاليم - التعاون الوطني</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Noto Sans Arabic', Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+      direction: rtl;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #1a5f2a;
+    }
+    
+    .header h1 {
+      color: #1a5f2a;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .region {
+      margin-bottom: 30px;
+      page-break-inside: avoid;
+    }
+    
+    .region-header {
+      background: #1a5f2a;
+      color: white;
+      padding: 12px 20px;
+      font-size: 18px;
+      font-weight: 700;
+      border-radius: 8px 8px 0 0;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+    }
+    
+    th {
+      background: #e8f5e9;
+      color: #1a5f2a;
+      padding: 12px;
+      text-align: right;
+      font-weight: 600;
+      border: 1px solid #c8e6c9;
+    }
+    
+    td {
+      padding: 10px 12px;
+      border: 1px solid #e0e0e0;
+      font-size: 14px;
+    }
+    
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+    
+    tr:hover {
+      background: #f0f7f0;
+    }
+    
+    .email {
+      direction: ltr;
+      text-align: left;
+      font-family: monospace;
+      color: #1565c0;
+    }
+    
+    .password {
+      direction: ltr;
+      text-align: left;
+      font-family: monospace;
+      background: #fff3e0;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: #e65100;
+    }
+    
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 2px solid #e0e0e0;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+    }
+    
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .container {
+        box-shadow: none;
+        padding: 20px;
+      }
+      .region {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>حسابات العمالات والأقاليم</h1>
+      <p>التعاون الوطني - نظام إدارة المؤسسات الاجتماعية</p>
+      <p>كلمة المرور الموحدة: <strong>Entraide2026</strong></p>
+    </div>
+
+    <!-- Region 1 -->
+    <div class="region">
+      <div class="region-header">1. طنجة - تطوان - الحسيمة</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>طنجة أصيلة</td><td class="email">tanger-assilah@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>المضيق الفنيدق</td><td class="email">mdiq-fnideq@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>تطوان</td><td class="email">tetouan@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الفحص أنجرة</td><td class="email">fahs-anjra@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>العرائش</td><td class="email">larache@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الحسيمة</td><td class="email">alhoceima@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>شفشاون</td><td class="email">chefchaouen@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>وزان</td><td class="email">ouazzane@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Region 2 -->
+    <div class="region">
+      <div class="region-header">2. الشرق</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>وجدة أنكاد</td><td class="email">oujda-angad@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الناظور</td><td class="email">nador@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الدريوش</td><td class="email">driouch@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>جرادة</td><td class="email">jerada@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>بركان</td><td class="email">berkane@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>تاوريرت</td><td class="email">taourirt@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>كرسيف</td><td class="email">guercif@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>فكيك</td><td class="email">figuig@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Region 3 -->
+    <div class="region">
+      <div class="region-header">3. فاس - مكناس</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>فاس</td><td class="email">fes@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>مكناس</td><td class="email">meknes@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>مولاي يعقوب</td><td class="email">moulay-yacoub@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>صفرو</td><td class="email">sefrou@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>بولمان</td><td class="email">boulemane@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الحاجب</td><td class="email">elhajeb@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>إفران</td><td class="email">ifrane@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>تاونات</td><td class="email">taounate@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>تازة</td><td class="email">taza@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Region 4 -->
+    <div class="region">
+      <div class="region-header">4. الرباط - سلا - القنيطرة</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>الرباط</td><td class="email">rabat@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>سلا</td><td class="email">sale@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الصخيرات تمارة</td><td class="email">skhirate-temara@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>القنيطرة</td><td class="email">kenitra@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الخميسات</td><td class="email">khemisset@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>سيدي قاسم</td><td class="email">sidi-kacem@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>سيدي سليمان</td><td class="email">sidi-slimane@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Region 5 -->
+    <div class="region">
+      <div class="region-header">5. بني ملال - خنيفرة</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>بني ملال</td><td class="email">beni-mellal@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>أزيلال</td><td class="email">azilal@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الفقيه بن صالح</td><td class="email">fquih-bensalah@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>خنيفرة</td><td class="email">khenifra@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>خريبكة</td><td class="email">khouribga@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Region 6 -->
+    <div class="region">
+      <div class="region-header">6. الدار البيضاء - سطات</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>الدار البيضاء</td><td class="email">casablanca@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>المحمدية</td><td class="email">mohammedia@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>النواصر</td><td class="email">nouaceur@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>مديونة</td><td class="email">mediouna@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>بن سليمان</td><td class="email">benslimane@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>برشيد</td><td class="email">berrechid@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>سطات</td><td class="email">settat@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>سيدي بنور</td><td class="email">sidi-bennour@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الجديدة</td><td class="email">eljadida@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Region 7 -->
+    <div class="region">
+      <div class="region-header">7. مراكش - آسفي</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>مراكش</td><td class="email">marrakech@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الحوز</td><td class="email">alhaouz@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>قلعة السراغنة</td><td class="email">kelaa-sraghna@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الرحامنة</td><td class="email">rehamna@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>شيشاوة</td><td class="email">chichaoua@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>آسفي</td><td class="email">safi@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>اليوسفية</td><td class="email">youssoufia@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الصويرة</td><td class="email">essaouira@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Region 8 -->
+    <div class="region">
+      <div class="region-header">8. درعة - تافيلالت</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>ورزازات</td><td class="email">ouarzazate@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>تنغير</td><td class="email">tinghir@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>زاكورة</td><td class="email">zagora@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>الرشيدية</td><td class="email">errachidia@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>ميدلت</td><td class="email">midelt@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Region 9 -->
+    <div class="region">
+      <div class="region-header">9. سوس - ماسة</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>أكادير إداوتنان</td><td class="email">agadir@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>إنزكان آيت ملول</td><td class="email">inezgane-aitmelloul@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>شتوكة آيت باها</td><td class="email">chtouka-aitbaha@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>تارودانت</td><td class="email">taroudannt@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>تزنيت</td><td class="email">tiznit@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>طاطا</td><td class="email">tata@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Region 10 -->
+    <div class="region">
+      <div class="region-header">10. كلميم - واد نون</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>كلميم</td><td class="email">guelmim@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>آسا الزاك</td><td class="email">assa-zag@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>طانطان</td><td class="email">tantan@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>سيدي إفني</td><td class="email">sidi-ifni@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Region 11 -->
+    <div class="region">
+      <div class="region-header">11. العيون - الساقية الحمراء</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>السمارة</td><td class="email">essmara@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>العيون</td><td class="email">laayoune@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>بوجدور</td><td class="email">boujdour@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>طرفاية</td><td class="email">tarfaya@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Region 12 -->
+    <div class="region">
+      <div class="region-header">12. الداخلة - وادي الذهب</div>
+      <table>
+        <thead>
+          <tr>
+            <th>العمالة / الإقليم</th>
+            <th>البريد الإلكتروني</th>
+            <th>كلمة المرور</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>وادي الذهب</td><td class="email">ouededdahab@entraide.ma</td><td class="password">Entraide2026</td></tr>
+          <tr><td>أوسرد</td><td class="email">aousserd@entraide.ma</td><td class="password">Entraide2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <p>التعاون الوطني - المملكة المغربية</p>
+      <p>تاريخ الإنشاء: أبريل 2026</p>
+      <p><strong>ملاحظة:</strong> يرجى تغيير كلمة المرور بعد أول تسجيل دخول</p>
+    </div>
+  </div>
+</body>
+</html>

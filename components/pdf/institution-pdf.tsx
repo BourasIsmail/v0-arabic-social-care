@@ -379,7 +379,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
           <DataRow label="الطاقة الاستيعابية الإجمالية المرخصة" value={data.totalCapacity} />
           <DataRow label="الطاقة الاستيعابية المرخصة ذكور" value={data.maleCapacity} />
           <DataRow label="الطاقة الاستيعابية المرخصة إناث" value={data.femaleCapacity} />
-          <FormRow label="المستوى التعليمي للفئة المستهدفة">
+          <FormRow label="السلك التعليمي للفئة المستهدفة">
             <View style={styles.cbRow}>
               <Checkbox checked={data.primary || false} label="ابتدائي" />
               <Checkbox checked={data.middleSchool || false} label="ثانوي إعدادي" />
@@ -434,7 +434,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Checkbox checked={data.building?.renovationCapacity === "NEEDS_RECONSTRUCTION"} label="تتطلب إعادة البناء" />
             </View>
           </FormRow>
-          <FormRow label="تحد��د مالك الوعاء العقاري">
+          <FormRow label="تحد����د مالك الوعاء العقاري">
             <View style={styles.cbRow}>
               <Checkbox checked={data.building?.ownerType === "STATE_DOMAIN"} label="أملاك الدولة" />
               <Checkbox checked={data.building?.ownerType === "COMMUNAL"} label="ملك جماعي" />

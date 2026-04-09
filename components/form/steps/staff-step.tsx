@@ -30,6 +30,7 @@ export function StaffStep() {
   const [staffMembers, setStaffMembers] = useState<StaffMemberDTO[]>(
     formData.staffMembers || []
   );
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   // Sync staffMembers when formVersion changes (for edit mode)
   useEffect(() => {
@@ -49,9 +50,37 @@ export function StaffStep() {
     annualCost: 0,
   });
 
+  // Get staff types that are already added (to prevent duplicates)
+  const usedStaffTypes = staffMembers.map((m) => m.staffType);
+  const availableStaffTypes = Object.entries(staffTypeLabels).filter(
+    ([value]) => !usedStaffTypes.includes(value as StaffType)
+  );
+
   const addStaffMember = () => {
     if (!newMember.staffType) return;
 
+    // Check for duplicate staff type
+    if (usedStaffTypes.includes(newMember.staffType)) {
+      setValidationError(`نوع التأطير "${staffTypeLabels[newMember.staffType]}" مضاف مسبقا`);
+      return;
+    }
+
+    // Calculate total staff count
+    const totalStaff = (newMember.nbAssociation || 0) + (newMember.nbDeployed || 0) + (newMember.nbVolunteers || 0);
+    
+    // Validate CNSS count
+    if ((newMember.nbCNSS || 0) > totalStaff) {
+      setValidationError(`عدد المستفيدين من CNSS (${newMember.nbCNSS}) لا يمكن أن يتجاوز العدد الإجمالي للمستخدمين (${totalStaff})`);
+      return;
+    }
+
+    // Validate SMIG count
+    if ((newMember.nbSMIG || 0) > totalStaff) {
+      setValidationError(`عدد المستفيدين من SMIG (${newMember.nbSMIG}) لا يمكن أن يتجاوز العدد الإجمالي للمستخدمين (${totalStaff})`);
+      return;
+    }
+
+    setValidationError(null);
     setStaffMembers([...staffMembers, newMember as StaffMemberDTO]);
     setNewMember({
       staffType: undefined,
@@ -92,21 +121,25 @@ export function StaffStep() {
               <Label htmlFor="staffType">نوع التأطير *</Label>
               <Select
                 value={newMember.staffType || ""}
-                onValueChange={(value) =>
-                  setNewMember({ ...newMember, staffType: value as StaffType })
-                }
+                onValueChange={(value) => {
+                  setNewMember({ ...newMember, staffType: value as StaffType });
+                  setValidationError(null);
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="اختر نوع التأطير" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(staffTypeLabels).map(([value, label]) => (
+                  {availableStaffTypes.map(([value, label]) => (
                     <SelectItem key={value} value={value}>
                       {label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {availableStaffTypes.length === 0 && (
+                <p className="text-sm text-muted-foreground">تمت إضافة جميع أنواع التأطير</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -114,9 +147,10 @@ export function StaffStep() {
               <Input
                 id="nbAssociation"
                 type="number"
+                min="0"
                 value={newMember.nbAssociation || ""}
                 onChange={(e) =>
-                  setNewMember({ ...newMember, nbAssociation: parseInt(e.target.value) || 0 })
+                  setNewMember({ ...newMember, nbAssociation: Math.max(0, parseInt(e.target.value) || 0) })
                 }
                 placeholder="0"
               />
@@ -127,9 +161,10 @@ export function StaffStep() {
               <Input
                 id="nbDeployed"
                 type="number"
+                min="0"
                 value={newMember.nbDeployed || ""}
                 onChange={(e) =>
-                  setNewMember({ ...newMember, nbDeployed: parseInt(e.target.value) || 0 })
+                  setNewMember({ ...newMember, nbDeployed: Math.max(0, parseInt(e.target.value) || 0) })
                 }
                 placeholder="0"
               />
@@ -140,9 +175,10 @@ export function StaffStep() {
               <Input
                 id="nbVolunteers"
                 type="number"
+                min="0"
                 value={newMember.nbVolunteers || ""}
                 onChange={(e) =>
-                  setNewMember({ ...newMember, nbVolunteers: parseInt(e.target.value) || 0 })
+                  setNewMember({ ...newMember, nbVolunteers: Math.max(0, parseInt(e.target.value) || 0) })
                 }
                 placeholder="0"
               />
@@ -153,12 +189,14 @@ export function StaffStep() {
               <Input
                 id="nbCNSS"
                 type="number"
+                min="0"
                 value={newMember.nbCNSS || ""}
                 onChange={(e) =>
-                  setNewMember({ ...newMember, nbCNSS: parseInt(e.target.value) || 0 })
+                  setNewMember({ ...newMember, nbCNSS: Math.max(0, parseInt(e.target.value) || 0) })
                 }
                 placeholder="0"
               />
+              <p className="text-xs text-muted-foreground">يجب أن لا يتجاوز مجموع المستخدمين</p>
             </div>
 
             <div className="space-y-2">
@@ -166,12 +204,14 @@ export function StaffStep() {
               <Input
                 id="nbSMIG"
                 type="number"
+                min="0"
                 value={newMember.nbSMIG || ""}
                 onChange={(e) =>
-                  setNewMember({ ...newMember, nbSMIG: parseInt(e.target.value) || 0 })
+                  setNewMember({ ...newMember, nbSMIG: Math.max(0, parseInt(e.target.value) || 0) })
                 }
                 placeholder="0"
               />
+              <p className="text-xs text-muted-foreground">يجب أن لا يتجاوز مجموع المستخدمين</p>
             </div>
 
             <div className="space-y-2">
@@ -180,9 +220,10 @@ export function StaffStep() {
                 id="monthlyCost"
                 type="number"
                 step="0.01"
+                min="0"
                 value={newMember.monthlyCost || ""}
                 onChange={(e) =>
-                  setNewMember({ ...newMember, monthlyCost: parseFloat(e.target.value) || 0 })
+                  setNewMember({ ...newMember, monthlyCost: Math.max(0, parseFloat(e.target.value) || 0) })
                 }
                 placeholder="0.00"
               />
@@ -194,19 +235,26 @@ export function StaffStep() {
                 id="annualCost"
                 type="number"
                 step="0.01"
+                min="0"
                 value={newMember.annualCost || ""}
                 onChange={(e) =>
-                  setNewMember({ ...newMember, annualCost: parseFloat(e.target.value) || 0 })
+                  setNewMember({ ...newMember, annualCost: Math.max(0, parseFloat(e.target.value) || 0) })
                 }
                 placeholder="0.00"
               />
             </div>
           </div>
 
+          {validationError && (
+            <div className="bg-destructive/10 border border-destructive/30 rounded-md p-3 text-sm text-destructive">
+              {validationError}
+            </div>
+          )}
+
           <Button
             type="button"
             onClick={addStaffMember}
-            disabled={!newMember.staffType}
+            disabled={!newMember.staffType || availableStaffTypes.length === 0}
             className="gap-2"
           >
             <Plus className="h-4 w-4" />

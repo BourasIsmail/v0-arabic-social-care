@@ -66,6 +66,9 @@ export function FinancingStep() {
     { key: "operatingOther", label: "آخر (للتحديد)" },
   ];
 
+  // Watch for parent contributions to show paid option
+  const parentContributionsSelected = watch("operatingParentContributions");
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Card>
@@ -108,7 +111,8 @@ export function FinancingStep() {
               id="totalConstructionCost"
               type="number"
               step="0.01"
-              {...register("totalConstructionCost", { valueAsNumber: true })}
+              min="0"
+              {...register("totalConstructionCost", { valueAsNumber: true, min: 0 })}
               placeholder="0.00"
             />
           </div>
@@ -174,13 +178,28 @@ export function FinancingStep() {
             ))}
           </div>
 
+          {parentContributionsSelected && (
+            <div className="space-y-2 sm:col-span-2 lg:col-span-4">
+              <Label htmlFor="parentContributionAmount">مبلغ اشتراكات الآباء الشهري (درهم)</Label>
+              <Input
+                id="parentContributionAmount"
+                type="number"
+                step="0.01"
+                min="0"
+                {...register("parentContributionAmount", { valueAsNumber: true, min: 0 })}
+                placeholder="0.00"
+              />
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="annualManagementCost">التكلفة السنوية للتسيير (درهم)</Label>
             <Input
               id="annualManagementCost"
               type="number"
               step="0.01"
-              {...register("annualManagementCost", { valueAsNumber: true })}
+              min="0"
+              {...register("annualManagementCost", { valueAsNumber: true, min: 0 })}
               placeholder="0.00"
             />
           </div>
@@ -198,7 +217,8 @@ export function FinancingStep() {
               id="annualHRCost"
               type="number"
               step="0.01"
-              {...register("annualHRCost", { valueAsNumber: true })}
+              min="0"
+              {...register("annualHRCost", { valueAsNumber: true, min: 0 })}
               placeholder="0.00"
             />
           </div>
@@ -209,7 +229,8 @@ export function FinancingStep() {
               id="annualMealsCost"
               type="number"
               step="0.01"
-              {...register("annualMealsCost", { valueAsNumber: true })}
+              min="0"
+              {...register("annualMealsCost", { valueAsNumber: true, min: 0 })}
               placeholder="0.00"
             />
           </div>
@@ -220,7 +241,8 @@ export function FinancingStep() {
               id="annualOtherExpenses"
               type="number"
               step="0.01"
-              {...register("annualOtherExpenses", { valueAsNumber: true })}
+              min="0"
+              {...register("annualOtherExpenses", { valueAsNumber: true, min: 0 })}
               placeholder="0.00"
             />
           </div>
@@ -231,7 +253,8 @@ export function FinancingStep() {
               id="individualAnnualCost"
               type="number"
               step="0.01"
-              {...register("individualAnnualCost", { valueAsNumber: true })}
+              min="0"
+              {...register("individualAnnualCost", { valueAsNumber: true, min: 0 })}
               placeholder="0.00"
             />
           </div>

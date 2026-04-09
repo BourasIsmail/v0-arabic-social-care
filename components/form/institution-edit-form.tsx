@@ -568,8 +568,8 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
 
           {targetOther && (
             <div className="space-y-2">
-              <Label>تحديد المستوى الآخر</Label>
-              <Input {...register("otherDetail")} placeholder="أدخل المستوى" />
+              <Label>تحديد السلك الآخر</Label>
+              <Input {...register("otherDetail")} placeholder="أدخل السلك" />
             </div>
           )}
 

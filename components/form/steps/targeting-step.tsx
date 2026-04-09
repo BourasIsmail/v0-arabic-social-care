@@ -80,6 +80,17 @@ export function TargetingStep() {
   const selectionBody = watch("selectionBody");
   const tariffDeterminationBody = watch("tariffDeterminationBody");
 
+  // Get selected criteria to filter priority options
+  const selectedCriteria = selectionCriteria.filter(
+    (criteria) => watch(criteria.key as keyof TargetingDTO) as boolean
+  );
+
+  // Map criteria keys to their Arabic labels for priority selection
+  const priorityOptions = selectedCriteria.map((criteria) => ({
+    value: criteria.key === "otherCriteria" ? "other" : criteria.key,
+    label: criteria.key === "otherCriteria" ? "آخر" : criteria.label,
+  }));
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Card>
@@ -118,34 +129,36 @@ export function TargetingStep() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>تصنيف المعايير المعتمدة حسب الأولوية في الاستهداف</CardTitle>
-          <CardDescription>رتب الأولويات من 1 إلى 5 (اختر من المعايير المحددة أعلاه)</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-          {[1, 2, 3, 4, 5].map((num) => (
-            <div key={num} className="space-y-2">
-              <Label htmlFor={`priority${num}`}>الأولوية {num}</Label>
-              <Select
-                value={watch(`priority${num}` as keyof TargetingDTO) as string || ""}
-                onValueChange={(value) => setValue(`priority${num}` as keyof TargetingDTO, value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={`اختر الأولوية ${num}`} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="socialSituation">الوضعية الاجتماعية للأسرة</SelectItem>
-                  <SelectItem value="distance">المسافة بين المدرسة ومحل سكن المستفيد</SelectItem>
-                  <SelectItem value="schoolResults">النتائج المدرسية للمستفيد</SelectItem>
-                  <SelectItem value="scholarship">الاستفادة من المنحة الدراسية</SelectItem>
-                  <SelectItem value="other">آخر</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      {selectedCriteria.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>تصنيف المعايير المعتمدة حسب الأولوية في الاستهداف</CardTitle>
+            <CardDescription>رتب الأولويات حسب المعايير المحددة أعلاه ({selectedCriteria.length} معايير محددة)</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+            {[1, 2, 3, 4, 5].slice(0, selectedCriteria.length).map((num) => (
+              <div key={num} className="space-y-2">
+                <Label htmlFor={`priority${num}`}>الأولوية {num}</Label>
+                <Select
+                  value={watch(`priority${num}` as keyof TargetingDTO) as string || ""}
+                  onValueChange={(value) => setValue(`priority${num}` as keyof TargetingDTO, value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={`اختر الأولوية ${num}`} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {priorityOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
