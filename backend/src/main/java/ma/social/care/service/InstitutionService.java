@@ -19,6 +19,8 @@ public interface InstitutionService {
             InstitutionType institutionType,
             Milieu milieu,
             LegalStatus legalStatus,
+            Long userPrefectureId,
+            boolean isAdmin,
             Pageable pageable
     );
 

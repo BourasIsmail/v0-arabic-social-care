@@ -20,13 +20,16 @@ public interface InstitutionRepository extends JpaRepository<Institution, Long> 
             "AND (:commune IS NULL OR i.commune = :commune) " +
             "AND (:institutionType IS NULL OR i.institutionType = :institutionType) " +
             "AND (:milieu IS NULL OR i.milieu = :milieu) " +
-            "AND (:legalStatus IS NULL OR i.legalStatus = :legalStatus)")
+            "AND (:legalStatus IS NULL OR i.legalStatus = :legalStatus) " +
+            "AND (:prefectureId IS NULL OR i.prefecture.id = :prefectureId) " +
+            "AND i.isDeleted = false")
     Page<Institution> findAllWithFilters(
             @Param("region") String region,
             @Param("commune") String commune,
             @Param("institutionType") InstitutionType institutionType,
             @Param("milieu") Milieu milieu,
             @Param("legalStatus") LegalStatus legalStatus,
+            @Param("prefectureId") Long prefectureId,
             Pageable pageable
     );
 

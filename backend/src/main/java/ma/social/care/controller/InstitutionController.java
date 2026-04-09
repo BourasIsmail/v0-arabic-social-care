@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.social.care.dto.*;
+import ma.social.care.entity.User;
 import ma.social.care.entity.enums.*;
+import ma.social.care.repository.UserRepository;
 import ma.social.care.service.CsvExportService;
 import ma.social.care.service.InstitutionService;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +34,7 @@ public class InstitutionController {
 
     private final InstitutionService institutionService;
     private final CsvExportService csvExportService;
+    private final UserRepository userRepository;
 
     /**
      * Create a new institution with all nested data in one request
@@ -45,6 +50,7 @@ public class InstitutionController {
 
     /**
      * Get paginated list of institutions with optional filters
+     * Non-admin users (USER role) can only see institutions in their prefecture
      */
     @GetMapping
     public ResponseEntity<Page<InstitutionSummaryDTO>> getAllInstitutions(
@@ -55,9 +61,20 @@ public class InstitutionController {
             @RequestParam(required = false) LegalStatus legalStatus,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        log.info("GET /api/v1/institutions - Fetching institutions with filters");
+        // Get current authenticated user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+        Long userPrefectureId = currentUser.getPrefectureId();
+        
+        log.info("GET /api/v1/institutions - Fetching institutions for user: {}, isAdmin: {}, prefectureId: {}", 
+                email, isAdmin, userPrefectureId);
+        
         Page<InstitutionSummaryDTO> institutions = institutionService.getAllInstitutions(
-                region, commune, institutionType, milieu, legalStatus, pageable
+                region, commune, institutionType, milieu, legalStatus, userPrefectureId, isAdmin, pageable
         );
         return ResponseEntity.ok(institutions);
     }
