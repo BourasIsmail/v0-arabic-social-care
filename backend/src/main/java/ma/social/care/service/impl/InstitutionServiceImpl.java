@@ -128,13 +128,18 @@ public class InstitutionServiceImpl implements InstitutionService {
             InstitutionType institutionType,
             Milieu milieu,
             LegalStatus legalStatus,
+            Long userPrefectureId,
+            boolean isAdmin,
             Pageable pageable
     ) {
-        log.debug("Fetching institutions with filters - region: {}, commune: {}, type: {}, milieu: {}, status: {}",
-                region, commune, institutionType, milieu, legalStatus);
+        // For non-admin users (USER role), filter by their prefecture
+        Long prefectureFilter = isAdmin ? null : userPrefectureId;
+        
+        log.debug("Fetching institutions with filters - region: {}, commune: {}, type: {}, milieu: {}, status: {}, prefectureId: {}, isAdmin: {}",
+                region, commune, institutionType, milieu, legalStatus, prefectureFilter, isAdmin);
 
         Page<Institution> institutions = institutionRepository.findAllWithFilters(
-                region, commune, institutionType, milieu, legalStatus, pageable
+                region, commune, institutionType, milieu, legalStatus, prefectureFilter, pageable
         );
 
         return institutions.map(mapper::toSummaryDTO);
