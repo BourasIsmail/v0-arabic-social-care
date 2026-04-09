@@ -55,12 +55,12 @@ function SeasonFields({
         <CardTitle className="text-base">{seasonLabel}</CardTitle>
         {schoolLevelExceedsTotal && (
           <p className="text-sm text-destructive">
-            خطأ: مجموع التوزيع حسب المستوى الدراسي ({schoolLevelTotal}) يتجاوز العدد الإجمالي للمستفيدين ({totalBeneficiaries})
+            خطأ: مجموع التوزيع حسب السلك الدراسي ({schoolLevelTotal}) يتجاوز العدد الإجمالي للمستفيدين ({totalBeneficiaries})
           </p>
         )}
         {!schoolLevelExceedsTotal && schoolLevelNotEqual && (
           <p className="text-sm text-amber-600">
-            تنبيه: مجموع التوزيع حسب المستوى الدراسي ({schoolLevelTotal}) لا يساوي العدد الإجمالي للمستفيدين ({totalBeneficiaries})
+            تنبيه: مجموع التوزيع حسب السلك الدراسي ({schoolLevelTotal}) لا يساوي العدد الإجمالي للمستفيدين ({totalBeneficiaries})
           </p>
         )}
       </CardHeader>

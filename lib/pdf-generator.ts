@@ -571,7 +571,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                 <div class="field-value">${getDisplayValue(data.femaleCapacity)}</div>
               </div>
               <div class="field-row">
-                <div class="field-label">المستوى التعليمي للفئة المستهدفة</div>
+                <div class="field-label">السلك التعليمي للفئة المستهدفة</div>
                 <div class="field-value">
                   <div class="checkbox-row">
                     <span class="checkbox-item"><span class="check">${getCheckbox(data.primary)}</span> ابتدائي</span>
@@ -941,7 +941,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                   <th>المستفيدون من CNSS</th>
                   <th>المستفيدون من SMIG</th>
                   <th>الكلفة الشهرية (درهم)</th>
-                  <th>الكلفة السنوية (درهم)</th>
+                  <th>الكلفة ��لسنوية (درهم)</th>
                 </tr>
               </thead>
               <tbody>

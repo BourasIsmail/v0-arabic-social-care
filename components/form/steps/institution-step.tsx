@@ -44,9 +44,11 @@ export function InstitutionStep() {
     watch,
     setValue,
     reset,
+    trigger,
     formState: { errors },
   } = useForm<Partial<InstitutionRequest>>({
     defaultValues: formData,
+    mode: "onChange",
   });
 
   // Reset form when formVersion changes or formData changes (for edit mode and when user geo is pre-filled)
@@ -56,7 +58,11 @@ export function InstitutionStep() {
 
   const legalStatus = watch("legalStatus");
 
-  const onSubmit = (data: Partial<InstitutionRequest>) => {
+  const onSubmit = async (data: Partial<InstitutionRequest>) => {
+    // Validate required fields before proceeding
+    const isValid = await trigger(["institutionType", "associationName", "institutionName"]);
+    if (!isValid) return;
+    
     updateFormData(data);
     setCurrentStep("building");
   };
@@ -353,7 +359,7 @@ export function InstitutionStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>المستوى التعليمي للفئة المستهدفة</CardTitle>
+          <CardTitle>السلك التعليمي للفئة المستهدفة</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -380,7 +386,7 @@ export function InstitutionStep() {
 
           {watch("other") && (
             <div className="space-y-2">
-              <Label htmlFor="otherDetail">تحديد المستوى الآخر</Label>
+              <Label htmlFor="otherDetail">تحديد السلك الآخر</Label>
               <Input
                 id="otherDetail"
                 {...register("otherDetail")}
