@@ -151,6 +151,7 @@ export interface FinancingDTO {
   operatingNationalEducation?: boolean;
   operatingCommune?: boolean;
   operatingParentContributions?: boolean;
+  parentContributionAmount?: number;
   operatingDonors?: boolean;
   operatingAssociationOwnSources?: boolean;
   operatingOther?: boolean;
