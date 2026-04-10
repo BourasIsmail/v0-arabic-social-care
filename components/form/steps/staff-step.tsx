@@ -185,7 +185,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="nbCNSS">عدد المستخدمين المستفيدين من الصندوق الوطني للضمان الاجتماعي (CNSS)</Label>
+              <Label htmlFor="nbCNSS">عدد المستخدمين المستفيدين بالجمعية من الصندوق الوطني للضمان الاجتماعي (CNSS)</Label>
               <Input
                 id="nbCNSS"
                 type="number"
@@ -200,7 +200,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="nbSMIG">عدد المستخدمين المستفيدين من الحد الأدنى للأجر المهني المضمون (SMIG)</Label>
+              <Label htmlFor="nbSMIG">عدد المستخدمين المستفيدين بالجمعية من الحد الأدنى للأجر المهني المضمون (SMIG)</Label>
               <Input
                 id="nbSMIG"
                 type="number"
@@ -215,7 +215,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="monthlyCost">الكلفة الشهرية (بالدرهم)</Label>
+              <Label htmlFor="monthlyCost">الكلفة الشهرية (بالدرهم) لجميع الأطر</Label>
               <Input
                 id="monthlyCost"
                 type="number"
@@ -230,7 +230,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="annualCost">الكلفة السنوية (بالدرهم)</Label>
+              <Label htmlFor="annualCost">الكلفة السنوية (بالدرهم) لجميع الأطر</Label>
               <Input
                 id="annualCost"
                 type="number"
@@ -284,8 +284,8 @@ export function StaffStep() {
                     <TableHead>الأطر المتطوعة</TableHead>
                     <TableHead>CNSS</TableHead>
                     <TableHead>SMIG</TableHead>
-                    <TableHead>الكلفة الشهرية</TableHead>
-                    <TableHead>الكلفة السنوية</TableHead>
+                    <TableHead>الكلفة الشهرية لجميع الأطر</TableHead>
+                    <TableHead>الكلفة السنوية لجميع الأطر</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>

@@ -268,35 +268,107 @@ export function ReviewStep() {
           <CardHeader>
             <CardTitle className="text-base">معطيات حول تمويل المؤسسة</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-1">
-            <InfoRow
-              label="الكلفة الإجمالية لبناء المؤسسة"
-              value={
-                formData.financing.totalConstructionCost &&
-                `${formData.financing.totalConstructionCost.toLocaleString()} درهم`
-              }
-            />
-            <InfoRow
-              label="الكلفة السنوية لتسيير المؤسسة"
-              value={
-                formData.financing.annualManagementCost &&
-                `${formData.financing.annualManagementCost.toLocaleString()} درهم`
-              }
-            />
-            <InfoRow
-              label="الكلفة السنوية المخصصة للموارد البشرية"
-              value={
-                formData.financing.annualHRCost &&
-                `${formData.financing.annualHRCost.toLocaleString()} درهم`
-              }
-            />
-            <InfoRow
-              label="الكلفة السنوية المخصصة للإطعام"
-              value={
-                formData.financing.annualMealsCost &&
-                `${formData.financing.annualMealsCost.toLocaleString()} درهم`
-              }
-            />
+          <CardContent className="space-y-4">
+            <div className="space-y-1">
+              <h4 className="font-medium text-sm text-muted-foreground">مصادر تمويل البناء</h4>
+              <div className="flex flex-wrap gap-2">
+                {formData.financing.solidarityMinistry && <span className="px-2 py-1 bg-secondary rounded text-xs">وزارة التضامن والإدماج الاجتماعي والأسرة</span>}
+                {formData.financing.nationalEntraide && <span className="px-2 py-1 bg-secondary rounded text-xs">التعاون الوطني</span>}
+                {formData.financing.indh && <span className="px-2 py-1 bg-secondary rounded text-xs">المبادرة الوطنية للتنمية البشرية</span>}
+                {formData.financing.commune && <span className="px-2 py-1 bg-secondary rounded text-xs">الجماعة</span>}
+                {formData.financing.fondationMohammed5 && <span className="px-2 py-1 bg-secondary rounded text-xs">مؤسسة محمد الخامس للتضامن</span>}
+                {formData.financing.nationalRevival && <span className="px-2 py-1 bg-secondary rounded text-xs">الإنعاش الوطني</span>}
+                {formData.financing.association && <span className="px-2 py-1 bg-secondary rounded text-xs">الجمعية/مؤسسة</span>}
+                {formData.financing.otherConstruction && <span className="px-2 py-1 bg-secondary rounded text-xs">آخر: {formData.financing.otherConstructionDetail}</span>}
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <h4 className="font-medium text-sm text-muted-foreground">مصادر تمويل التجهيز</h4>
+              <div className="flex flex-wrap gap-2">
+                {formData.financing.equipmentSolidarityMinistry && <span className="px-2 py-1 bg-secondary rounded text-xs">وزارة التضامن والإدماج الاجتماعي والأسرة</span>}
+                {formData.financing.equipmentNationalEntraide && <span className="px-2 py-1 bg-secondary rounded text-xs">التعاون الوطني</span>}
+                {formData.financing.equipmentIndh && <span className="px-2 py-1 bg-secondary rounded text-xs">المبادرة الوطنية للتنمية البشرية</span>}
+                {formData.financing.equipmentCommune && <span className="px-2 py-1 bg-secondary rounded text-xs">الجماعة</span>}
+                {formData.financing.equipmentFondationMohammed5 && <span className="px-2 py-1 bg-secondary rounded text-xs">مؤسسة محمد الخامس للتضامن</span>}
+                {formData.financing.equipmentAssociation && <span className="px-2 py-1 bg-secondary rounded text-xs">الجمعية/مؤسسة</span>}
+                {formData.financing.equipmentOther && <span className="px-2 py-1 bg-secondary rounded text-xs">آخر: {formData.financing.equipmentOtherDetail}</span>}
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <h4 className="font-medium text-sm text-muted-foreground">مصادر تمويل التسيير</h4>
+              <div className="flex flex-wrap gap-2">
+                {formData.financing.operatingIndh && <span className="px-2 py-1 bg-secondary rounded text-xs">المبادرة الوطنية للتنمية البشرية</span>}
+                {formData.financing.operatingNationalEntraide && <span className="px-2 py-1 bg-secondary rounded text-xs">التعاون الوطني</span>}
+                {formData.financing.operatingNationalEducation && <span className="px-2 py-1 bg-secondary rounded text-xs">قطاع التربية الوطنية</span>}
+                {formData.financing.operatingCommune && <span className="px-2 py-1 bg-secondary rounded text-xs">الجماعة</span>}
+                {formData.financing.operatingParentContributions && <span className="px-2 py-1 bg-secondary rounded text-xs">اشتراكات الآباء</span>}
+                {formData.financing.operatingDonors && <span className="px-2 py-1 bg-secondary rounded text-xs">المحسنون (هبات وغيرها)</span>}
+                {formData.financing.operatingAssociationOwnSources && <span className="px-2 py-1 bg-secondary rounded text-xs">مصادر ذاتية للجمعية المسيرة</span>}
+                {formData.financing.operatingOther && <span className="px-2 py-1 bg-secondary rounded text-xs">آخر: {formData.financing.operatingOtherDetail}</span>}
+              </div>
+            </div>
+
+            <div className="border-t pt-4 space-y-1">
+              <InfoRow
+                label="الكلفة الإجمالية لبناء المؤسسة"
+                value={
+                  formData.financing.totalConstructionCost &&
+                  `${formData.financing.totalConstructionCost.toLocaleString()} درهم`
+                }
+              />
+              <InfoRow
+                label="الكلفة السنوية لتسيير المؤسسة"
+                value={
+                  formData.financing.annualManagementCost &&
+                  `${formData.financing.annualManagementCost.toLocaleString()} درهم`
+                }
+              />
+              {formData.financing.parentContributionAmount && (
+                <InfoRow
+                  label="مبلغ اشتراكات الآباء الشهري"
+                  value={`${formData.financing.parentContributionAmount.toLocaleString()} درهم`}
+                />
+              )}
+              <InfoRow
+                label="الكلفة السنوية المخصصة للموارد البشرية"
+                value={
+                  formData.financing.annualHRCost &&
+                  `${formData.financing.annualHRCost.toLocaleString()} درهم`
+                }
+              />
+              <InfoRow
+                label="الكلفة السنوية المخصصة للإطعام"
+                value={
+                  formData.financing.annualMealsCost &&
+                  `${formData.financing.annualMealsCost.toLocaleString()} درهم`
+                }
+              />
+              <InfoRow
+                label="الكلفة السنوية لباقي النفقات"
+                value={
+                  formData.financing.annualOtherExpenses &&
+                  `${formData.financing.annualOtherExpenses.toLocaleString()} درهم`
+                }
+              />
+              <InfoRow
+                label="الكلفة الفردية السنوية"
+                value={
+                  formData.financing.individualAnnualCost &&
+                  `${formData.financing.individualAnnualCost.toLocaleString()} درهم`
+                }
+              />
+            </div>
+
+            {(formData.financing.associationShare || formData.financing.educationShare || formData.financing.otherShare) && (
+              <div className="border-t pt-4 space-y-1">
+                <h4 className="font-medium text-sm text-muted-foreground mb-2">نسب المساهمة في تمويل الإطعام</h4>
+                <InfoRow label="نسبة مساهمة الجمعية المسيرة" value={formData.financing.associationShare ? `${formData.financing.associationShare}%` : undefined} />
+                <InfoRow label="نسبة مساهمة قطاع التربية الوطنية" value={formData.financing.educationShare ? `${formData.financing.educationShare}%` : undefined} />
+                <InfoRow label="نسبة مساهمة أخرى" value={formData.financing.otherShare ? `${formData.financing.otherShare}%` : undefined} />
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
@@ -307,40 +379,75 @@ export function ReviewStep() {
           <CardHeader>
             <CardTitle className="text-base">معطيات حول الاستهداف وتوسعة الخدمات</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-1">
-            <InfoRow
-              label="الجهة التي تقوم بعملية انتقاء المستفيدين"
-              value={
-                formData.targeting.selectionBody &&
-                selectionBodyLabels[formData.targeting.selectionBody]
-              }
-            />
-            <InfoRow
-              label="خدمات المؤسسة مجانية"
-              value={formData.targeting.servicesAreFree ? "نعم" : "لا"}
-            />
-            {!formData.targeting.servicesAreFree && (
-              <>
-                <InfoRow
-                  label="مبلغ الاشتراك الشهري"
-                  value={
-                    formData.targeting.tariffType &&
-                    tariffTypeLabels[formData.targeting.tariffType]
-                  }
-                />
-                <InfoRow
-                  label="قيمتها"
-                  value={
-                    formData.targeting.uniformAmount &&
-                    `${formData.targeting.uniformAmount} درهم`
-                  }
-                />
-              </>
-            )}
-            <InfoRow
-              label="عدد الطلبات التي لم تتم الاستجابة لها"
-              value={formData.targeting.unsatisfiedRequestsCount}
-            />
+          <CardContent className="space-y-4">
+            <div className="space-y-1">
+              <h4 className="font-medium text-sm text-muted-foreground">معايير الاستهداف</h4>
+              <div className="flex flex-wrap gap-2">
+                {formData.targeting.socialSituation && <span className="px-2 py-1 bg-secondary rounded text-xs">الوضعية الاجتماعية للأسرة</span>}
+                {formData.targeting.distanceToSchool && <span className="px-2 py-1 bg-secondary rounded text-xs">المسافة بين المدرسة ومحل سكن المستفيد</span>}
+                {formData.targeting.schoolResults && <span className="px-2 py-1 bg-secondary rounded text-xs">النتائج المدرسية للمستفيد</span>}
+                {formData.targeting.hasScholarship && <span className="px-2 py-1 bg-secondary rounded text-xs">الاستفادة من المنحة الدراسية</span>}
+                {formData.targeting.otherCriteria && <span className="px-2 py-1 bg-secondary rounded text-xs">آخر: {formData.targeting.otherCriteriaDetail}</span>}
+              </div>
+            </div>
+
+            <div className="border-t pt-4 space-y-1">
+              <InfoRow
+                label="الجهة التي تقوم بعملية انتقاء المستفيدين"
+                value={
+                  formData.targeting.selectionBody &&
+                  selectionBodyLabels[formData.targeting.selectionBody]
+                }
+              />
+              <InfoRow
+                label="خدمات المؤسسة مجانية"
+                value={formData.targeting.servicesAreFree ? "نعم" : "لا"}
+              />
+              {!formData.targeting.servicesAreFree && (
+                <>
+                  <InfoRow
+                    label="نوع التعريفة"
+                    value={
+                      formData.targeting.tariffType &&
+                      tariffTypeLabels[formData.targeting.tariffType]
+                    }
+                  />
+                  <InfoRow
+                    label="قيمة الاشتراك الموحد"
+                    value={
+                      formData.targeting.uniformAmount &&
+                      `${formData.targeting.uniformAmount} درهم`
+                    }
+                  />
+                  {formData.targeting.tariffType === "BRACKETED" && (
+                    <>
+                      <InfoRow
+                        label="الشريحة الدنيا"
+                        value={
+                          formData.targeting.bracketMin &&
+                          `${formData.targeting.bracketMin} درهم`
+                        }
+                      />
+                      <InfoRow
+                        label="الشريحة العليا"
+                        value={
+                          formData.targeting.bracketMax &&
+                          `${formData.targeting.bracketMax} درهم`
+                        }
+                      />
+                    </>
+                  )}
+                  <InfoRow
+                    label="الجهة المحددة للتعريفة"
+                    value={formData.targeting.tariffDeterminationBody}
+                  />
+                </>
+              )}
+              <InfoRow
+                label="عدد الطلبات التي لم تتم الاستجابة لها"
+                value={formData.targeting.unsatisfiedRequestsCount}
+              />
+            </div>
           </CardContent>
         </Card>
       )}
