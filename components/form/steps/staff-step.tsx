@@ -230,7 +230,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="annualCost">الكلفة السنوية (بالدرهم) لجميع الأطر</Label>
+              <Label htmlFor="annualCost">الكلفة السنوية (بالدرهم) للجمعية</Label>
               <Input
                 id="annualCost"
                 type="number"
