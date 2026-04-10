@@ -215,7 +215,7 @@ export function StaffStep() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="monthlyCost">الكلفة الشهرية (بالدرهم) لجميع الأطر</Label>
+              <Label htmlFor="monthlyCost">الكلفة الشهرية (بالدرهم) للجمعية</Label>
               <Input
                 id="monthlyCost"
                 type="number"
@@ -284,8 +284,8 @@ export function StaffStep() {
                     <TableHead>الأطر المتطوعة</TableHead>
                     <TableHead>CNSS</TableHead>
                     <TableHead>SMIG</TableHead>
-                    <TableHead>الكلفة الشهرية لجميع الأطر</TableHead>
-                    <TableHead>الكلفة السنوية لجميع الأطر</TableHead>
+                    <TableHead>الكلفة الشهرية (بالدرهم) للجمعية</TableHead>
+                    <TableHead>الكلفة السنوية (بالدرهم) للجمعية</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
