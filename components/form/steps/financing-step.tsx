@@ -178,6 +178,17 @@ export function FinancingStep() {
             ))}
           </div>
 
+          {watch("operatingOther") && (
+            <div className="space-y-2 sm:col-span-2 lg:col-span-4">
+              <Label htmlFor="operatingOtherDetail">تحديد المصدر الآخر</Label>
+              <Input
+                id="operatingOtherDetail"
+                {...register("operatingOtherDetail")}
+                placeholder="أدخل المصدر"
+              />
+            </div>
+          )}
+
           {parentContributionsSelected && (
             <div className="space-y-2 sm:col-span-2 lg:col-span-4">
               <Label htmlFor="parentContributionAmount">مبلغ اشتراكات الآباء الشهري (درهم)</Label>
@@ -272,8 +283,9 @@ export function FinancingStep() {
               id="associationShare"
               type="number"
               step="0.01"
+              min="0"
               max="100"
-              {...register("associationShare", { valueAsNumber: true })}
+              {...register("associationShare", { valueAsNumber: true, min: 0, max: 100 })}
               placeholder="0"
             />
           </div>
@@ -284,8 +296,9 @@ export function FinancingStep() {
               id="educationShare"
               type="number"
               step="0.01"
+              min="0"
               max="100"
-              {...register("educationShare", { valueAsNumber: true })}
+              {...register("educationShare", { valueAsNumber: true, min: 0, max: 100 })}
               placeholder="0"
             />
           </div>
@@ -296,8 +309,9 @@ export function FinancingStep() {
               id="otherShare"
               type="number"
               step="0.01"
+              min="0"
               max="100"
-              {...register("otherShare", { valueAsNumber: true })}
+              {...register("otherShare", { valueAsNumber: true, min: 0, max: 100 })}
               placeholder="0"
             />
           </div>

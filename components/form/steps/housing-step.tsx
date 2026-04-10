@@ -82,10 +82,12 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.maleBeneficiaries`}
             type="number"
+            min="0"
             {...register(`${seasonKey}.maleBeneficiaries`, { 
               valueAsNumber: true,
+              min: 0,
               onChange: (e) => {
-                const males = parseInt(e.target.value) || 0;
+                const males = Math.max(0, parseInt(e.target.value) || 0);
                 const females = watch(`${seasonKey}.femaleBeneficiaries`) || 0;
                 updateTotal(males, females);
               }
@@ -98,10 +100,12 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.femaleBeneficiaries`}
             type="number"
+            min="0"
             {...register(`${seasonKey}.femaleBeneficiaries`, { 
               valueAsNumber: true,
+              min: 0,
               onChange: (e) => {
-                const females = parseInt(e.target.value) || 0;
+                const females = Math.max(0, parseInt(e.target.value) || 0);
                 const males = watch(`${seasonKey}.maleBeneficiaries`) || 0;
                 updateTotal(males, females);
               }
@@ -114,8 +118,9 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.primaryBeneficiaries`}
             type="number"
+            min="0"
             className={schoolLevelExceedsTotal ? "border-destructive" : ""}
-            {...register(`${seasonKey}.primaryBeneficiaries`, { valueAsNumber: true })}
+            {...register(`${seasonKey}.primaryBeneficiaries`, { valueAsNumber: true, min: 0 })}
             placeholder="0"
           />
         </div>
@@ -124,8 +129,9 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.middleSchoolBeneficiaries`}
             type="number"
+            min="0"
             className={schoolLevelExceedsTotal ? "border-destructive" : ""}
-            {...register(`${seasonKey}.middleSchoolBeneficiaries`, { valueAsNumber: true })}
+            {...register(`${seasonKey}.middleSchoolBeneficiaries`, { valueAsNumber: true, min: 0 })}
             placeholder="0"
           />
         </div>
@@ -134,8 +140,9 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.highSchoolBeneficiaries`}
             type="number"
+            min="0"
             className={schoolLevelExceedsTotal ? "border-destructive" : ""}
-            {...register(`${seasonKey}.highSchoolBeneficiaries`, { valueAsNumber: true })}
+            {...register(`${seasonKey}.highSchoolBeneficiaries`, { valueAsNumber: true, min: 0 })}
             placeholder="0"
           />
         </div>
@@ -144,8 +151,9 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.orphans`}
             type="number"
+            min="0"
             className={schoolLevelExceedsTotal ? "border-destructive" : ""}
-            {...register(`${seasonKey}.orphans`, { valueAsNumber: true })}
+            {...register(`${seasonKey}.orphans`, { valueAsNumber: true, min: 0 })}
             placeholder="0"
           />
         </div>
@@ -154,7 +162,8 @@ function SeasonFields({
           <Input
             id={`${seasonKey}.disabled`}
             type="number"
-            {...register(`${seasonKey}.disabled`, { valueAsNumber: true })}
+            min="0"
+            {...register(`${seasonKey}.disabled`, { valueAsNumber: true, min: 0 })}
             placeholder="0"
           />
         </div>
@@ -268,7 +277,8 @@ export function HousingStep() {
             <Input
               id="totalMealBeneficiaries2526"
               type="number"
-              {...register("totalMealBeneficiaries2526", { valueAsNumber: true })}
+              min="0"
+              {...register("totalMealBeneficiaries2526", { valueAsNumber: true, min: 0 })}
               placeholder="0"
             />
           </div>
@@ -278,7 +288,8 @@ export function HousingStep() {
             <Input
               id="associationMealBeneficiaries"
               type="number"
-              {...register("associationMealBeneficiaries", { valueAsNumber: true })}
+              min="0"
+              {...register("associationMealBeneficiaries", { valueAsNumber: true, min: 0 })}
               placeholder="0"
             />
           </div>
@@ -288,7 +299,8 @@ export function HousingStep() {
             <Input
               id="educationMealBeneficiaries"
               type="number"
-              {...register("educationMealBeneficiaries", { valueAsNumber: true })}
+              min="0"
+              {...register("educationMealBeneficiaries", { valueAsNumber: true, min: 0 })}
               placeholder="0"
             />
           </div>
@@ -298,8 +310,9 @@ export function HousingStep() {
             <Input
               id="fullGrantCount"
               type="number"
+              min="0"
               className={grantMismatch ? "border-destructive" : ""}
-              {...register("fullGrantCount", { valueAsNumber: true })}
+              {...register("fullGrantCount", { valueAsNumber: true, min: 0 })}
               placeholder="0"
             />
           </div>
@@ -309,8 +322,9 @@ export function HousingStep() {
             <Input
               id="halfGrantCount"
               type="number"
+              min="0"
               className={grantMismatch ? "border-destructive" : ""}
-              {...register("halfGrantCount", { valueAsNumber: true })}
+              {...register("halfGrantCount", { valueAsNumber: true, min: 0 })}
               placeholder="0"
             />
             {grantMismatch && (
