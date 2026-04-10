@@ -940,8 +940,8 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                   <th>عدد الأطر المتطوعة</th>
                   <th>المستفيدون من CNSS</th>
                   <th>المستفيدون من SMIG</th>
-                  <th>الكلفة الشهرية (درهم)</th>
-                  <th>الكلفة ��لسنوية (درهم)</th>
+                  <th>الكلفة الشهرية (بالدرهم) للجمعية</th>
+                  <th>الكلفة السنوية (بالدرهم) للجمعية</th>
                 </tr>
               </thead>
               <tbody>
