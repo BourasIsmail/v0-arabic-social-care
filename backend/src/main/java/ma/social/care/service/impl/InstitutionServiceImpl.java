@@ -250,16 +250,17 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     @Override
     public void deleteInstitution(Long id) {
-        log.info("Soft deleting institution with ID: {}", id);
+        log.info("Hard deleting institution with ID: {}", id);
 
         Institution institution = institutionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Institution", "id", id));
 
-        institution.setIsDeleted(true);
-        institution.setDeletedAt(LocalDateTime.now());
-        institutionRepository.save(institution);
+        // Hard delete - removes institution and all related components
+        // (Building, Financing, Targeting, HousingMeals, StaffMembers)
+        // due to CascadeType.ALL and orphanRemoval = true
+        institutionRepository.delete(institution);
 
-        log.info("Institution soft deleted successfully");
+        log.info("Institution and all components permanently deleted");
     }
 
     @Override
