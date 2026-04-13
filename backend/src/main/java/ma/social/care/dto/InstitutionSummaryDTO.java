@@ -18,6 +18,8 @@ public class InstitutionSummaryDTO {
     private String institutionName;
     private Long regionId;
     private String regionName;
+    private Long prefectureId;
+    private String prefectureName;
     private Long communeId;
     private String communeName;
     private Milieu milieu;
