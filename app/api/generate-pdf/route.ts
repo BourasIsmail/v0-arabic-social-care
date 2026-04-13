@@ -613,7 +613,7 @@ export async function POST(request: Request) {
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.solidarityMinistry)}</span> وزارة التضامن والإدماج الإجتماعي والأُسْرَة</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.nationalEntraide)}</span> التعاون الوطني</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.indh)}</span> المبادرة الوطنية للتنمية البشرية</span>
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.commune)}</span> الجماعة</span>
+                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.commune)}</span> ال��ماعة</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.fondationMohammed5)}</span> مؤسسة محمد الخامس للتضامن</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.nationalRevival)}</span> الإنعاش الوطني</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.association)}</span> الجمعية</span>
@@ -918,11 +918,11 @@ export async function POST(request: Request) {
                   <div class="visa-space"></div>
                 </div>
                 <div class="visa-box">
-                  <h4>تأشيرة المدير الإقليمي أو الجهوي لوزارة التربية الوطنية والتعليم الأولي والرياضة</h4>
+                  <h4>تأشيرة المدير الجهوي أو الإقليمي لوزارة التربية الوطنية والتعليم الأولي والرياضة</h4>
                   <div class="visa-space"></div>
                 </div>
                 <div class="visa-box">
-                  <h4>تأشيرة المدير الإقليمي للتعاون الوطني</h4>
+                  <h4>تأشيرة المدير الجهوي أو الإقليمي للتعاون الوطني</h4>
                   <div class="visa-space"></div>
                 </div>
               </div>
