@@ -434,7 +434,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Checkbox checked={data.building?.renovationCapacity === "NEEDS_RECONSTRUCTION"} label="تتطلب إعادة البناء" />
             </View>
           </FormRow>
-          <FormRow label="تحد�����د مالك الوعاء العقاري">
+          <FormRow label="تحد������د مالك الوعاء العقاري">
             <View style={styles.cbRow}>
               <Checkbox checked={data.building?.ownerType === "STATE_DOMAIN"} label="أملاك الدولة" />
               <Checkbox checked={data.building?.ownerType === "COMMUNAL"} label="ملك جماعي" />
@@ -736,11 +736,11 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
             <View style={styles.sigLine} />
           </View>
           <View style={styles.sigCell}>
-            <Text style={styles.sigLabel}>تأشيرة المدير الإقليمي للتعاون الوطني</Text>
+            <Text style={styles.sigLabel}>تأشيرة المدير الجهوي أو الإقليمي للتعاون الوطني</Text>
             <View style={styles.sigLine} />
           </View>
           <View style={[styles.sigCell, { borderLeft: "none" }]}>
-            <Text style={styles.sigLabel}>تأشيرة المدير الإقليمي أو الجهوي لوزارة التربية الوطنية</Text>
+            <Text style={styles.sigLabel}>تأشيرة المدير الجهوي أو الإقليمي لوزارة التربية الوطنية</Text>
             <View style={styles.sigLine} />
           </View>
         </View>

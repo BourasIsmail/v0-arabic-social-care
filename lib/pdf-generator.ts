@@ -971,11 +971,11 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
             </div>
             <div class="visa-row">
               <div class="visa-box">
-                <h4>تأشيرة المدير الإقليمي للتعاون الوطني</h4>
+                <h4>تأشيرة المدير الجهوي أو الإقليمي للتعاون الوطني</h4>
                 <div class="visa-space"></div>
               </div>
               <div class="visa-box">
-                <h4>تأشيرة المدير الإقليمي أو الجهوي لوزارة التربية الوطنية والتعليم الأولي والرياضة</h4>
+                <h4>تأشيرة المدير الجهوي أو الإقليمي لوزارة التربية الوطنية والتعليم الأولي والرياضة</h4>
                 <div class="visa-space"></div>
               </div>
               <div class="visa-box">
