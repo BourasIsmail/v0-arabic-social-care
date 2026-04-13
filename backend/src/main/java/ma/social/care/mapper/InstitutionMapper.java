@@ -42,6 +42,8 @@ public interface InstitutionMapper {
 
     @Mapping(target = "regionId", source = "region.id")
     @Mapping(target = "regionName", source = "region.name")
+    @Mapping(target = "prefectureId", source = "prefecture.id")
+    @Mapping(target = "prefectureName", source = "prefecture.name")
     @Mapping(target = "communeId", source = "commune.id")
     @Mapping(target = "communeName", source = "commune.name")
     InstitutionSummaryDTO toSummaryDTO(Institution entity);

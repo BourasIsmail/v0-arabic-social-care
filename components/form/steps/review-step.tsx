@@ -366,7 +366,7 @@ export function ReviewStep() {
                 <h4 className="font-medium text-sm text-muted-foreground mb-2">نسب المساهمة في تمويل الإطعام</h4>
                 <InfoRow label="نسبة مساهمة الجمعية المسيرة" value={formData.financing.associationShare ? `${formData.financing.associationShare}%` : undefined} />
                 <InfoRow label="نسبة مساهمة قطاع التربية الوطنية" value={formData.financing.educationShare ? `${formData.financing.educationShare}%` : undefined} />
-                <InfoRow label="نسبة مساهمة أخرى" value={formData.financing.otherShare ? `${formData.financing.otherShare}%` : undefined} />
+                <InfoRow label="نسبة مساهمة أخر��" value={formData.financing.otherShare ? `${formData.financing.otherShare}%` : undefined} />
               </div>
             )}
           </CardContent>
@@ -384,9 +384,9 @@ export function ReviewStep() {
               <h4 className="font-medium text-sm text-muted-foreground">معايير الاستهداف</h4>
               <div className="flex flex-wrap gap-2">
                 {formData.targeting.socialSituation && <span className="px-2 py-1 bg-secondary rounded text-xs">الوضعية الاجتماعية للأسرة</span>}
-                {formData.targeting.distanceToSchool && <span className="px-2 py-1 bg-secondary rounded text-xs">المسافة بين المدرسة ومحل سكن المستفيد</span>}
+                {formData.targeting.distance && <span className="px-2 py-1 bg-secondary rounded text-xs">المسافة بين المدرسة ومحل سكن المستفيد</span>}
                 {formData.targeting.schoolResults && <span className="px-2 py-1 bg-secondary rounded text-xs">النتائج المدرسية للمستفيد</span>}
-                {formData.targeting.hasScholarship && <span className="px-2 py-1 bg-secondary rounded text-xs">الاستفادة من المنحة الدراسية</span>}
+                {formData.targeting.scholarship && <span className="px-2 py-1 bg-secondary rounded text-xs">الاستفادة من المنحة الدراسية</span>}
                 {formData.targeting.otherCriteria && <span className="px-2 py-1 bg-secondary rounded text-xs">آخر: {formData.targeting.otherCriteriaDetail}</span>}
               </div>
             </div>
@@ -419,27 +419,15 @@ export function ReviewStep() {
                       `${formData.targeting.uniformAmount} درهم`
                     }
                   />
-                  {formData.targeting.tariffType === "BRACKETED" && (
-                    <>
-                      <InfoRow
-                        label="الشريحة الدنيا"
-                        value={
-                          formData.targeting.bracketMin &&
-                          `${formData.targeting.bracketMin} درهم`
-                        }
-                      />
-                      <InfoRow
-                        label="الشريحة العليا"
-                        value={
-                          formData.targeting.bracketMax &&
-                          `${formData.targeting.bracketMax} درهم`
-                        }
-                      />
-                    </>
+                  {formData.targeting.tariffBracket && (
+                    <InfoRow
+                      label="شريحة الاشتراك"
+                      value={tariffBracketLabels[formData.targeting.tariffBracket]}
+                    />
                   )}
                   <InfoRow
                     label="الجهة المحددة للتعريفة"
-                    value={formData.targeting.tariffDeterminationBody}
+                    value={formData.targeting.tariffDeterminationBody && selectionBodyLabels[formData.targeting.tariffDeterminationBody]}
                   />
                 </>
               )}
