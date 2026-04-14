@@ -166,7 +166,7 @@ export function ReviewStep() {
               الموقع الجغرافي للمؤسسة
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              خط العرض: {formData.latitude.toFixed(6)} | خط الطول: {formData.longitude.toFixed(6)}
+              خط العرض: {Number(formData.latitude).toFixed(6)} | خط الطول: {Number(formData.longitude).toFixed(6)}
             </p>
           </CardHeader>
           <CardContent>
@@ -366,7 +366,7 @@ export function ReviewStep() {
                 <h4 className="font-medium text-sm text-muted-foreground mb-2">نسب المساهمة في تمويل الإطعام</h4>
                 <InfoRow label="نسبة مساهمة الجمعية المسيرة" value={formData.financing.associationShare ? `${formData.financing.associationShare}%` : undefined} />
                 <InfoRow label="نسبة مساهمة قطاع التربية الوطنية" value={formData.financing.educationShare ? `${formData.financing.educationShare}%` : undefined} />
-                <InfoRow label="نسبة مساهمة أخر��" value={formData.financing.otherShare ? `${formData.financing.otherShare}%` : undefined} />
+                <InfoRow label="نسبة مساهمة ��خر��" value={formData.financing.otherShare ? `${formData.financing.otherShare}%` : undefined} />
               </div>
             )}
           </CardContent>
