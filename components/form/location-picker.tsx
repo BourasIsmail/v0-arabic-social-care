@@ -264,14 +264,14 @@ export function LocationPicker({
         <div className="flex-1 grid grid-cols-2 gap-2">
           <Input
             type="text"
-            value={latitude?.toFixed(6) || ""}
+            value={latitude !== undefined ? String(latitude) : ""}
             placeholder="خط العرض"
             readOnly
             className="bg-muted"
           />
           <Input
             type="text"
-            value={longitude?.toFixed(6) || ""}
+            value={longitude !== undefined ? String(longitude) : ""}
             placeholder="خط الطول"
             readOnly
             className="bg-muted"
