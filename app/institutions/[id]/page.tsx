@@ -237,7 +237,7 @@ export default function InstitutionDetailPage({
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">الإحداثيات</span>
                       <span className="font-mono text-xs">
-                        {data.latitude.toFixed(6)}, {data.longitude.toFixed(6)}
+                        {Number(data.latitude).toFixed(6)}, {Number(data.longitude).toFixed(6)}
                       </span>
                     </div>
                     <LocationMapDisplay
