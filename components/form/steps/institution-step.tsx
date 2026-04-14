@@ -60,7 +60,7 @@ export function InstitutionStep() {
 
   const onSubmit = async (data: Partial<InstitutionRequest>) => {
     // Validate required fields before proceeding
-    const isValid = await trigger(["institutionType", "associationName", "institutionName", "latitude", "longitude"]);
+    const isValid = await trigger(["institutionType", "associationName", "institutionName"]);
     if (!isValid) return;
     
     updateFormData(data);
@@ -184,20 +184,15 @@ export function InstitutionStep() {
             </Select>
           </div>
 
-          <div className="sm:col-span-2 space-y-2">
-            <input type="hidden" {...register("latitude", { required: "الإحداثيات الجغرافية مطلوبة" })} />
-            <input type="hidden" {...register("longitude", { required: "الإحداثيات الجغرافية مطلوبة" })} />
+          <div className="sm:col-span-2">
             <LocationPicker
               latitude={watch("latitude")}
               longitude={watch("longitude")}
               onLocationChange={(lat, lng) => {
-                setValue("latitude", lat, { shouldValidate: true });
-                setValue("longitude", lng, { shouldValidate: true });
+                setValue("latitude", lat);
+                setValue("longitude", lng);
               }}
             />
-            {(errors.latitude || errors.longitude) && (
-              <p className="text-sm text-destructive">الإحداثيات الجغرافية مطلوبة *</p>
-            )}
           </div>
         </CardContent>
       </Card>

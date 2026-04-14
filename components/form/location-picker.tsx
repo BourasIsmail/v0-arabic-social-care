@@ -259,7 +259,7 @@ export function LocationPicker({
 
   return (
     <div className="space-y-2">
-      <Label>الموقع الجغرافي (خط العرض وخط الطول) *</Label>
+      <Label>الموقع الجغرافي (خط العرض وخط الطول)</Label>
       <div className="flex gap-2">
         <div className="flex-1 grid grid-cols-2 gap-2">
           <Input
