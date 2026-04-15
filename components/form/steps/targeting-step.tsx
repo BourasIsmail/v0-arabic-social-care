@@ -29,7 +29,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 export function TargetingStep() {
   const { formData, updateFormData, setCurrentStep, formVersion } = useFormContext();
 
-  const { register, watch, setValue, handleSubmit, reset } = useForm<TargetingDTO>({
+  const { register, watch, setValue, handleSubmit, reset, formState: { errors }, trigger } = useForm<TargetingDTO>({
     defaultValues: formData.targeting || {},
   });
 
@@ -40,7 +40,9 @@ export function TargetingStep() {
     }
   }, [formVersion, reset, formData.targeting]);
 
-  const onSubmit = (data: TargetingDTO) => {
+  const onSubmit = async (data: TargetingDTO) => {
+    const isValid = await trigger(["selectionBody"]);
+    if (!isValid) return;
     updateFormData({ targeting: data });
     setCurrentStep("housing");
   };
@@ -166,10 +168,11 @@ export function TargetingStep() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="selectionBody">الجهة التي تقوم بعملية انتقاء المستفيدين</Label>
+            <Label htmlFor="selectionBody">الجهة التي تقوم بعملية انتقاء المستفيدين *</Label>
+            <input type="hidden" {...register("selectionBody", { required: true })} />
             <Select
               value={watch("selectionBody") || ""}
-              onValueChange={(value) => setValue("selectionBody", value as SelectionBody)}
+              onValueChange={(value) => setValue("selectionBody", value as SelectionBody, { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="اختر جهة الانتقاء" />
@@ -182,6 +185,9 @@ export function TargetingStep() {
                 ))}
               </SelectContent>
             </Select>
+            {errors.selectionBody && (
+              <p className="text-sm text-destructive">الجهة التي تقوم بعملية انتقاء المستفيدين مطلوبة</p>
+            )}
           </div>
 
           {selectionBody === SelectionBody.MIXED_COMMITTEE && (

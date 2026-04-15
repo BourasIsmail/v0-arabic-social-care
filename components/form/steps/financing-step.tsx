@@ -14,7 +14,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 export function FinancingStep() {
   const { formData, updateFormData, setCurrentStep, formVersion } = useFormContext();
 
-  const { register, watch, setValue, handleSubmit, reset } = useForm<FinancingDTO>({
+  const { register, watch, setValue, handleSubmit, reset, formState: { errors }, trigger } = useForm<FinancingDTO>({
     defaultValues: formData.financing || {},
   });
 
@@ -25,7 +25,13 @@ export function FinancingStep() {
     }
   }, [formVersion, reset, formData.financing]);
 
-  const onSubmit = (data: FinancingDTO) => {
+  const onSubmit = async (data: FinancingDTO) => {
+    const isValid = await trigger([
+      "annualManagementCost", "annualHRCost", "annualMealsCost", 
+      "annualOtherExpenses", "individualAnnualCost",
+      "associationShare", "educationShare", "otherShare"
+    ]);
+    if (!isValid) return;
     updateFormData({ financing: data });
     setCurrentStep("targeting");
   };
@@ -204,15 +210,18 @@ export function FinancingStep() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="annualManagementCost">التكلفة السنوية للتسيير (درهم)</Label>
+            <Label htmlFor="annualManagementCost">التكلفة السنوية للتسيير (درهم) *</Label>
             <Input
               id="annualManagementCost"
               type="number"
               step="0.01"
               min="0"
-              {...register("annualManagementCost", { valueAsNumber: true, min: 0 })}
+              {...register("annualManagementCost", { required: true, valueAsNumber: true, min: 0 })}
               placeholder="0.00"
             />
+            {errors.annualManagementCost && (
+              <p className="text-sm text-destructive">التكلفة السنوية للتسيير مطلوبة</p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -223,51 +232,63 @@ export function FinancingStep() {
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="annualHRCost">الكلفة السنوية المخصصة للموارد البشرية (درهم)</Label>
+            <Label htmlFor="annualHRCost">الكلفة السنوية المخصصة للموارد البشرية (درهم) *</Label>
             <Input
               id="annualHRCost"
               type="number"
               step="0.01"
               min="0"
-              {...register("annualHRCost", { valueAsNumber: true, min: 0 })}
+              {...register("annualHRCost", { required: true, valueAsNumber: true, min: 0 })}
               placeholder="0.00"
             />
+            {errors.annualHRCost && (
+              <p className="text-sm text-destructive">الكلفة السنوية المخصصة للموارد البشرية مطلوبة</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="annualMealsCost">الكلفة السنوية المخصصة للإطعام (درهم)</Label>
+            <Label htmlFor="annualMealsCost">الكلفة السنوية المخصصة للإطعام (درهم) *</Label>
             <Input
               id="annualMealsCost"
               type="number"
               step="0.01"
               min="0"
-              {...register("annualMealsCost", { valueAsNumber: true, min: 0 })}
+              {...register("annualMealsCost", { required: true, valueAsNumber: true, min: 0 })}
               placeholder="0.00"
             />
+            {errors.annualMealsCost && (
+              <p className="text-sm text-destructive">الكلفة السنوية المخصصة للإطعام مطلوبة</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="annualOtherExpenses">الكلفة السنوية المخصصة لباقي النفقات (الماء، الكهرباء، الغاز، مواد النظافة...) (درهم)</Label>
+            <Label htmlFor="annualOtherExpenses">الكلفة السنوية المخصصة لباقي النفقات (الماء، الكهرباء، الغاز، مواد النظافة...) (درهم) *</Label>
             <Input
               id="annualOtherExpenses"
               type="number"
               step="0.01"
               min="0"
-              {...register("annualOtherExpenses", { valueAsNumber: true, min: 0 })}
+              {...register("annualOtherExpenses", { required: true, valueAsNumber: true, min: 0 })}
               placeholder="0.00"
             />
+            {errors.annualOtherExpenses && (
+              <p className="text-sm text-destructive">الكلفة السنوية المخصصة لباقي النفقات مطلوبة</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="individualAnnualCost">الكلفة السنوية للتكفل بكل مستفيد داخل المؤسسة (الكلفة الفردية) (درهم)</Label>
+            <Label htmlFor="individualAnnualCost">الكلفة السنوية للتكفل بكل مستفيد داخل المؤسسة (الكلفة الفردية) (درهم) *</Label>
             <Input
               id="individualAnnualCost"
               type="number"
               step="0.01"
               min="0"
-              {...register("individualAnnualCost", { valueAsNumber: true, min: 0 })}
+              {...register("individualAnnualCost", { required: true, valueAsNumber: true, min: 0 })}
               placeholder="0.00"
             />
+            {errors.individualAnnualCost && (
+              <p className="text-sm text-destructive">الكلفة السنوية للتكفل بكل مستفيد مطلوبة</p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -278,42 +299,51 @@ export function FinancingStep() {
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-3">
           <div className="space-y-2">
-            <Label htmlFor="associationShare">نسبة مساهمة الجمعية المسيرة</Label>
+            <Label htmlFor="associationShare">نسبة مساهمة الجمعية المسيرة *</Label>
             <Input
               id="associationShare"
               type="number"
               step="0.01"
               min="0"
               max="100"
-              {...register("associationShare", { valueAsNumber: true, min: 0, max: 100 })}
+              {...register("associationShare", { required: true, valueAsNumber: true, min: 0, max: 100 })}
               placeholder="0"
             />
+            {errors.associationShare && (
+              <p className="text-sm text-destructive">نسبة مساهمة الجمعية المسيرة مطلوبة</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="educationShare">نسبة مساهمة قطاع التربية الوطنية</Label>
+            <Label htmlFor="educationShare">نسبة مساهمة قطاع التربية الوطنية *</Label>
             <Input
               id="educationShare"
               type="number"
               step="0.01"
               min="0"
               max="100"
-              {...register("educationShare", { valueAsNumber: true, min: 0, max: 100 })}
+              {...register("educationShare", { required: true, valueAsNumber: true, min: 0, max: 100 })}
               placeholder="0"
             />
+            {errors.educationShare && (
+              <p className="text-sm text-destructive">نسبة مساهمة قطاع التربية الوطنية مطلوبة</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="otherShare">نسبة مساهمة أخرى (للتحديد)</Label>
+            <Label htmlFor="otherShare">نسبة مساهمة أخرى (للتحديد) *</Label>
             <Input
               id="otherShare"
               type="number"
               step="0.01"
               min="0"
               max="100"
-              {...register("otherShare", { valueAsNumber: true, min: 0, max: 100 })}
+              {...register("otherShare", { required: true, valueAsNumber: true, min: 0, max: 100 })}
               placeholder="0"
             />
+            {errors.otherShare && (
+              <p className="text-sm text-destructive">نسبة مساهمة أخرى مطلوبة</p>
+            )}
           </div>
         </CardContent>
       </Card>

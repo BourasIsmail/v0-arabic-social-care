@@ -31,7 +31,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 export function BuildingStep() {
   const { formData, updateFormData, setCurrentStep, formVersion } = useFormContext();
 
-  const { watch, setValue, handleSubmit, reset } = useForm<BuildingDTO>({
+  const { watch, setValue, handleSubmit, reset, register, formState: { errors }, trigger } = useForm<BuildingDTO>({
     defaultValues: formData.building || {},
   });
 
@@ -42,7 +42,9 @@ export function BuildingStep() {
     }
   }, [formVersion, reset, formData.building]);
 
-  const onSubmit = (data: BuildingDTO) => {
+  const onSubmit = async (data: BuildingDTO) => {
+    const isValid = await trigger(["buildingStatus", "buildingCondition", "ownerType"]);
+    if (!isValid) return;
     updateFormData({ building: data });
     setCurrentStep("financing");
   };
@@ -59,10 +61,11 @@ export function BuildingStep() {
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="buildingStatus">وضعية البناية</Label>
+            <Label htmlFor="buildingStatus">وضعية البناية *</Label>
+            <input type="hidden" {...register("buildingStatus", { required: true })} />
             <Select
               value={watch("buildingStatus") || ""}
-              onValueChange={(value) => setValue("buildingStatus", value as BuildingStatus)}
+              onValueChange={(value) => setValue("buildingStatus", value as BuildingStatus, { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="اختر وضعية البناية" />
@@ -75,6 +78,9 @@ export function BuildingStep() {
                 ))}
               </SelectContent>
             </Select>
+            {errors.buildingStatus && (
+              <p className="text-sm text-destructive">وضعية البناية مطلوبة</p>
+            )}
             {watch("buildingStatus") === "OTHER" && (
               <Input
                 placeholder="حدد وضعية البناية"
@@ -85,10 +91,11 @@ export function BuildingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="buildingCondition">الحالة العامة للبناية</Label>
+            <Label htmlFor="buildingCondition">الحالة العامة للبناية *</Label>
+            <input type="hidden" {...register("buildingCondition", { required: true })} />
             <Select
               value={watch("buildingCondition") || ""}
-              onValueChange={(value) => setValue("buildingCondition", value as BuildingCondition)}
+              onValueChange={(value) => setValue("buildingCondition", value as BuildingCondition, { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="اختر حالة البناية" />
@@ -101,6 +108,9 @@ export function BuildingStep() {
                 ))}
               </SelectContent>
             </Select>
+            {errors.buildingCondition && (
+              <p className="text-sm text-destructive">الحالة العامة للبناية مطلوبة</p>
+            )}
             {watch("buildingCondition") === "OTHER" && (
               <Input
                 placeholder="حدد حالة البناية"
@@ -130,10 +140,11 @@ export function BuildingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="ownerType">تحديد مالك الوعاء العقاري</Label>
+            <Label htmlFor="ownerType">تحديد مالك الوعاء العقاري *</Label>
+            <input type="hidden" {...register("ownerType", { required: true })} />
             <Select
               value={watch("ownerType") || ""}
-              onValueChange={(value) => setValue("ownerType", value as OwnerType)}
+              onValueChange={(value) => setValue("ownerType", value as OwnerType, { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="اختر نوع المالك" />
@@ -146,6 +157,9 @@ export function BuildingStep() {
                 ))}
               </SelectContent>
             </Select>
+            {errors.ownerType && (
+              <p className="text-sm text-destructive">تحديد مالك الوعاء العقاري مطلوب</p>
+            )}
             {watch("ownerType") === "OTHER" && (
               <Input
                 placeholder="حدد نوع المالك"
