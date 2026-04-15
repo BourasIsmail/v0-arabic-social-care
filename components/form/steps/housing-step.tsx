@@ -198,11 +198,7 @@ export function HousingStep() {
     }
   }, [formVersion, reset, formData.housingMeals]);
 
-  // Scholarship validation
-  const totalMealBeneficiaries = watch("totalMealBeneficiaries2526") || 0;
-  const fullGrantCount = watch("fullGrantCount") || 0;
-  const halfGrantCount = watch("halfGrantCount") || 0;
-  const grantMismatch = totalMealBeneficiaries > 0 && (fullGrantCount + halfGrantCount) !== totalMealBeneficiaries;
+
 
   const onSubmit = async (data: HousingMealsDTO) => {
     const isValid = await trigger([
@@ -283,48 +279,23 @@ export function HousingStep() {
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="totalMealBeneficiaries2526">
-              العدد الإجمالي للمستفيدين فعليا من هذه الخدمة
-            </Label>
-            <Input
-              id="totalMealBeneficiaries2526"
-              type="number"
-              min="0"
-              {...register("totalMealBeneficiaries2526", { valueAsNumber: true, min: 0 })}
-              placeholder="0"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="associationMealBeneficiaries">العدد الإجمالي للمستفيدين فعليا من خدمة الإطعام الممول من طرف الجمعية</Label>
-            <Input
-              id="associationMealBeneficiaries"
-              type="number"
-              min="0"
-              {...register("associationMealBeneficiaries", { valueAsNumber: true, min: 0 })}
-              placeholder="0"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="educationMealBeneficiaries">العدد الإجمالي للمستفيدين فعليا من خدمة الإطعام التي يؤمنها قطاع التربية الوطنية</Label>
-            <Input
-              id="educationMealBeneficiaries"
-              type="number"
-              min="0"
-              {...register("educationMealBeneficiaries", { valueAsNumber: true, min: 0 })}
-              placeholder="0"
-            />
-          </div>
-
-          <div className="space-y-2">
             <Label htmlFor="fullGrantCount">عدد المستفيدين من منحة كاملة</Label>
             <Input
               id="fullGrantCount"
               type="number"
               min="0"
-              className={grantMismatch ? "border-destructive" : ""}
-              {...register("fullGrantCount", { valueAsNumber: true, min: 0 })}
+              {...register("fullGrantCount", { 
+                valueAsNumber: true, 
+                min: 0,
+                onChange: (e) => {
+                  const fullGrant = Math.max(0, parseInt(e.target.value) || 0);
+                  const halfGrant = watch("halfGrantCount") || 0;
+                  const educationTotal = fullGrant + halfGrant;
+                  setValue("educationMealBeneficiaries", educationTotal);
+                  const associationBeneficiaries = watch("associationMealBeneficiaries") || 0;
+                  setValue("totalMealBeneficiaries2526", associationBeneficiaries + educationTotal);
+                }
+              })}
               placeholder="0"
             />
           </div>
@@ -335,15 +306,67 @@ export function HousingStep() {
               id="halfGrantCount"
               type="number"
               min="0"
-              className={grantMismatch ? "border-destructive" : ""}
-              {...register("halfGrantCount", { valueAsNumber: true, min: 0 })}
+              {...register("halfGrantCount", { 
+                valueAsNumber: true, 
+                min: 0,
+                onChange: (e) => {
+                  const halfGrant = Math.max(0, parseInt(e.target.value) || 0);
+                  const fullGrant = watch("fullGrantCount") || 0;
+                  const educationTotal = fullGrant + halfGrant;
+                  setValue("educationMealBeneficiaries", educationTotal);
+                  const associationBeneficiaries = watch("associationMealBeneficiaries") || 0;
+                  setValue("totalMealBeneficiaries2526", associationBeneficiaries + educationTotal);
+                }
+              })}
               placeholder="0"
             />
-            {grantMismatch && (
-              <p className="text-sm text-destructive">
-                تحذير: مجموع المنح الكاملة ونصف المنح ({fullGrantCount + halfGrantCount}) لا يساوي العدد الإجمالي للمستفيدين من الإطعام ({totalMealBeneficiaries})
-              </p>
-            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="educationMealBeneficiaries">العدد الإجمالي للمستفيدين فعليا من خدمة الإطعام التي يؤمنها قطاع التربية الوطنية</Label>
+            <Input
+              id="educationMealBeneficiaries"
+              type="number"
+              value={watch("educationMealBeneficiaries") || ""}
+              readOnly
+              className="bg-muted"
+              placeholder="يتم حسابه تلقائيا"
+            />
+            <p className="text-xs text-muted-foreground">يتم حسابه تلقائيا (منحة كاملة + نصف منحة)</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="associationMealBeneficiaries">العدد الإجمالي للمستفيدين فعليا من خدمة الإطعام الممول من طرف الجمعية</Label>
+            <Input
+              id="associationMealBeneficiaries"
+              type="number"
+              min="0"
+              {...register("associationMealBeneficiaries", { 
+                valueAsNumber: true, 
+                min: 0,
+                onChange: (e) => {
+                  const associationBeneficiaries = Math.max(0, parseInt(e.target.value) || 0);
+                  const educationBeneficiaries = watch("educationMealBeneficiaries") || 0;
+                  setValue("totalMealBeneficiaries2526", associationBeneficiaries + educationBeneficiaries);
+                }
+              })}
+              placeholder="0"
+            />
+          </div>
+
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="totalMealBeneficiaries2526">
+              العدد الإجمالي للمستفيدين فعليا من هذه الخدمة
+            </Label>
+            <Input
+              id="totalMealBeneficiaries2526"
+              type="number"
+              value={watch("totalMealBeneficiaries2526") || ""}
+              readOnly
+              className="bg-muted"
+              placeholder="يتم حسابه تلقائيا"
+            />
+            <p className="text-xs text-muted-foreground">يتم حسابه تلقائيا (الجمعية + قطاع التربية الوطنية)</p>
           </div>
 
           <div className="space-y-2">
