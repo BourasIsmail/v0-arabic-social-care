@@ -60,7 +60,13 @@ export function InstitutionStep() {
 
   const onSubmit = async (data: Partial<InstitutionRequest>) => {
     // Validate required fields before proceeding
-    const isValid = await trigger(["institutionType", "associationName", "institutionName", "creationYear", "latitude", "longitude"]);
+    const isValid = await trigger([
+      "institutionType", "associationName", "institutionName", "creationYear",
+      "address", "milieu", "latitude", "longitude",
+      "legalStatus", "serviceStartDate",
+      "maleCapacity", "femaleCapacity",
+      "distanceToSchool", "distanceToNationalBoardingSchool"
+    ]);
     if (!isValid) return;
     
     updateFormData(data);
@@ -76,9 +82,10 @@ export function InstitutionStep() {
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="institutionType">نوع المؤسسة *</Label>
+            <input type="hidden" {...register("institutionType", { required: true })} />
             <Select
               value={watch("institutionType") || ""}
-              onValueChange={(value) => setValue("institutionType", value as InstitutionType)}
+              onValueChange={(value) => setValue("institutionType", value as InstitutionType, { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="اختر نوع المؤسسة" />
@@ -149,12 +156,15 @@ export function InstitutionStep() {
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="address">العنوان</Label>
+            <Label htmlFor="address">العنوان *</Label>
             <Input
               id="address"
-              {...register("address")}
+              {...register("address", { required: true })}
               placeholder="أدخل العنوان الكامل"
             />
+            {errors.address && (
+              <p className="text-sm text-destructive">العنوان مطلوب</p>
+            )}
           </div>
 
           <CascadeGeoSelect
@@ -167,10 +177,11 @@ export function InstitutionStep() {
           />
 
           <div className="space-y-2">
-            <Label htmlFor="milieu">المجال</Label>
+            <Label htmlFor="milieu">المجال *</Label>
+            <input type="hidden" {...register("milieu", { required: true })} />
             <Select
               value={watch("milieu") || ""}
-              onValueChange={(value) => setValue("milieu", value as Milieu)}
+              onValueChange={(value) => setValue("milieu", value as Milieu, { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="اختر المجال" />
@@ -183,6 +194,9 @@ export function InstitutionStep() {
                 ))}
               </SelectContent>
             </Select>
+            {errors.milieu && (
+              <p className="text-sm text-destructive">المجال مطلوب</p>
+            )}
           </div>
 
           <div className="sm:col-span-2 space-y-2">
@@ -209,10 +223,11 @@ export function InstitutionStep() {
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="legalStatus">الوضعية القانونية</Label>
+            <Label htmlFor="legalStatus">الوضعية القانونية *</Label>
+            <input type="hidden" {...register("legalStatus", { required: true })} />
             <Select
               value={watch("legalStatus") || ""}
-              onValueChange={(value) => setValue("legalStatus", value as LegalStatus)}
+              onValueChange={(value) => setValue("legalStatus", value as LegalStatus, { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="اختر الوضعية" />
@@ -225,6 +240,9 @@ export function InstitutionStep() {
                 ))}
               </SelectContent>
             </Select>
+            {errors.legalStatus && (
+              <p className="text-sm text-destructive">الوضعية القانونية مطلوبة</p>
+            )}
           </div>
 
           {legalStatus === LegalStatus.LICENSED && (
@@ -250,12 +268,13 @@ export function InstitutionStep() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="serviceStartDate">تاريخ شروع المؤسسة في تقديم خدماتها</Label>
+            <Label htmlFor="serviceStartDate">تاريخ شروع المؤسسة في تقديم خدماتها *</Label>
             <Input
               id="serviceStartDate"
               type="date"
               max={new Date().toISOString().split('T')[0]}
               {...register("serviceStartDate", {
+                required: "تاريخ شروع المؤسسة في تقديم خدماتها مطلوب",
                 validate: (value) => {
                   if (value && new Date(value) >= new Date()) {
                     return "تاريخ شروع المؤسسة يجب أن يكون أصغر من تاريخ اليوم";
@@ -326,11 +345,12 @@ export function InstitutionStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="maleCapacity">الطاقة الاستيعابية المرخصة ذكور</Label>
+            <Label htmlFor="maleCapacity">الطاقة الاستيعابية المرخصة ذكور *</Label>
             <Input
               id="maleCapacity"
               type="number"
               {...register("maleCapacity", { 
+                required: true,
                 valueAsNumber: true, 
                 min: 0,
                 onChange: (e) => {
@@ -341,14 +361,18 @@ export function InstitutionStep() {
               })}
               placeholder="عدد الذكور"
             />
+            {errors.maleCapacity && (
+              <p className="text-sm text-destructive">الطاقة الاستيعابية المرخصة ذكور مطلوبة</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="femaleCapacity">الطاقة الاستيعابية المرخصة إناث</Label>
+            <Label htmlFor="femaleCapacity">الطاقة الاستيعابية المرخصة إناث *</Label>
             <Input
               id="femaleCapacity"
               type="number"
               {...register("femaleCapacity", { 
+                required: true,
                 valueAsNumber: true, 
                 min: 0,
                 onChange: (e) => {
@@ -359,6 +383,9 @@ export function InstitutionStep() {
               })}
               placeholder="عدد الإناث"
             />
+            {errors.femaleCapacity && (
+              <p className="text-sm text-destructive">الطاقة الاستيعابية المرخصة إناث مطلوبة</p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -409,10 +436,11 @@ export function InstitutionStep() {
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="distanceToSchool">البعد الجغرافي عن أقرب مؤسسة تعليمية مستقبلة للمستفيدين</Label>
+            <Label htmlFor="distanceToSchool">البعد الجغرافي عن أقرب مؤسسة تعليمية مستقبلة للمستفيدين *</Label>
+            <input type="hidden" {...register("distanceToSchool", { required: true })} />
             <Select
               value={watch("distanceToSchool") || ""}
-              onValueChange={(value) => setValue("distanceToSchool", value as Distance)}
+              onValueChange={(value) => setValue("distanceToSchool", value as Distance, { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="اختر المسافة" />
@@ -425,16 +453,20 @@ export function InstitutionStep() {
                 ))}
               </SelectContent>
             </Select>
+            {errors.distanceToSchool && (
+              <p className="text-sm text-destructive">البعد الجغرافي عن أقرب مؤسسة تعليمية مطلوب</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="distanceToNationalBoardingSchool">
-              البعد الجغرافي عن أقرب داخلية تابعة لقطاع التربية الوطنية
+              البعد الجغرافي عن أقرب داخلية تابعة لقطاع التربية الوطنية *
             </Label>
+            <input type="hidden" {...register("distanceToNationalBoardingSchool", { required: true })} />
             <Select
               value={watch("distanceToNationalBoardingSchool") || ""}
               onValueChange={(value) =>
-                setValue("distanceToNationalBoardingSchool", value as Distance)
+                setValue("distanceToNationalBoardingSchool", value as Distance, { shouldValidate: true })
               }
             >
               <SelectTrigger>
@@ -448,6 +480,9 @@ export function InstitutionStep() {
                 ))}
               </SelectContent>
             </Select>
+            {errors.distanceToNationalBoardingSchool && (
+              <p className="text-sm text-destructive">البعد الجغرافي عن أقرب داخلية مطلوب</p>
+            )}
           </div>
         </CardContent>
       </Card>
