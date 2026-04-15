@@ -90,6 +90,21 @@ export default function InstitutionsPage() {
     isUserRole && userPrefectureId ? buildApiUrl(API_ENDPOINTS.geo.communesByPrefecture(userPrefectureId)) : null
   );
   
+  // Fetch statistics from API for ADMIN (total counts, not paginated)
+  const { data: statsData } = useAuthSWR<{
+    totalInstitutions: number;
+    darTalibCount: number;
+    darTalibaCount: number;
+    mixedCount: number;
+  }>(
+    shouldFetch && !isUserRole ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) : null
+  );
+
+  // Fetch ALL institutions for USER role to calculate stats (no pagination)
+  const { data: allUserInstitutions } = useAuthSWR<{ content: InstitutionResponse[] }>(
+    shouldFetch && isUserRole ? buildApiUrl(`${API_ENDPOINTS.institutions.list}?size=1000`) : null
+  );
+
   // Combined loading state (auth loading OR data loading)
   const isLoading = isAuthLoading || isDataLoading;
   
@@ -108,13 +123,24 @@ export default function InstitutionsPage() {
       }
     : rawData;
 
-  // Calculate stats from filtered data (client-side)
-  const stats = data?.content
+  // Calculate stats: For ADMIN use API stats, for USER calculate from filtered prefecture data
+  const userPrefectureInstitutions = allUserInstitutions?.content?.filter(
+    (inst) => prefectureCommuneIds.includes(inst.communeId as number)
+  ) || [];
+
+  const stats = isUserRole
     ? {
-        total: data.content.length,
-        DAR_TALIB: data.content.filter((i) => i.institutionType === "DAR_TALIB").length,
-        DAR_TALIBA: data.content.filter((i) => i.institutionType === "DAR_TALIBA").length,
-        DAR_TALIB_TALIBA: data.content.filter((i) => i.institutionType === "DAR_TALIB_TALIBA").length,
+        total: userPrefectureInstitutions.length,
+        DAR_TALIB: userPrefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIB").length,
+        DAR_TALIBA: userPrefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIBA").length,
+        DAR_TALIB_TALIBA: userPrefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIB_TALIBA").length,
+      }
+    : statsData
+    ? {
+        total: statsData.totalInstitutions,
+        DAR_TALIB: statsData.darTalibCount,
+        DAR_TALIBA: statsData.darTalibaCount,
+        DAR_TALIB_TALIBA: statsData.mixedCount,
       }
     : null;
 
@@ -201,7 +227,7 @@ export default function InstitutionsPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">إجمالي المؤسسات</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-foreground">{stats?.total ?? data?.totalElements ?? 0}</p>
+              <p className="text-3xl font-bold text-foreground">{stats?.total ?? "-"}</p>
             </CardContent>
           </Card>
           <Card className="card-hover relative overflow-hidden">
