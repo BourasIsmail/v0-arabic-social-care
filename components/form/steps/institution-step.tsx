@@ -60,7 +60,7 @@ export function InstitutionStep() {
 
   const onSubmit = async (data: Partial<InstitutionRequest>) => {
     // Validate required fields before proceeding
-    const isValid = await trigger(["institutionType", "associationName", "institutionName", "latitude", "longitude"]);
+    const isValid = await trigger(["institutionType", "associationName", "institutionName", "creationYear", "latitude", "longitude"]);
     if (!isValid) return;
     
     updateFormData(data);
@@ -121,11 +121,12 @@ export function InstitutionStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="creationYear">سنة إحداث المؤسسة</Label>
+            <Label htmlFor="creationYear">سنة إحداث المؤسسة *</Label>
             <Input
               id="creationYear"
               type="number"
               {...register("creationYear", { 
+                required: "سنة إحداث المؤسسة مطلوبة",
                 valueAsNumber: true, 
                 min: 1900, 
                 max: {
@@ -136,7 +137,7 @@ export function InstitutionStep() {
               placeholder="مثال: 2010"
             />
             {errors.creationYear && (
-              <p className="text-sm text-destructive">{errors.creationYear.message || "سنة إحداث المؤسسة غير صالحة"}</p>
+              <p className="text-sm text-destructive">{errors.creationYear.message || "سنة إحداث المؤسسة مطلوبة"}</p>
             )}
           </div>
         </CardContent>
