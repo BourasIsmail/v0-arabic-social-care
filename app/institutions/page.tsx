@@ -114,7 +114,7 @@ export default function InstitutionsPage() {
         total: data.content.length,
         DAR_TALIB: data.content.filter((i) => i.institutionType === "DAR_TALIB").length,
         DAR_TALIBA: data.content.filter((i) => i.institutionType === "DAR_TALIBA").length,
-        MIXED: data.content.filter((i) => i.institutionType === "MIXED").length,
+        DAR_TALIB_TALIBA: data.content.filter((i) => i.institutionType === "DAR_TALIB_TALIBA").length,
       }
     : null;
 
@@ -225,10 +225,10 @@ export default function InstitutionsPage() {
           <Card className="card-hover relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-primary to-accent" />
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">مختلطة</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">دار الطالب والطالبة</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">{stats?.MIXED ?? "-"}</p>
+              <p className="text-3xl font-bold">{stats?.DAR_TALIB_TALIBA ?? "-"}</p>
             </CardContent>
           </Card>
         </div>
@@ -313,7 +313,7 @@ export default function InstitutionsPage() {
                               "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap",
                               institution.institutionType === "DAR_TALIB" && "bg-primary/10 text-primary",
                               institution.institutionType === "DAR_TALIBA" && "bg-accent/10 text-accent",
-                              institution.institutionType === "MIXED" && "bg-secondary text-secondary-foreground"
+                              institution.institutionType === "DAR_TALIB_TALIBA" && "bg-secondary text-secondary-foreground"
                             )}>
                               {institutionTypeLabels[institution.institutionType]}
                             </span>
