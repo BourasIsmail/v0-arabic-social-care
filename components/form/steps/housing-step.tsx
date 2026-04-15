@@ -27,6 +27,7 @@ function SeasonFields({
   watch,
   setValue,
   errors,
+  isRequired = false,
 }: {
   seasonKey: "season2324" | "season2425" | "season2526";
   seasonLabel: string;
@@ -34,6 +35,7 @@ function SeasonFields({
   watch: ReturnType<typeof useForm<HousingMealsDTO>>["watch"];
   setValue: ReturnType<typeof useForm<HousingMealsDTO>>["setValue"];
   errors: Record<string, string>;
+  isRequired?: boolean;
 }) {
   const updateTotal = (males: number, females: number) => {
     setValue(`${seasonKey}.totalBeneficiaries`, males + females);
@@ -52,7 +54,7 @@ function SeasonFields({
   return (
     <Card className={schoolLevelExceedsTotal ? "border-destructive" : schoolLevelNotEqual ? "border-amber-500" : ""}>
       <CardHeader>
-        <CardTitle className="text-base">{seasonLabel}</CardTitle>
+        <CardTitle className="text-base">{seasonLabel}{isRequired && " *"}</CardTitle>
         {schoolLevelExceedsTotal && (
           <p className="text-sm text-destructive">
             خطأ: مجموع التوزيع حسب السلك الدراسي ({schoolLevelTotal}) يتجاوز العدد الإجمالي للمستفيدين ({totalBeneficiaries})
@@ -78,12 +80,13 @@ function SeasonFields({
           <p className="text-xs text-muted-foreground">يتم حسابه تلقائيا (ذكور + إناث)</p>
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`${seasonKey}.maleBeneficiaries`}>توزيعه حسب الذكور</Label>
+          <Label htmlFor={`${seasonKey}.maleBeneficiaries`}>توزيعه حسب الذكور{isRequired && " *"}</Label>
           <Input
             id={`${seasonKey}.maleBeneficiaries`}
             type="number"
             min="0"
             {...register(`${seasonKey}.maleBeneficiaries`, { 
+              required: isRequired,
               valueAsNumber: true,
               min: 0,
               onChange: (e) => {
@@ -96,12 +99,13 @@ function SeasonFields({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`${seasonKey}.femaleBeneficiaries`}>توزيعه حسب الإناث</Label>
+          <Label htmlFor={`${seasonKey}.femaleBeneficiaries`}>توزيعه حسب الإناث{isRequired && " *"}</Label>
           <Input
             id={`${seasonKey}.femaleBeneficiaries`}
             type="number"
             min="0"
             {...register(`${seasonKey}.femaleBeneficiaries`, { 
+              required: isRequired,
               valueAsNumber: true,
               min: 0,
               onChange: (e) => {
@@ -175,7 +179,7 @@ function SeasonFields({
 export function HousingStep() {
   const { formData, updateFormData, setCurrentStep, formVersion } = useFormContext();
 
-  const { register, watch, setValue, handleSubmit, reset } = useForm<HousingMealsDTO>({
+  const { register, watch, setValue, handleSubmit, reset, formState: { errors }, trigger } = useForm<HousingMealsDTO>({
     defaultValues: formData.housingMeals || {
       season2324: {},
       season2425: {},
@@ -200,7 +204,12 @@ export function HousingStep() {
   const halfGrantCount = watch("halfGrantCount") || 0;
   const grantMismatch = totalMealBeneficiaries > 0 && (fullGrantCount + halfGrantCount) !== totalMealBeneficiaries;
 
-  const onSubmit = (data: HousingMealsDTO) => {
+  const onSubmit = async (data: HousingMealsDTO) => {
+    const isValid = await trigger([
+      "season2526.maleBeneficiaries", "season2526.femaleBeneficiaries",
+      "mealServiceType"
+    ]);
+    if (!isValid) return;
     updateFormData({ housingMeals: data });
     setCurrentStep("staff");
   };
@@ -230,6 +239,7 @@ export function HousingStep() {
             watch={watch}
             setValue={setValue}
             errors={{}}
+            isRequired={false}
           />
           <SeasonFields
             seasonKey="season2425"
@@ -238,6 +248,7 @@ export function HousingStep() {
             watch={watch}
             setValue={setValue}
             errors={{}}
+            isRequired={false}
           />
           <SeasonFields
             seasonKey="season2526"
@@ -246,6 +257,7 @@ export function HousingStep() {
             watch={watch}
             setValue={setValue}
             errors={{}}
+            isRequired={true}
           />
         </CardContent>
       </Card>
@@ -335,10 +347,11 @@ export function HousingStep() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="mealServiceType">نوعية خدمة الإطعام المقدمة</Label>
+            <Label htmlFor="mealServiceType">نوعية خدمة الإطعام المقدمة *</Label>
+            <input type="hidden" {...register("mealServiceType", { required: true })} />
             <Select
               value={watch("mealServiceType") || ""}
-              onValueChange={(value) => setValue("mealServiceType", value as MealServiceType)}
+              onValueChange={(value) => setValue("mealServiceType", value as MealServiceType, { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="اختر نوع الخدمة" />
@@ -351,6 +364,9 @@ export function HousingStep() {
                 ))}
               </SelectContent>
             </Select>
+            {errors.mealServiceType && (
+              <p className="text-sm text-destructive">نوعية خدمة الإطعام المقدمة مطلوبة</p>
+            )}
             {watch("mealServiceType") === "OTHER" && (
               <Input
                 placeholder="حدد نوعية خدمة الإطعام"
@@ -363,7 +379,7 @@ export function HousingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>ما هي مقترحاتكم من أجل تحسين جودة الإطعام بالمؤسسة</CardTitle>
+          <CardTitle>ما هي مقترحاتكم من أجل تحسين جودة ال��طعام بالمؤسسة</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-3">
