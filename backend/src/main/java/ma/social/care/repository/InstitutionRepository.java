@@ -66,6 +66,9 @@ public interface InstitutionRepository extends JpaRepository<Institution, Long> 
     @Query("SELECT COUNT(i) FROM Institution i WHERE i.isDeleted = false AND i.legalStatus = :status")
     long countByLegalStatus(@Param("status") LegalStatus status);
 
+    @Query("SELECT COUNT(i) FROM Institution i WHERE i.isDeleted = false AND (i.legalStatus = 'UNLICENSED' OR i.legalStatus IS NULL)")
+    long countUnlicensed();
+
     @Query("SELECT COALESCE(SUM(i.totalCapacity), 0) FROM Institution i WHERE i.isDeleted = false")
     long sumTotalCapacity();
 

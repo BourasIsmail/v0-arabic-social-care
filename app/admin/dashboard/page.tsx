@@ -94,7 +94,7 @@ export default function AdminDashboardPage() {
   const typeDistributionData = [
     { name: "دار الطالب", value: stats?.darTalibCount || 0, fill: COLORS.darTalib },
     { name: "دار الطالبة", value: stats?.darTalibaCount || 0, fill: COLORS.darTaliba },
-    { name: "مختلطة", value: stats?.mixedCount || 0, fill: COLORS.mixed },
+    { name: "دار الطالب والطالبة", value: stats?.mixedCount || 0, fill: COLORS.mixed },
   ];
 
   const milieuData = [
@@ -123,7 +123,7 @@ export default function AdminDashboardPage() {
   const pieChartConfig = {
     darTalib: { label: "دار الطالب", color: COLORS.darTalib },
     darTaliba: { label: "دار الطالبة", color: COLORS.darTaliba },
-    mixed: { label: "مختلطة", color: COLORS.mixed },
+    mixed: { label: "دار الطالب والطالبة", color: COLORS.mixed },
   };
 
   return (
@@ -289,7 +289,7 @@ export default function AdminDashboardPage() {
 
             <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow border-r-4 border-r-violet-500">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-muted-foreground">مختلطة</CardTitle>
+                <CardTitle className="text-sm text-muted-foreground">دار الطالب والطالبة</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-violet-600">{stats?.mixedCount || 0}</div>
