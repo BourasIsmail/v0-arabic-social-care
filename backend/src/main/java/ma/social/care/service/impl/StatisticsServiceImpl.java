@@ -71,7 +71,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         
         // By legal status - optimized queries
         long licensedCount = institutionRepository.countByLegalStatus(LegalStatus.LICENSED);
-        long unlicensedCount = institutionRepository.countByLegalStatus(LegalStatus.UNLICENSED);
+        long unlicensedCount = institutionRepository.countUnlicensed();
         
         // Services - optimized queries
         long institutionsWithHousing = institutionRepository.countWithHousing();
