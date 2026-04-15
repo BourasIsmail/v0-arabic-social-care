@@ -90,6 +90,16 @@ export default function InstitutionsPage() {
     isUserRole && userPrefectureId ? buildApiUrl(API_ENDPOINTS.geo.communesByPrefecture(userPrefectureId)) : null
   );
   
+  // Fetch statistics from API (total counts, not paginated)
+  const { data: statsData } = useAuthSWR<{
+    totalInstitutions: number;
+    darTalibCount: number;
+    darTalibaCount: number;
+    mixedCount: number;
+  }>(
+    shouldFetch ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) : null
+  );
+
   // Combined loading state (auth loading OR data loading)
   const isLoading = isAuthLoading || isDataLoading;
   
@@ -108,13 +118,13 @@ export default function InstitutionsPage() {
       }
     : rawData;
 
-  // Calculate stats from filtered data (client-side)
-  const stats = data?.content
+  // Use stats from API (total counts from database)
+  const stats = statsData
     ? {
-        total: data.content.length,
-        DAR_TALIB: data.content.filter((i) => i.institutionType === "DAR_TALIB").length,
-        DAR_TALIBA: data.content.filter((i) => i.institutionType === "DAR_TALIBA").length,
-        DAR_TALIB_TALIBA: data.content.filter((i) => i.institutionType === "DAR_TALIB_TALIBA").length,
+        total: statsData.totalInstitutions,
+        DAR_TALIB: statsData.darTalibCount,
+        DAR_TALIBA: statsData.darTalibaCount,
+        DAR_TALIB_TALIBA: statsData.mixedCount,
       }
     : null;
 
@@ -201,7 +211,7 @@ export default function InstitutionsPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">إجمالي المؤسسات</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-foreground">{stats?.total ?? data?.totalElements ?? 0}</p>
+              <p className="text-3xl font-bold text-foreground">{stats?.total ?? "-"}</p>
             </CardContent>
           </Card>
           <Card className="card-hover relative overflow-hidden">
