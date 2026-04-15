@@ -206,8 +206,7 @@ export function HousingStep() {
 
   const onSubmit = async (data: HousingMealsDTO) => {
     const isValid = await trigger([
-      "season2324.maleBeneficiaries", "season2324.femaleBeneficiaries",
-      "season2425.maleBeneficiaries", "season2425.femaleBeneficiaries",
+      "season2526.maleBeneficiaries", "season2526.femaleBeneficiaries",
       "mealServiceType"
     ]);
     if (!isValid) return;
@@ -240,7 +239,7 @@ export function HousingStep() {
             watch={watch}
             setValue={setValue}
             errors={{}}
-            isRequired={true}
+            isRequired={false}
           />
           <SeasonFields
             seasonKey="season2425"
@@ -249,7 +248,7 @@ export function HousingStep() {
             watch={watch}
             setValue={setValue}
             errors={{}}
-            isRequired={true}
+            isRequired={false}
           />
           <SeasonFields
             seasonKey="season2526"
@@ -258,7 +257,7 @@ export function HousingStep() {
             watch={watch}
             setValue={setValue}
             errors={{}}
-            isRequired={false}
+            isRequired={true}
           />
         </CardContent>
       </Card>
@@ -380,7 +379,7 @@ export function HousingStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>ما هي مقترحاتكم من أجل تحسين جودة الإطعام بالمؤسسة</CardTitle>
+          <CardTitle>ما هي مقترحاتكم من أجل تحسين جودة ال��طعام بالمؤسسة</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-3">
