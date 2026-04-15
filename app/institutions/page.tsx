@@ -90,14 +90,19 @@ export default function InstitutionsPage() {
     isUserRole && userPrefectureId ? buildApiUrl(API_ENDPOINTS.geo.communesByPrefecture(userPrefectureId)) : null
   );
   
-  // Fetch statistics from API (total counts, not paginated)
+  // Fetch statistics from API for ADMIN (total counts, not paginated)
   const { data: statsData } = useAuthSWR<{
     totalInstitutions: number;
     darTalibCount: number;
     darTalibaCount: number;
     mixedCount: number;
   }>(
-    shouldFetch ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) : null
+    shouldFetch && !isUserRole ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) : null
+  );
+
+  // Fetch ALL institutions for USER role to calculate stats (no pagination)
+  const { data: allUserInstitutions } = useAuthSWR<{ content: InstitutionResponse[] }>(
+    shouldFetch && isUserRole ? buildApiUrl(`${API_ENDPOINTS.institutions.list}?size=1000`) : null
   );
 
   // Combined loading state (auth loading OR data loading)
@@ -118,8 +123,19 @@ export default function InstitutionsPage() {
       }
     : rawData;
 
-  // Use stats from API (total counts from database)
-  const stats = statsData
+  // Calculate stats: For ADMIN use API stats, for USER calculate from filtered prefecture data
+  const userPrefectureInstitutions = allUserInstitutions?.content?.filter(
+    (inst) => prefectureCommuneIds.includes(inst.communeId as number)
+  ) || [];
+
+  const stats = isUserRole
+    ? {
+        total: userPrefectureInstitutions.length,
+        DAR_TALIB: userPrefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIB").length,
+        DAR_TALIBA: userPrefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIBA").length,
+        DAR_TALIB_TALIBA: userPrefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIB_TALIBA").length,
+      }
+    : statsData
     ? {
         total: statsData.totalInstitutions,
         DAR_TALIB: statsData.darTalibCount,
