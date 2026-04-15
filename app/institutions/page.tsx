@@ -195,8 +195,8 @@ export default function InstitutionsPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-4 mb-8">
-          <Card className="card-hover overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-primary to-primary/50" />
+          <Card className="card-hover relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-primary to-primary/50" />
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">إجمالي المؤسسات</CardTitle>
             </CardHeader>
@@ -204,8 +204,8 @@ export default function InstitutionsPage() {
               <p className="text-3xl font-bold text-foreground">{stats?.total ?? data?.totalElements ?? 0}</p>
             </CardContent>
           </Card>
-          <Card className="card-hover overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-primary" />
+          <Card className="card-hover relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">دور الطالب</CardTitle>
             </CardHeader>
@@ -213,8 +213,8 @@ export default function InstitutionsPage() {
               <p className="text-3xl font-bold text-primary">{stats?.DAR_TALIB ?? "-"}</p>
             </CardContent>
           </Card>
-          <Card className="card-hover overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-accent" />
+          <Card className="card-hover relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-accent" />
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">دور الطالبة</CardTitle>
             </CardHeader>
@@ -222,8 +222,8 @@ export default function InstitutionsPage() {
               <p className="text-3xl font-bold text-accent">{stats?.DAR_TALIBA ?? "-"}</p>
             </CardContent>
           </Card>
-          <Card className="card-hover overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-primary to-accent" />
+          <Card className="card-hover relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-primary to-accent" />
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">مختلطة</CardTitle>
             </CardHeader>
