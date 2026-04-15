@@ -114,7 +114,7 @@ export default function InstitutionsPage() {
         total: data.content.length,
         DAR_TALIB: data.content.filter((i) => i.institutionType === "DAR_TALIB").length,
         DAR_TALIBA: data.content.filter((i) => i.institutionType === "DAR_TALIBA").length,
-        MIXED: data.content.filter((i) => i.institutionType === "MIXED").length,
+        DAR_TALIB_TALIBA: data.content.filter((i) => i.institutionType === "DAR_TALIB_TALIBA").length,
       }
     : null;
 
@@ -195,8 +195,8 @@ export default function InstitutionsPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-4 mb-8">
-          <Card className="card-hover overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-primary to-primary/50" />
+          <Card className="card-hover relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-primary to-primary/50" />
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">إجمالي المؤسسات</CardTitle>
             </CardHeader>
@@ -204,8 +204,8 @@ export default function InstitutionsPage() {
               <p className="text-3xl font-bold text-foreground">{stats?.total ?? data?.totalElements ?? 0}</p>
             </CardContent>
           </Card>
-          <Card className="card-hover overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-primary" />
+          <Card className="card-hover relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">دور الطالب</CardTitle>
             </CardHeader>
@@ -213,8 +213,8 @@ export default function InstitutionsPage() {
               <p className="text-3xl font-bold text-primary">{stats?.DAR_TALIB ?? "-"}</p>
             </CardContent>
           </Card>
-          <Card className="card-hover overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-accent" />
+          <Card className="card-hover relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-accent" />
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">دور الطالبة</CardTitle>
             </CardHeader>
@@ -222,13 +222,13 @@ export default function InstitutionsPage() {
               <p className="text-3xl font-bold text-accent">{stats?.DAR_TALIBA ?? "-"}</p>
             </CardContent>
           </Card>
-          <Card className="card-hover overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-primary to-accent" />
+          <Card className="card-hover relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-l from-primary to-accent" />
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">مختلطة</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">دار الطالب والطالبة</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold">{stats?.MIXED ?? "-"}</p>
+              <p className="text-3xl font-bold">{stats?.DAR_TALIB_TALIBA ?? "-"}</p>
             </CardContent>
           </Card>
         </div>
@@ -313,7 +313,7 @@ export default function InstitutionsPage() {
                               "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap",
                               institution.institutionType === "DAR_TALIB" && "bg-primary/10 text-primary",
                               institution.institutionType === "DAR_TALIBA" && "bg-accent/10 text-accent",
-                              institution.institutionType === "MIXED" && "bg-secondary text-secondary-foreground"
+                              institution.institutionType === "DAR_TALIB_TALIBA" && "bg-secondary text-secondary-foreground"
                             )}>
                               {institutionTypeLabels[institution.institutionType]}
                             </span>
