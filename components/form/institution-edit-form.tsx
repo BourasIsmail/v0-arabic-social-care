@@ -75,9 +75,6 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
     institution.staffMembers || []
   );
   const [newStaff, setNewStaff] = useState<Partial<StaffMemberDTO>>({});
-  
-  // Debug log to see what staffMembers data is being loaded
-  console.log("[v0] institution.staffMembers:", institution.staffMembers);
 
   // Geo data
   const { data: regions } = useSWR<GeoDTO[]>("/api/api/v1/regions", fetcher);
