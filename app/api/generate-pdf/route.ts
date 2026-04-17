@@ -834,7 +834,7 @@ export async function POST(request: Request) {
                     <th>ابتدائي</th>
                     <th>إعدادي</th>
                     <th>ثانوي</th>
-                    <th>أيتام</th>
+                    <th>آخر</th>
                     <th>ذوي إعاقة</th>
                   </tr>
                 </thead>

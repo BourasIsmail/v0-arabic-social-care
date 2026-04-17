@@ -838,7 +838,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                     <th>ابتدائي</th>
                     <th>إعدادي</th>
                     <th>ثانوي</th>
-                    <th>أيتام</th>
+                    <th>آخر</th>
                     <th>في وضعية إعاقة</th>
                   </tr>
                 </thead>
@@ -935,7 +935,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
               <thead>
                 <tr>
                   <th>نوع التأطير</th>
-                  <th>عدد المستخدمين بالجمعية</th>
+                  <th>عدد ال��ستخدمين بالجمعية</th>
                   <th>عدد الأطر الموضوعة رهن الإشارة</th>
                   <th>عدد الأطر المتطوعة</th>
                   <th>المستفيدون من CNSS</th>
