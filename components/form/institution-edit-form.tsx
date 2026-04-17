@@ -1416,45 +1416,14 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
       {/* Section 9: Staff */}
       <Card>
         <CardHeader>
-          <CardTitle>الموارد البشرية</CardTitle>
+          <CardTitle>معطيات حول الموارد البشرية العاملة بالمؤسسة</CardTitle>
+          <CardDescription>أدخل بيانات المستخدم ثم اضغط على زر الإضافة</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Existing staff list */}
-          {staffMembers.length > 0 && (
+          {/* Add new staff form */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 p-4 border rounded-lg">
             <div className="space-y-2">
-              {staffMembers.map((staff, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 bg-muted rounded-lg"
-                >
-                  <div className="flex items-center gap-4">
-                    <span className="font-medium">
-                      {staffTypeLabels[staff.staffType]}
-                    </span>
-                    <span className="text-muted-foreground">العدد: {staff.count || 1}</span>
-                    {staff.monthlySalary && (
-                      <span className="text-muted-foreground">
-                        الراتب: {staff.monthlySalary} درهم
-                      </span>
-                    )}
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeStaffMember(index)}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Add new staff */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border rounded-lg">
-            <div className="space-y-2">
-              <Label>نوع المستخدم</Label>
+              <Label>نوع التأطير *</Label>
               <Select
                 value={newStaff.staffType || ""}
                 onValueChange={(v) =>
@@ -1462,53 +1431,176 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="اختر النوع" />
+                  <SelectValue placeholder="اختر نوع التأطير" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(staffTypeLabels).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
+                  {Object.entries(staffTypeLabels)
+                    .filter(([value]) => !staffMembers.some(m => m.staffType === value))
+                    .map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
+
             <div className="space-y-2">
-              <Label>العدد</Label>
+              <Label>عدد المستخدمين بالجمعية</Label>
               <Input
                 type="number"
-                value={newStaff.count || ""}
+                min="0"
+                value={newStaff.nbAssociation || ""}
                 onChange={(e) =>
-                  setNewStaff({ ...newStaff, count: parseInt(e.target.value) || undefined })
+                  setNewStaff({ ...newStaff, nbAssociation: Math.max(0, parseInt(e.target.value) || 0) })
                 }
+                placeholder="0"
               />
             </div>
+
             <div className="space-y-2">
-              <Label>الراتب الشهري</Label>
+              <Label>عدد الأطر الموضوعة رهن الإشارة</Label>
               <Input
                 type="number"
-                value={newStaff.monthlySalary || ""}
+                min="0"
+                value={newStaff.nbDeployed || ""}
                 onChange={(e) =>
-                  setNewStaff({
-                    ...newStaff,
-                    monthlySalary: parseInt(e.target.value) || undefined,
-                  })
+                  setNewStaff({ ...newStaff, nbDeployed: Math.max(0, parseInt(e.target.value) || 0) })
                 }
+                placeholder="0"
               />
             </div>
-            <div className="flex items-end">
+
+            <div className="space-y-2">
+              <Label>عدد الأطر المتطوعة</Label>
+              <Input
+                type="number"
+                min="0"
+                value={newStaff.nbVolunteers || ""}
+                onChange={(e) =>
+                  setNewStaff({ ...newStaff, nbVolunteers: Math.max(0, parseInt(e.target.value) || 0) })
+                }
+                placeholder="0"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>المستفيدين من CNSS</Label>
+              <Input
+                type="number"
+                min="0"
+                value={newStaff.nbCNSS || ""}
+                onChange={(e) =>
+                  setNewStaff({ ...newStaff, nbCNSS: Math.max(0, parseInt(e.target.value) || 0) })
+                }
+                placeholder="0"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>المستفيدين من SMIG</Label>
+              <Input
+                type="number"
+                min="0"
+                value={newStaff.nbSMIG || ""}
+                onChange={(e) =>
+                  setNewStaff({ ...newStaff, nbSMIG: Math.max(0, parseInt(e.target.value) || 0) })
+                }
+                placeholder="0"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>الكلفة الشهرية (درهم)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={newStaff.monthlyCost || ""}
+                onChange={(e) =>
+                  setNewStaff({ ...newStaff, monthlyCost: Math.max(0, parseFloat(e.target.value) || 0) })
+                }
+                placeholder="0.00"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>الكلفة السنوية (درهم)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={newStaff.annualCost || ""}
+                onChange={(e) =>
+                  setNewStaff({ ...newStaff, annualCost: Math.max(0, parseFloat(e.target.value) || 0) })
+                }
+                placeholder="0.00"
+              />
+            </div>
+
+            <div className="sm:col-span-2 lg:col-span-4 flex justify-end">
               <Button
                 type="button"
                 variant="outline"
                 onClick={addStaffMember}
                 disabled={!newStaff.staffType}
-                className="w-full"
+                className="gap-2"
               >
-                <Plus className="h-4 w-4 ml-2" />
+                <Plus className="h-4 w-4" />
                 اضافة مستخدم
               </Button>
             </div>
           </div>
+
+          {/* Existing staff list */}
+          {staffMembers.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-right p-2">نوع التأطير</th>
+                    <th className="text-right p-2">بالجمعية</th>
+                    <th className="text-right p-2">رهن الإشارة</th>
+                    <th className="text-right p-2">المتطوعون</th>
+                    <th className="text-right p-2">CNSS</th>
+                    <th className="text-right p-2">SMIG</th>
+                    <th className="text-right p-2">الكلفة الشهرية</th>
+                    <th className="text-right p-2">الكلفة السنوية</th>
+                    <th className="text-right p-2"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {staffMembers.map((staff, index) => (
+                    <tr key={index} className="border-b">
+                      <td className="p-2 font-medium">{staffTypeLabels[staff.staffType]}</td>
+                      <td className="p-2">{staff.nbAssociation || 0}</td>
+                      <td className="p-2">{staff.nbDeployed || 0}</td>
+                      <td className="p-2">{staff.nbVolunteers || 0}</td>
+                      <td className="p-2">{staff.nbCNSS || 0}</td>
+                      <td className="p-2">{staff.nbSMIG || 0}</td>
+                      <td className="p-2">{staff.monthlyCost?.toLocaleString() || 0} درهم</td>
+                      <td className="p-2">{staff.annualCost?.toLocaleString() || 0} درهم</td>
+                      <td className="p-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeStaffMember(index)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              لا يوجد مستخدمون مضافون. استخدم النموذج أعلاه لإضافة مستخدمين.
+            </div>
+          )}
         </CardContent>
       </Card>
 
