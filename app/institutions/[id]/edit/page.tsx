@@ -28,6 +28,8 @@ export default function EditInstitutionPage({
       try {
         loadedRef.current = true;
         const data = await fetcher(`/api/api/v1/institutions/${id}`);
+        console.log("[v0] Loaded institution data:", data);
+        console.log("[v0] staffMembers in response:", data?.staffMembers);
         setInstitution(data);
       } catch (err) {
         console.error("Error loading institution:", err);
