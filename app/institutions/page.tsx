@@ -61,7 +61,19 @@ export default function InstitutionsPage() {
   // For USER role, wait until user data is loaded before fetching
   // This prevents fetching all data before we know the user's prefecture
   const isUserDataReady = !isAuthLoading && user !== null;
-  const shouldFetch = isUserRole ? (isUserDataReady && !!userPrefectureId) : isUserDataReady;
+  
+  // Fetch communes for user's prefecture FIRST (for USER role filtering)
+  // Since backend doesn't return prefectureId in institution data, we filter by communeId
+  const { data: prefectureCommunes, isLoading: isCommunesLoading } = useAuthSWR<Array<{ id: number; name: string }>>(
+    isUserRole && userPrefectureId ? buildApiUrl(API_ENDPOINTS.geo.communesByPrefecture(userPrefectureId)) : null
+  );
+  
+  const prefectureCommuneIds = prefectureCommunes?.map(c => c.id) || [];
+  
+  // For USER role, wait for communes to be loaded before fetching institutions
+  const shouldFetch = isUserRole 
+    ? (isUserDataReady && !!userPrefectureId && !isCommunesLoading && prefectureCommuneIds.length > 0) 
+    : isUserDataReady;
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
@@ -74,20 +86,11 @@ export default function InstitutionsPage() {
   if (institutionType && institutionType !== "all") {
     queryParams.set("institutionType", institutionType);
   }
-  // Filter by prefecture for USER role
-  if (isUserRole && userPrefectureId) {
-    queryParams.set("prefectureId", userPrefectureId.toString());
-  }
 
   // Only fetch when user data is ready (prevents race condition for USER role)
+  // For USER role, we fetch all and filter client-side since backend doesn't support prefectureId filter
   const { data: rawData, error, isLoading: isDataLoading, mutate } = useAuthSWR<PageResponse<InstitutionSummary>>(
     shouldFetch ? `${buildApiUrl(API_ENDPOINTS.institutions.list)}?${queryParams.toString()}` : null
-  );
-  
-  // Fetch communes for user's prefecture (for USER role filtering)
-  // Since backend doesn't return prefectureId in institution data, we filter by communeId
-  const { data: prefectureCommunes } = useAuthSWR<Array<{ id: number; name: string }>>(
-    isUserRole && userPrefectureId ? buildApiUrl(API_ENDPOINTS.geo.communesByPrefecture(userPrefectureId)) : null
   );
   
   // Fetch statistics from API for ADMIN (total counts, not paginated)
@@ -100,40 +103,39 @@ export default function InstitutionsPage() {
     shouldFetch && !isUserRole ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) : null
   );
 
-  // Fetch ALL institutions for USER role to calculate stats (no pagination)
-  const { data: allUserInstitutions } = useAuthSWR<{ content: InstitutionResponse[] }>(
+  // Fetch ALL institutions for USER role to calculate stats and display (no pagination)
+  const { data: allUserInstitutions } = useAuthSWR<{ content: InstitutionSummary[] }>(
     shouldFetch && isUserRole ? buildApiUrl(`${API_ENDPOINTS.institutions.list}?size=1000`) : null
   );
 
-  // Combined loading state (auth loading OR data loading)
-  const isLoading = isAuthLoading || isDataLoading;
+  // Combined loading state (auth loading OR data loading OR communes loading for USER)
+  const isLoading = isAuthLoading || isDataLoading || (isUserRole && isCommunesLoading);
   
-  // Client-side filtering for USER role by communeId (since backend doesn't have prefectureId in response)
+  // Client-side filtering for USER role by communeId
   // Filter institutions whose communeId is in the user's prefecture communes list
-  const prefectureCommuneIds = prefectureCommunes?.map(c => c.id) || [];
-  const data = rawData && isUserRole && prefectureCommuneIds.length > 0
+  const filteredUserContent = allUserInstitutions?.content?.filter(
+    (inst) => prefectureCommuneIds.includes(inst.communeId as number)
+  ) || [];
+  
+  // For USER role, use filtered data from allUserInstitutions; for ADMIN, use rawData
+  const data = isUserRole && allUserInstitutions
     ? {
-        ...rawData,
-        content: rawData.content.filter(
-          (inst) => prefectureCommuneIds.includes(inst.communeId as number)
-        ),
-        totalElements: rawData.content.filter(
-          (inst) => prefectureCommuneIds.includes(inst.communeId as number)
-        ).length,
+        content: filteredUserContent.slice(page * pageSize, (page + 1) * pageSize),
+        totalElements: filteredUserContent.length,
+        totalPages: Math.ceil(filteredUserContent.length / pageSize),
+        number: page,
+        first: page === 0,
+        last: (page + 1) * pageSize >= filteredUserContent.length,
       }
     : rawData;
 
   // Calculate stats: For ADMIN use API stats, for USER calculate from filtered prefecture data
-  const userPrefectureInstitutions = allUserInstitutions?.content?.filter(
-    (inst) => prefectureCommuneIds.includes(inst.communeId as number)
-  ) || [];
-
   const stats = isUserRole
     ? {
-        total: userPrefectureInstitutions.length,
-        DAR_TALIB: userPrefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIB").length,
-        DAR_TALIBA: userPrefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIBA").length,
-        DAR_TALIB_TALIBA: userPrefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIB_TALIBA").length,
+        total: filteredUserContent.length,
+        DAR_TALIB: filteredUserContent.filter((i) => i.institutionType === "DAR_TALIB").length,
+        DAR_TALIBA: filteredUserContent.filter((i) => i.institutionType === "DAR_TALIBA").length,
+        DAR_TALIB_TALIBA: filteredUserContent.filter((i) => i.institutionType === "DAR_TALIB_TALIBA").length,
       }
     : statsData
     ? {
