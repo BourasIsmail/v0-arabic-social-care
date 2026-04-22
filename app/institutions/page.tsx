@@ -111,11 +111,19 @@ export default function InstitutionsPage() {
   // Combined loading state (auth loading OR data loading OR communes loading for USER)
   const isLoading = isAuthLoading || isDataLoading || (isUserRole && isCommunesLoading);
   
-  // Client-side filtering for USER role by communeId
+  // Client-side filtering for USER role by communeId and institutionType
   // Filter institutions whose communeId is in the user's prefecture communes list
-  const filteredUserContent = allUserInstitutions?.content?.filter(
-    (inst) => prefectureCommuneIds.includes(inst.communeId as number)
-  ) || [];
+  const filteredUserContent = allUserInstitutions?.content?.filter((inst) => {
+    // Filter by prefecture communes
+    const matchesCommune = prefectureCommuneIds.includes(inst.communeId as number);
+    // Filter by institution type if selected
+    const matchesType = !institutionType || institutionType === "all" || inst.institutionType === institutionType;
+    // Filter by search term if provided
+    const matchesSearch = !search || 
+      inst.institutionName?.toLowerCase().includes(search.toLowerCase()) ||
+      inst.associationName?.toLowerCase().includes(search.toLowerCase());
+    return matchesCommune && matchesType && matchesSearch;
+  }) || [];
   
   // For USER role, use filtered data from allUserInstitutions; for ADMIN, use rawData
   const data = isUserRole && allUserInstitutions
@@ -129,13 +137,18 @@ export default function InstitutionsPage() {
       }
     : rawData;
 
-  // Calculate stats: For ADMIN use API stats, for USER calculate from filtered prefecture data
+  // Calculate stats: For ADMIN use API stats, for USER calculate from prefecture data (not filtered by type)
+  // Stats should always show total counts for the user's prefecture, not affected by type filter
+  const prefectureInstitutions = allUserInstitutions?.content?.filter(
+    (inst) => prefectureCommuneIds.includes(inst.communeId as number)
+  ) || [];
+  
   const stats = isUserRole
     ? {
-        total: filteredUserContent.length,
-        DAR_TALIB: filteredUserContent.filter((i) => i.institutionType === "DAR_TALIB").length,
-        DAR_TALIBA: filteredUserContent.filter((i) => i.institutionType === "DAR_TALIBA").length,
-        DAR_TALIB_TALIBA: filteredUserContent.filter((i) => i.institutionType === "DAR_TALIB_TALIBA").length,
+        total: prefectureInstitutions.length,
+        DAR_TALIB: prefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIB").length,
+        DAR_TALIBA: prefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIBA").length,
+        DAR_TALIB_TALIBA: prefectureInstitutions.filter((i) => i.institutionType === "DAR_TALIB_TALIBA").length,
       }
     : statsData
     ? {
