@@ -130,25 +130,25 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
   const staffRows = (data.staffMembers || []).map((staff: any) => `
     <tr>
       <td>${getLabelValue('staffType', staff.staffType || staff.position)}</td>
-      <td>${getDisplayValue(staff.nbAssociation || staff.count || 1, '—')}</td>
-      <td>${getDisplayValue(staff.nbDeployed || 0, '—')}</td>
-      <td>${getDisplayValue(staff.nbVolunteers || 0, '—')}</td>
-      <td>${getDisplayValue(staff.nbCNSS || 0, '—')}</td>
-      <td>${getDisplayValue(staff.nbSMIG || 0, '—')}</td>
-      <td>${getDisplayValue(staff.monthlyCost || 0, '—')}</td>
-      <td>${getDisplayValue(staff.annualCost || 0, '—')}</td>
+      <td>${staff.nbAssociation ?? staff.count ?? 0}</td>
+      <td>${staff.nbDeployed ?? 0}</td>
+      <td>${staff.nbVolunteers ?? 0}</td>
+      <td>${staff.nbCNSS ?? 0}</td>
+      <td>${staff.nbSMIG ?? 0}</td>
+      <td>${(staff.monthlyCost ?? 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+      <td>${(staff.annualCost ?? 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
     </tr>
   `).join('');
 
   // Calculate staff totals
   const staffTotals = (data.staffMembers || []).reduce((acc: any, staff: any) => ({
-    nbAssociation: acc.nbAssociation + (staff.nbAssociation || staff.count || 1),
-    nbDeployed: acc.nbDeployed + (staff.nbDeployed || 0),
-    nbVolunteers: acc.nbVolunteers + (staff.nbVolunteers || 0),
-    nbCNSS: acc.nbCNSS + (staff.nbCNSS || 0),
-    nbSMIG: acc.nbSMIG + (staff.nbSMIG || 0),
-    monthlyCost: acc.monthlyCost + (staff.monthlyCost || 0),
-    annualCost: acc.annualCost + (staff.annualCost || 0),
+    nbAssociation: acc.nbAssociation + (staff.nbAssociation ?? staff.count ?? 0),
+    nbDeployed: acc.nbDeployed + (staff.nbDeployed ?? 0),
+    nbVolunteers: acc.nbVolunteers + (staff.nbVolunteers ?? 0),
+    nbCNSS: acc.nbCNSS + (staff.nbCNSS ?? 0),
+    nbSMIG: acc.nbSMIG + (staff.nbSMIG ?? 0),
+    monthlyCost: acc.monthlyCost + (staff.monthlyCost ?? 0),
+    annualCost: acc.annualCost + (staff.annualCost ?? 0),
   }), { nbAssociation: 0, nbDeployed: 0, nbVolunteers: 0, nbCNSS: 0, nbSMIG: 0, monthlyCost: 0, annualCost: 0 });
 
   // Logo URL - use base64 if provided, otherwise use relative path
@@ -935,7 +935,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
               <thead>
                 <tr>
                   <th>نوع التأطير</th>
-                  <th>عدد ال��ستخدمين بالجمعية</th>
+                  <th>عدد ال��ستخ��مين بالجمعية</th>
                   <th>عدد الأطر الموضوعة رهن الإشارة</th>
                   <th>عدد الأطر المتطوعة</th>
                   <th>المستفيدون من CNSS</th>
@@ -955,8 +955,8 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                   <td>${staffTotals.nbVolunteers}</td>
                   <td>${staffTotals.nbCNSS}</td>
                   <td>${staffTotals.nbSMIG}</td>
-                  <td>${staffTotals.monthlyCost}</td>
-                  <td>${staffTotals.annualCost}</td>
+                  <td>${staffTotals.monthlyCost.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                  <td>${staffTotals.annualCost.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 </tr>
               </tfoot>
             </table>
