@@ -345,10 +345,10 @@ export default function InstitutionsPage() {
                     <TableBody>
                       {data.content.map((institution) => (
                         <TableRow key={institution.id}>
-                          <TableCell className="font-medium text-right">
+                          <TableCell className="font-medium text-right truncate max-w-0" title={institution.institutionName}>
                             {institution.institutionName}
                           </TableCell>
-                          <TableCell className="text-right">{institution.associationName}</TableCell>
+                          <TableCell className="text-right truncate max-w-0" title={institution.associationName}>{institution.associationName}</TableCell>
                           <TableCell className="text-right">
                             <span className={cn(
                               "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap",
