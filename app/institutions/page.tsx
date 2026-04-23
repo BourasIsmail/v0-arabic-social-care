@@ -345,13 +345,15 @@ export default function InstitutionsPage() {
                     <TableBody>
                       {data.content.map((institution) => (
                         <TableRow key={institution.id}>
-                          <TableCell className="font-medium text-right">
-                            {institution.institutionName}
+                          <TableCell className="font-medium text-right truncate max-w-0" title={institution.institutionName}>
+                            <span className="block truncate">{institution.institutionName}</span>
                           </TableCell>
-                          <TableCell className="text-right">{institution.associationName}</TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right truncate max-w-0" title={institution.associationName}>
+                            <span className="block truncate">{institution.associationName}</span>
+                          </TableCell>
+                          <TableCell className="text-right truncate max-w-0">
                             <span className={cn(
-                              "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap",
+                              "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap",
                               institution.institutionType === "DAR_TALIB" && "bg-primary/10 text-primary",
                               institution.institutionType === "DAR_TALIBA" && "bg-accent/10 text-accent",
                               institution.institutionType === "DAR_TALIB_TALIBA" && "bg-secondary text-secondary-foreground"
@@ -359,9 +361,11 @@ export default function InstitutionsPage() {
                               {institutionTypeLabels[institution.institutionType]}
                             </span>
                           </TableCell>
-                          <TableCell className="text-right">{institution.regionName || "-"}</TableCell>
-                          <TableCell className="text-center">{institution.totalCapacity || "-"}</TableCell>
-                          <TableCell className="text-center">
+                          <TableCell className="text-right truncate max-w-0" title={institution.regionName || "-"}>
+                            <span className="block truncate">{institution.regionName || "-"}</span>
+                          </TableCell>
+                          <TableCell className="text-center truncate max-w-0">{institution.totalCapacity || "-"}</TableCell>
+                          <TableCell className="text-center truncate max-w-0">
                             {new Date(institution.createdAt).toLocaleDateString("ar-MA")}
                           </TableCell>
                           <TableCell className="text-left">
