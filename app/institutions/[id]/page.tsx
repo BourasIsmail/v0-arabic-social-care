@@ -4,6 +4,7 @@ import { use, useState, useRef } from "react";
 import Link from "next/link";
 import { Building2, ArrowRight, Pencil, Calendar, MapPin, Users, FileDown, Upload, FileText, X, Loader2 } from "lucide-react";
 import { useAuthSWR, useAuthMutate } from "@/lib/use-auth-swr";
+import { useAuth } from "@/lib/auth-context";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
 import { PDFDownloadButton } from "@/components/pdf/pdf-download-button";
@@ -37,6 +38,8 @@ export default function InstitutionDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const { user } = useAuth();
+  const canModify = user?.role === "ADMIN" || user?.role === "USER";
   const { data, error, isLoading, mutate } = useAuthSWR<InstitutionResponse>(
     `/api/api/v1/institutions/${id}`
   );
@@ -177,12 +180,14 @@ export default function InstitutionDetailPage({
                   </Button>
                 </Link>
                 <PDFDownloadButton data={data} variant="outline" />
-                <Link href={`/institutions/${id}/edit`}>
-                  <Button className="gap-2 rounded-lg shadow-md shadow-primary/20">
-                    <Pencil className="h-4 w-4" />
-                    <span className="hidden sm:inline">تعديل</span>
-                  </Button>
-                </Link>
+                {canModify && (
+                  <Link href={`/institutions/${id}/edit`}>
+                    <Button className="gap-2 rounded-lg shadow-md shadow-primary/20">
+                      <Pencil className="h-4 w-4" />
+                      <span className="hidden sm:inline">تعديل</span>
+                    </Button>
+                  </Link>
+                )}
                 <UserMenu />
               </div>
             </div>
@@ -531,7 +536,9 @@ export default function InstitutionDetailPage({
                   <FileText className="h-5 w-5 text-primary" />
                   الاستبيان الموقع
                 </CardTitle>
-                <CardDescription>قم بتحميل نسخة PDF من الاستبيان بعد توقيعه</CardDescription>
+                <CardDescription>
+                  {canModify ? "قم بتحميل نسخة PDF من الاستبيان بعد توقيعه" : "عرض الاستبيان الموقع"}
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {data.signedPdfUrl ? (
@@ -550,44 +557,48 @@ export default function InstitutionDetailPage({
                         </a>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={isUploading}
-                      >
-                        {isUploading ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <>
-                            <Upload className="h-4 w-4 ml-1" />
-                            تغيير
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleRemovePdf}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <Input
-                      ref={fileInputRef}
-                      type="file"
-                      accept=".pdf"
-                      onChange={handlePdfUpload}
-                      disabled={isUploading}
-                      className="hidden"
-                    />
+                    {canModify && (
+                      <>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="flex-1"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={isUploading}
+                          >
+                            {isUploading ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <>
+                                <Upload className="h-4 w-4 ml-1" />
+                                تغيير
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleRemovePdf}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <Input
+                          ref={fileInputRef}
+                          type="file"
+                          accept=".pdf"
+                          onChange={handlePdfUpload}
+                          disabled={isUploading}
+                          className="hidden"
+                        />
+                      </>
+                    )}
                   </div>
-                ) : (
+                ) : canModify ? (
                   <div className="space-y-2">
                     <Input
                       ref={fileInputRef}
@@ -615,6 +626,10 @@ export default function InstitutionDetailPage({
                         </div>
                       )}
                     </Label>
+                  </div>
+                ) : (
+                  <div className="text-center py-4 text-muted-foreground">
+                    لا يوجد ملف مرفق
                   </div>
                 )}
               </CardContent>

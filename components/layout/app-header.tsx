@@ -42,7 +42,7 @@ export function AppHeader({
 }: AppHeaderProps) {
   const pathname = usePathname();
   const { user } = useAuth();
-  const isAdmin = user?.role === "ADMIN";
+  const isAdmin = user?.role === "ADMIN" || user?.role === "VIEW_ONLY";
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-border/50">

@@ -55,7 +55,7 @@ export function UserMenu() {
             <span>الملف الشخصي</span>
           </DropdownMenuItem>
         </Link>
-        {user.role === "ADMIN" && (
+        {(user.role === "ADMIN" || user.role === "VIEW_ONLY") && (
           <>
             <Link href="/admin/dashboard">
               <DropdownMenuItem className="gap-2 cursor-pointer">

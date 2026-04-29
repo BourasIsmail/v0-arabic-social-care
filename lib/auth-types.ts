@@ -2,7 +2,7 @@ export interface User {
   id: number;
   email: string;
   fullName: string;
-  role: "USER" | "ADMIN";
+  role: "USER" | "ADMIN" | "VIEW_ONLY";
   regionId?: number;
   prefectureId?: number;
 }
@@ -16,7 +16,7 @@ export interface RegisterRequest {
   fullName: string;
   email: string;
   password: string;
-  role?: "USER" | "ADMIN";
+  role?: "USER" | "ADMIN" | "VIEW_ONLY";
   regionId?: number;
   prefectureId?: number;
 }

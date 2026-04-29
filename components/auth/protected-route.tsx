@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: "USER" | "ADMIN";
+  requiredRole?: "USER" | "ADMIN" | "VIEW_ONLY";
 }
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
@@ -24,7 +24,8 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
 
     // Check if we need to redirect
     const needsAuthRedirect = !isAuthenticated;
-    const needsRoleRedirect = requiredRole === "ADMIN" && user?.role !== "ADMIN";
+    // ADMIN requirement allows both ADMIN and VIEW_ONLY roles
+    const needsRoleRedirect = requiredRole === "ADMIN" && user?.role !== "ADMIN" && user?.role !== "VIEW_ONLY";
 
     if (needsAuthRedirect || needsRoleRedirect) {
       redirectingRef.current = true;
@@ -50,7 +51,8 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
   }
 
   // Show loading while redirecting
-  if (!isAuthenticated || (requiredRole === "ADMIN" && user?.role !== "ADMIN")) {
+  // ADMIN requirement allows both ADMIN and VIEW_ONLY roles
+  if (!isAuthenticated || (requiredRole === "ADMIN" && user?.role !== "ADMIN" && user?.role !== "VIEW_ONLY")) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
