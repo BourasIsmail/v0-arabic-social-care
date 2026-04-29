@@ -1,13 +1,35 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Building2, ArrowRight, FileText } from "lucide-react";
+import { Building2, ArrowRight, FileText, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DiagnosticFormWizard } from "@/components/form/diagnostic-form-wizard";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
+import { useAuth } from "@/lib/auth-context";
 
 export default function DiagnosticPage() {
+  const router = useRouter();
+  const { user, isLoading } = useAuth();
+
+  // Redirect VIEW_ONLY users - they cannot create institutions
+  useEffect(() => {
+    if (!isLoading && user?.role === "VIEW_ONLY") {
+      router.push("/institutions");
+    }
+  }, [user, isLoading, router]);
+
+  // Show loading while checking
+  if (isLoading || user?.role === "VIEW_ONLY") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">

@@ -89,7 +89,7 @@ export default function UsersPage() {
     fullName: string;
     email: string;
     password: string;
-    role: "USER" | "ADMIN";
+    role: "USER" | "ADMIN" | "VIEW_ONLY";
     regionId: number | "";
     prefectureId: number | "";
   }>({
@@ -216,6 +216,9 @@ export default function UsersPage() {
     }
   };
 
+  // VIEW_ONLY users can see user list but cannot add/edit/delete
+  const canModify = currentUser?.role === "ADMIN";
+
   return (
     <ProtectedRoute requiredRole="ADMIN">
       <div className="min-h-screen bg-background">
@@ -250,12 +253,12 @@ export default function UsersPage() {
                   إدارة المستخدمين
                 </h1>
                 <p className="text-muted-foreground">
-                  إضافة وتعديل وحذف المستخدمين
+                  {canModify ? "إضافة وتعديل وحذف المستخدمين" : "عرض المستخدمين"}
                 </p>
               </div>
             </div>
 
-            <Dialog
+            {canModify && <Dialog
               open={isDialogOpen}
               onOpenChange={(open) => {
                 setIsDialogOpen(open);
@@ -326,7 +329,7 @@ export default function UsersPage() {
                     <Label htmlFor="role">الدور *</Label>
                     <Select
                       value={formData.role}
-                      onValueChange={(value: "USER" | "ADMIN") =>
+                      onValueChange={(value: "USER" | "ADMIN" | "VIEW_ONLY") =>
                         setFormData({ ...formData, role: value })
                       }
                     >
@@ -336,6 +339,7 @@ export default function UsersPage() {
                       <SelectContent>
                         <SelectItem value="USER">مستخدم</SelectItem>
                         <SelectItem value="ADMIN">مدير</SelectItem>
+                        <SelectItem value="VIEW_ONLY">للقراءة فقط</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -391,7 +395,7 @@ export default function UsersPage() {
                   </DialogFooter>
                 </form>
               </DialogContent>
-            </Dialog>
+            </Dialog>}
           </div>
 
           {/* Users table */}
@@ -438,7 +442,7 @@ export default function UsersPage() {
                           <TableCell>
                             <Badge
                               variant={
-                                user.role === "ADMIN" ? "default" : "secondary"
+                                user.role === "ADMIN" ? "default" : user.role === "VIEW_ONLY" ? "outline" : "secondary"
                               }
                               className="gap-1"
                             >
@@ -447,7 +451,7 @@ export default function UsersPage() {
                               ) : (
                                 <UserIcon className="h-3 w-3" />
                               )}
-                              {user.role === "ADMIN" ? "مدير" : "مستخدم"}
+                              {user.role === "ADMIN" ? "مدير" : user.role === "VIEW_ONLY" ? "للقراءة فقط" : "مستخدم"}
                             </Badge>
                           </TableCell>
                           <TableCell>
@@ -457,50 +461,54 @@ export default function UsersPage() {
                             {user.prefectureName || user.prefectureId || "-"}
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => openEditDialog(user)}
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
+                            {canModify ? (
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => openEditDialog(user)}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
 
-                              {user.id !== currentUser?.id && (
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="text-destructive hover:text-destructive"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>
-                                        تأكيد الحذف
-                                      </AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        هل أنت متأكد من حذف المستخدم &quot;
-                                        {user.fullName}&quot;؟ لا يمكن التراجع
-                                        عن هذا الإجراء.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>إلغاء</AlertDialogCancel>
-                                      <AlertDialogAction
-                                        onClick={() => handleDelete(user.id)}
-                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                {user.id !== currentUser?.id && (
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-destructive hover:text-destructive"
                                       >
-                                        حذف
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              )}
-                            </div>
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          تأكيد الحذف
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          هل أنت متأكد من حذف المستخدم &quot;
+                                          {user.fullName}&quot;؟ لا يمكن التراجع
+                                          عن هذا الإجراء.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() => handleDelete(user.id)}
+                                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                        >
+                                          حذف
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">-</span>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))}

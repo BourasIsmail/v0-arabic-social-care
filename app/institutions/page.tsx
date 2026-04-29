@@ -56,6 +56,8 @@ export default function InstitutionsPage() {
 
   // Check if user is USER role (not ADMIN) - they can only see their prefecture's institutions
   const isUserRole = user?.role === "USER";
+  const isViewOnly = user?.role === "VIEW_ONLY";
+  const canModify = user?.role === "ADMIN" || user?.role === "USER"; // VIEW_ONLY cannot modify
   const userPrefectureId = user?.prefectureId;
   
   // For USER role, wait until user data is loaded before fetching
@@ -220,12 +222,14 @@ export default function InstitutionsPage() {
                   <Download className="h-4 w-4" />
                   <span className="hidden sm:inline">تصدير CSV</span>
                 </Button>
-                <Link href="/diagnostic">
-                  <Button className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    <span className="hidden sm:inline">مؤسسة جديدة</span>
-                  </Button>
-                </Link>
+                {canModify && (
+                  <Link href="/diagnostic">
+                    <Button className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      <span className="hidden sm:inline">مؤسسة جديدة</span>
+                    </Button>
+                  </Link>
+                )}
                 <UserMenu />
               </div>
             </div>
@@ -375,40 +379,44 @@ export default function InstitutionsPage() {
                                   <Eye className="h-4 w-4" />
                                 </Button>
                               </Link>
-                              <Link href={`/institutions/${institution.id}/edit`}>
-                                <Button variant="ghost" size="sm">
-                                  <Pencil className="h-4 w-4" />
-                                </Button>
-                              </Link>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-destructive hover:text-destructive"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      هل أنت متأكد من حذف هذه المؤسسة؟ لا يمكن التراجع عن هذا
-                                      الإجراء.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>إلغاء</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDelete(institution.id)}
-                                      className="bg-destructive hover:bg-destructive/90"
-                                    >
-                                      حذف
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
+                              {canModify && (
+                                <>
+                                  <Link href={`/institutions/${institution.id}/edit`}>
+                                    <Button variant="ghost" size="sm">
+                                      <Pencil className="h-4 w-4" />
+                                    </Button>
+                                  </Link>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-destructive hover:text-destructive"
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          هل أنت متأكد من حذف هذه المؤسسة؟ لا يمكن التراجع عن هذا
+                                          الإجراء.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() => handleDelete(institution.id)}
+                                          className="bg-destructive hover:bg-destructive/90"
+                                        >
+                                          حذف
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </>
+                              )}
                             </div>
                           </TableCell>
                         </TableRow>

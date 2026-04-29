@@ -49,15 +49,15 @@ export default function AdminDashboardPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const router = useRouter();
 
-  // Redirect non-admin users
+  // Redirect non-admin/non-view-only users
   useEffect(() => {
-    if (!isAuthLoading && user && user.role !== "ADMIN") {
+    if (!isAuthLoading && user && user.role !== "ADMIN" && user.role !== "VIEW_ONLY") {
       router.push("/institutions");
     }
   }, [user, isAuthLoading, router]);
 
   const { data: stats, isLoading, error } = useAuthSWR<DashboardStats>(
-    user?.role === "ADMIN" ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) : null
+    (user?.role === "ADMIN" || user?.role === "VIEW_ONLY") ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) : null
   );
 
   if (isAuthLoading || isLoading) {
@@ -184,7 +184,7 @@ export default function AdminDashboardPage() {
             <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  المؤسسات المرخصة
+                  المؤ��سات المرخصة
                 </CardTitle>
                 <div className="h-9 w-9 rounded-lg bg-emerald-500/10 flex items-center justify-center">
                   <CheckCircle className="h-5 w-5 text-emerald-600" />

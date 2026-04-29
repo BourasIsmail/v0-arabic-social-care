@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Building2, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { InstitutionEditForm } from "@/components/form/institution-edit-form";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
 import { useAuthFetcher } from "@/lib/use-auth-swr";
+import { useAuth } from "@/lib/auth-context";
 import type { InstitutionResponse } from "@/lib/types";
 
 export default function EditInstitutionPage({
@@ -16,13 +18,23 @@ export default function EditInstitutionPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const router = useRouter();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const fetcher = useAuthFetcher();
   const [institution, setInstitution] = useState<InstitutionResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const loadedRef = useRef(false);
 
+  // Redirect VIEW_ONLY users - they cannot edit institutions
+  useEffect(() => {
+    if (!isAuthLoading && user?.role === "VIEW_ONLY") {
+      router.push(`/institutions/${id}`);
+    }
+  }, [user, isAuthLoading, router, id]);
+
   useEffect(() => {
     if (loadedRef.current) return;
+    if (isAuthLoading || user?.role === "VIEW_ONLY") return;
 
     async function loadInstitution() {
       try {
@@ -39,7 +51,8 @@ export default function EditInstitutionPage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  if (!institution && !error) {
+  // Show loading while checking auth or if VIEW_ONLY
+  if (isAuthLoading || user?.role === "VIEW_ONLY" || (!institution && !error)) {
     return (
       <ProtectedRoute>
         <div className="min-h-screen bg-background flex items-center justify-center">
