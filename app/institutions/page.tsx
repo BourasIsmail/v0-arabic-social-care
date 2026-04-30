@@ -41,9 +41,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   InstitutionType,
   institutionTypeLabels,
+  milieuLabels,
+  legalStatusLabels,
+  distanceLabels,
+  buildingStatusLabels,
+  buildingConditionLabels,
+  renovationCapacityLabels,
+  ownerTypeLabels,
+  selectionBodyLabels,
+  tariffTypeLabels,
+  mealServiceTypeLabels,
 } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import type { InstitutionSummary, PageResponse } from "@/lib/types";
+import type { InstitutionSummary, InstitutionResponse, PageResponse } from "@/lib/types";
 import { toast } from "sonner";
 
 export default function InstitutionsPage() {
@@ -182,40 +192,201 @@ export default function InstitutionsPage() {
 
   const handleExport = async () => {
     try {
-      // Get data to export - use filtered data for USER role, all data for ADMIN
-      const dataToExport = isUserRole ? filteredUserContent : (data?.content || []);
+      // Get IDs to export - use filtered data for USER role, all data for ADMIN
+      const summaryData = isUserRole ? filteredUserContent : (data?.content || []);
       
-      if (dataToExport.length === 0) {
+      if (summaryData.length === 0) {
         toast.error("لا توجد بيانات للتصدير");
         return;
       }
 
-      // CSV headers in Arabic
+      toast.info("جاري تحميل البيانات الكاملة...");
+
+      // Fetch full data for each institution
+      const fullDataPromises = summaryData.map(async (inst: InstitutionSummary) => {
+        try {
+          const response = await authFetch(buildApiUrl(`${API_ENDPOINTS.institutions.list}/${inst.id}`));
+          if (response.ok) {
+            return await response.json();
+          }
+          return null;
+        } catch {
+          return null;
+        }
+      });
+
+      const fullData = (await Promise.all(fullDataPromises)).filter(Boolean) as InstitutionResponse[];
+
+      // Helper functions for label lookups
+      const yesNo = (val?: boolean) => val ? "نعم" : "لا";
+      const getLabel = <T extends string>(labels: Record<T, string>, val?: T) => val ? (labels[val] || val) : "";
+
+      // CSV headers in Arabic - comprehensive list
       const headers = [
+        // Basic Info
         "اسم المؤسسة",
         "اسم الجمعية",
         "نوع المؤسسة",
+        "العنوان",
         "الجهة",
         "العمالة/الإقليم",
         "الجماعة",
-        "الطاقة الاستيعابية",
+        "الوسط",
         "خط العرض",
         "خط الطول",
-        "تاريخ الإنشاء"
+        "سنة الإنشاء",
+        "الوضعية القانونية",
+        "رقم الترخيص",
+        "تاريخ بداية الخدمة",
+        // Services
+        "الإيواء",
+        "الإطعام",
+        "الدعم التربوي",
+        "الأنشطة الثقافية",
+        "الرعاية الصحية",
+        "التأمين",
+        "الدعم النفسي",
+        // Capacity
+        "الطاقة الاستيعابية الإجمالية",
+        "طاقة الذكور",
+        "طاقة الإناث",
+        // Target Levels
+        "الابتدائي",
+        "الإعدادي",
+        "الثانوي",
+        "آخر",
+        // Distance
+        "المسافة إلى المؤسسة التعليمية",
+        "المسافة إلى الداخلية الوطنية",
+        // Building
+        "وضعية البناية",
+        "حالة البناية",
+        "قابلية التجديد",
+        "نوع المالك",
+        "اتفاقية شراكة",
+        // Season 2023-2024
+        "المستفيدون 2023-2024 (إجمالي)",
+        "المستفيدون 2023-2024 (ذكور)",
+        "المستفيدون 2023-2024 (إناث)",
+        "المستفيدون 2023-2024 (ابتدائي)",
+        "المستفيدون 2023-2024 (إعدادي)",
+        "المستفيدون 2023-2024 (ثانوي)",
+        // Season 2024-2025
+        "المستفيدون 2024-2025 (إجمالي)",
+        "المستفيدون 2024-2025 (ذكور)",
+        "المستفيدون 2024-2025 (إناث)",
+        "المستفيدون 2024-2025 (ابتدائي)",
+        "المستفيدون 2024-2025 (إعدادي)",
+        "المستفيدون 2024-2025 (ثانوي)",
+        // Season 2025-2026
+        "المستفيدون 2025-2026 (إجمالي)",
+        "المستفيدون 2025-2026 (ذكور)",
+        "المستفيدون 2025-2026 (إناث)",
+        "المستفيدون 2025-2026 (ابتدائي)",
+        "المستفيدون 2025-2026 (إعدادي)",
+        "المستفيدون 2025-2026 (ثانوي)",
+        // Meals
+        "المستفيدون من الإطعام 2025-2026",
+        "نوع خدمة الإطعام",
+        // Targeting
+        "هيئة الانتقاء",
+        "الخدمات مجانية",
+        "نوع التعريفة",
+        "الطلبات غير الملباة",
+        // Financing
+        "تكلفة البناء الإجمالية",
+        "التكلفة السنوية للتسيير",
+        "التكلفة السنوية للموارد البشرية",
+        "التكلفة السنوية للوجبات",
+        "المصاريف السنوية الأخرى",
+        "التكلفة الفردية السنوية",
+        // Dates
+        "تاريخ الإنشاء",
+        "تاريخ التحديث"
       ];
 
       // Convert data to CSV rows
-      const rows = dataToExport.map((inst: InstitutionSummary) => [
+      const rows = fullData.map((inst: InstitutionResponse) => [
+        // Basic Info
         inst.institutionName || "",
         inst.associationName || "",
-        institutionTypeLabels[inst.institutionType] || inst.institutionType,
+        getLabel(institutionTypeLabels, inst.institutionType),
+        inst.address || "",
         inst.regionName || "",
         inst.prefectureName || "",
         inst.communeName || "",
-        inst.totalCapacity?.toString() || "",
+        getLabel(milieuLabels, inst.milieu),
         inst.latitude?.toString() || "",
         inst.longitude?.toString() || "",
-        inst.createdAt ? new Date(inst.createdAt).toLocaleDateString("ar-MA") : ""
+        inst.creationYear?.toString() || "",
+        getLabel(legalStatusLabels, inst.legalStatus),
+        inst.licenseNumber || "",
+        inst.serviceStartDate || "",
+        // Services
+        yesNo(inst.housing),
+        yesNo(inst.meals),
+        yesNo(inst.educationalSupport),
+        yesNo(inst.culturalActivities),
+        yesNo(inst.healthCare),
+        yesNo(inst.insurance),
+        yesNo(inst.psychologicalSupport),
+        // Capacity
+        inst.totalCapacity?.toString() || "",
+        inst.maleCapacity?.toString() || "",
+        inst.femaleCapacity?.toString() || "",
+        // Target Levels
+        yesNo(inst.primary),
+        yesNo(inst.middleSchool),
+        yesNo(inst.highSchool),
+        inst.other ? (inst.otherDetail || "نعم") : "لا",
+        // Distance
+        getLabel(distanceLabels, inst.distanceToSchool),
+        getLabel(distanceLabels, inst.distanceToNationalBoardingSchool),
+        // Building
+        getLabel(buildingStatusLabels, inst.building?.buildingStatus),
+        getLabel(buildingConditionLabels, inst.building?.buildingCondition),
+        getLabel(renovationCapacityLabels, inst.building?.renovationCapacity),
+        getLabel(ownerTypeLabels, inst.building?.ownerType),
+        yesNo(inst.building?.hasPartnershipAgreement),
+        // Season 2023-2024
+        inst.housingMeals?.season2324?.totalBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2324?.maleBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2324?.femaleBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2324?.primaryBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2324?.middleSchoolBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2324?.highSchoolBeneficiaries?.toString() || "",
+        // Season 2024-2025
+        inst.housingMeals?.season2425?.totalBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2425?.maleBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2425?.femaleBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2425?.primaryBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2425?.middleSchoolBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2425?.highSchoolBeneficiaries?.toString() || "",
+        // Season 2025-2026
+        inst.housingMeals?.season2526?.totalBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2526?.maleBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2526?.femaleBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2526?.primaryBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2526?.middleSchoolBeneficiaries?.toString() || "",
+        inst.housingMeals?.season2526?.highSchoolBeneficiaries?.toString() || "",
+        // Meals
+        inst.housingMeals?.totalMealBeneficiaries2526?.toString() || "",
+        getLabel(mealServiceTypeLabels, inst.housingMeals?.mealServiceType),
+        // Targeting
+        getLabel(selectionBodyLabels, inst.targeting?.selectionBody),
+        yesNo(inst.targeting?.servicesAreFree),
+        getLabel(tariffTypeLabels, inst.targeting?.tariffType),
+        inst.targeting?.unsatisfiedRequestsCount?.toString() || "",
+        // Financing
+        inst.financing?.totalConstructionCost?.toString() || "",
+        inst.financing?.annualManagementCost?.toString() || "",
+        inst.financing?.annualHRCost?.toString() || "",
+        inst.financing?.annualMealsCost?.toString() || "",
+        inst.financing?.annualOtherExpenses?.toString() || "",
+        inst.financing?.individualAnnualCost?.toString() || "",
+        // Dates
+        inst.createdAt ? new Date(inst.createdAt).toLocaleDateString("ar-MA") : "",
+        inst.updatedAt ? new Date(inst.updatedAt).toLocaleDateString("ar-MA") : ""
       ]);
 
       // Escape CSV values (handle commas and quotes)
