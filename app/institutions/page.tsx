@@ -193,30 +193,52 @@ export default function InstitutionsPage() {
 
   const handleExport = async () => {
     try {
-      // Get IDs to export - use filtered data for USER role, all data for ADMIN
-      const summaryData = isUserRole ? filteredUserContent : (data?.content || []);
+      toast.info("جاري تحميل البيانات الكاملة...");
+
+      // For USER role, use filtered content; for ADMIN/VIEW_ONLY, fetch ALL institutions
+      let summaryData: InstitutionSummary[];
+      
+      if (isUserRole) {
+        // USER role - use already filtered data by prefecture
+        summaryData = filteredUserContent;
+      } else {
+        // ADMIN/VIEW_ONLY - fetch all institutions (not just current page)
+        const allDataResponse = await authFetch(buildApiUrl(`${API_ENDPOINTS.institutions.list}?size=10000`));
+        if (!allDataResponse.ok) {
+          throw new Error("Failed to fetch all institutions");
+        }
+        const allData = await allDataResponse.json();
+        summaryData = allData.content || [];
+      }
       
       if (summaryData.length === 0) {
         toast.error("لا توجد بيانات للتصدير");
         return;
       }
 
-      toast.info("جاري تحميل البيانات الكاملة...");
+      toast.info(`جاري تحميل ${summaryData.length} مؤسسة...`);
 
-      // Fetch full data for each institution
-      const fullDataPromises = summaryData.map(async (inst: InstitutionSummary) => {
-        try {
-          const response = await authFetch(buildApiUrl(`${API_ENDPOINTS.institutions.list}/${inst.id}`));
-          if (response.ok) {
-            return await response.json();
+      // Fetch full data for each institution in batches to avoid overwhelming the server
+      const batchSize = 10;
+      const fullData: InstitutionResponse[] = [];
+      
+      for (let i = 0; i < summaryData.length; i += batchSize) {
+        const batch = summaryData.slice(i, i + batchSize);
+        const batchPromises = batch.map(async (inst: InstitutionSummary) => {
+          try {
+            const response = await authFetch(buildApiUrl(`${API_ENDPOINTS.institutions.list}/${inst.id}`));
+            if (response.ok) {
+              return await response.json();
+            }
+            return null;
+          } catch {
+            return null;
           }
-          return null;
-        } catch {
-          return null;
-        }
-      });
-
-      const fullData = (await Promise.all(fullDataPromises)).filter(Boolean) as InstitutionResponse[];
+        });
+        
+        const batchResults = await Promise.all(batchPromises);
+        fullData.push(...batchResults.filter(Boolean) as InstitutionResponse[]);
+      }
 
       // Helper functions for label lookups
       const yesNo = (val?: boolean) => val ? "نعم" : "لا";
