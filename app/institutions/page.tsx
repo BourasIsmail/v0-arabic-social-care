@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import * as XLSX from "xlsx";
 import { Building2, Plus, Search, Filter, Eye, Pencil, Trash2, Download } from "lucide-react";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
@@ -389,27 +390,26 @@ export default function InstitutionsPage() {
         inst.updatedAt ? new Date(inst.updatedAt).toLocaleDateString("ar-MA") : ""
       ]);
 
-      // Escape CSV values (handle commas and quotes)
-      const escapeCSV = (value: string) => {
-        if (value.includes(",") || value.includes('"') || value.includes("\n")) {
-          return `"${value.replace(/"/g, '""')}"`;
-        }
-        return value;
-      };
+      // Create worksheet data with headers
+      const worksheetData = [headers, ...rows];
 
-      // Build CSV content with BOM for Excel Arabic support
-      const BOM = "\uFEFF";
-      const csvContent = BOM + [
-        headers.map(escapeCSV).join(","),
-        ...rows.map(row => row.map(escapeCSV).join(","))
-      ].join("\n");
+      // Create workbook and worksheet
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
 
-      // Create and download the file
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+      // Set RTL direction for Arabic
+      worksheet["!cols"] = headers.map(() => ({ wch: 20 })); // Set column widths
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, "المؤسسات");
+
+      // Generate Excel file and download
+      const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+      const blob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `institutions_${new Date().toISOString().split("T")[0]}.csv`;
+      a.download = `institutions_${new Date().toISOString().split("T")[0]}.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -440,7 +440,7 @@ export default function InstitutionsPage() {
               <div className="flex items-center gap-2">
                 <Button variant="outline" onClick={handleExport} className="gap-2">
                   <Download className="h-4 w-4" />
-                  <span className="hidden sm:inline">تصدير CSV</span>
+                  <span className="hidden sm:inline">تصدير Excel</span>
                 </Button>
                 {canModify && (
                   <Link href="/diagnostic">
