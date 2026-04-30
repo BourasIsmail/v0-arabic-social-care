@@ -21,7 +21,11 @@ export async function GET(request: NextRequest) {
     // Get the CSV content from backend
     const csvContent = await response.text();
 
-    return new NextResponse(csvContent, {
+    // Add UTF-8 BOM (Byte Order Mark) for Excel to properly recognize Arabic text
+    const BOM = "\uFEFF";
+    const csvWithBOM = BOM + csvContent;
+
+    return new NextResponse(csvWithBOM, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": `attachment; filename="institutions_${new Date().toISOString().split("T")[0]}.csv"`,
