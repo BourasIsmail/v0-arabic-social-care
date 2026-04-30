@@ -182,14 +182,63 @@ export default function InstitutionsPage() {
 
   const handleExport = async () => {
     try {
-      const response = await authFetch(buildApiUrl(API_ENDPOINTS.institutions.exportCsv));
-      if (!response.ok) throw new Error("Export failed");
+      // Get data to export - use filtered data for USER role, all data for ADMIN
+      const dataToExport = isUserRole ? filteredUserContent : (data?.content || []);
+      
+      if (dataToExport.length === 0) {
+        toast.error("لا توجد بيانات للتصدير");
+        return;
+      }
 
-      const blob = await response.blob();
+      // CSV headers in Arabic
+      const headers = [
+        "اسم المؤسسة",
+        "اسم الجمعية",
+        "نوع المؤسسة",
+        "الجهة",
+        "العمالة/الإقليم",
+        "الجماعة",
+        "الطاقة الاستيعابية",
+        "خط العرض",
+        "خط الطول",
+        "تاريخ الإنشاء"
+      ];
+
+      // Convert data to CSV rows
+      const rows = dataToExport.map((inst: InstitutionSummary) => [
+        inst.institutionName || "",
+        inst.associationName || "",
+        institutionTypeLabels[inst.institutionType] || inst.institutionType,
+        inst.regionName || "",
+        inst.prefectureName || "",
+        inst.communeName || "",
+        inst.totalCapacity?.toString() || "",
+        inst.latitude?.toString() || "",
+        inst.longitude?.toString() || "",
+        inst.createdAt ? new Date(inst.createdAt).toLocaleDateString("ar-MA") : ""
+      ]);
+
+      // Escape CSV values (handle commas and quotes)
+      const escapeCSV = (value: string) => {
+        if (value.includes(",") || value.includes('"') || value.includes("\n")) {
+          return `"${value.replace(/"/g, '""')}"`;
+        }
+        return value;
+      };
+
+      // Build CSV content with BOM for Excel Arabic support
+      const BOM = "\uFEFF";
+      const csvContent = BOM + [
+        headers.map(escapeCSV).join(","),
+        ...rows.map(row => row.map(escapeCSV).join(","))
+      ].join("\n");
+
+      // Create and download the file
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "institutions.csv";
+      a.download = `institutions_${new Date().toISOString().split("T")[0]}.csv`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
