@@ -312,12 +312,20 @@ export default function InstitutionsPage() {
         } as Record<string, string>,
         mealType: {
           IN_HOUSE: 'إعداد الوجبات في مطبخ المؤسسة',
+          INSTITUTION_KITCHEN: 'إعداد الوجبات في مطبخ المؤسسة',
           READY_MEALS: 'وجبات جاهزة',
           OTHER: 'آخر',
         } as Record<string, string>,
         selectionBody: {
           ASSOCIATION_ALONE: 'الجمعية بمفردها',
           COMMISSION: 'لجنة مختلطة',
+          MIXED_COMMITTEE: 'لجنة مختلطة',
+          OTHER: 'آخر',
+        } as Record<string, string>,
+        buildingConditionOther: {
+          OTHER: 'آخر',
+        } as Record<string, string>,
+        renovationCapabilityOther: {
           OTHER: 'آخر',
         } as Record<string, string>,
       };
