@@ -12,16 +12,18 @@ import { AppHeader } from "@/components/layout/app-header";
 import type { DashboardStats, Region, Prefecture } from "@/lib/types";
 import { 
   Building2, Users, MapPin, CheckCircle, Home, Loader2, Utensils, 
-  TrendingUp, Globe, Building, GraduationCap, XCircle
+  TrendingUp, Globe, Building, GraduationCap, XCircle, Banknote,
+  UserCog, Briefcase, BookOpen
 } from "lucide-react";
 import { API_ENDPOINTS, buildApiUrl } from "@/lib/api-config";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default function AdminDashboardPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("global");
+  const [activeTab, setActiveTab] = useState("overview");
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
   const [selectedPrefecture, setSelectedPrefecture] = useState<string>("all");
 
@@ -32,7 +34,7 @@ export default function AdminDashboardPage() {
     }
   }, [user, isAuthLoading, router]);
 
-  // Fetch dashboard stats from backend - this is the ONLY data source
+  // Fetch dashboard stats from backend
   const { data: stats, isLoading, error } = useAuthSWR<DashboardStats>(
     (user?.role === "ADMIN" || user?.role === "VIEW_ONLY") 
       ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) 
@@ -74,7 +76,7 @@ export default function AdminDashboardPage() {
     );
   }
 
-  if (error) {
+  if (error || !stats) {
     return (
       <ProtectedRoute allowedRoles={["ADMIN", "VIEW_ONLY"]}>
         <div className="min-h-screen bg-background">
@@ -92,294 +94,22 @@ export default function AdminDashboardPage() {
     );
   }
 
-  if (!stats) {
-    return (
-      <ProtectedRoute allowedRoles={["ADMIN", "VIEW_ONLY"]}>
-        <div className="min-h-screen bg-background">
-          <AppHeader />
-          <div className="container mx-auto p-6" dir="rtl">
-            <Card>
-              <CardHeader>
-                <CardTitle>لا توجد بيانات</CardTitle>
-                <CardDescription>لم يتم العثور على إحصائيات</CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-        </div>
-      </ProtectedRoute>
-    );
-  }
-
-  // Get filtered stats based on region/prefecture selection
-  const getFilteredStats = () => {
-    if (selectedRegion === "all") {
-      return {
-        totalInstitutions: stats.totalInstitutions,
-        totalCapacity: stats.totalCapacity,
-        totalBeneficiaries: stats.totalBeneficiaries,
-      };
-    }
-    
-    const regionId = Number(selectedRegion);
-    const regionStats = stats.byRegion?.find(r => r.regionId === regionId);
-    
-    if (selectedPrefecture !== "all") {
-      const prefId = Number(selectedPrefecture);
-      const prefStats = stats.byPrefecture?.find(p => p.prefectureId === prefId);
-      if (prefStats) {
-        return {
-          totalInstitutions: prefStats.count,
-          totalCapacity: prefStats.capacity,
-          totalBeneficiaries: prefStats.beneficiaries || 0,
-        };
-      }
-    }
-    
-    if (regionStats) {
-      return {
-        totalInstitutions: regionStats.count,
-        totalCapacity: regionStats.capacity,
-        totalBeneficiaries: regionStats.beneficiaries || 0,
-      };
-    }
-    
-    return {
-      totalInstitutions: stats.totalInstitutions,
-      totalCapacity: stats.totalCapacity,
-      totalBeneficiaries: stats.totalBeneficiaries,
-    };
+  const formatNumber = (n?: number) => n?.toLocaleString("ar-MA") ?? "0";
+  const formatCurrency = (n?: number) => n ? `${n.toLocaleString("ar-MA")} درهم` : "—";
+  const getPercent = (part?: number, total?: number) => {
+    if (!total || !part) return 0;
+    return Math.round((part / total) * 100);
   };
 
-  const filteredStats = getFilteredStats();
-
-  // Calculate percentages for distributions
   const total = stats.totalInstitutions || 1;
-  
-  const typeData = [
-    { name: "دار الطالب", value: stats.darTalibCount, color: "bg-blue-500" },
-    { name: "دار الطالبة", value: stats.darTalibaCount, color: "bg-pink-500" },
-    { name: "دار الطالب والطالبة", value: stats.mixedCount, color: "bg-purple-500" },
-  ];
-
-  const milieuData = [
-    { name: "حضري", value: stats.urbanCount, color: "bg-amber-500" },
-    { name: "قروي", value: stats.ruralCount, color: "bg-green-500" },
-  ];
-
-  const statusData = [
-    { name: "مرخصة", value: stats.licensedCount, color: "bg-emerald-500" },
-    { name: "غير مرخصة", value: stats.unlicensedCount, color: "bg-red-500" },
-  ];
-
-  // Stats Card Component
-  const StatCard = ({ 
-    title, 
-    value, 
-    icon: Icon, 
-    description,
-    color = "text-primary",
-  }: { 
-    title: string; 
-    value: string | number; 
-    icon: React.ElementType;
-    description?: string;
-    color?: string;
-  }) => (
-    <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <Icon className={`h-5 w-5 ${color}`} />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">
-          {typeof value === 'number' ? value.toLocaleString() : value}
-        </div>
-        {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
-      </CardContent>
-    </Card>
-  );
-
-  // Distribution Card Component
-  const DistributionCard = ({ 
-    title, 
-    data, 
-    icon: Icon,
-    description,
-  }: { 
-    title: string; 
-    data: { name: string; value: number; color: string }[];
-    icon: React.ElementType;
-    description?: string;
-  }) => {
-    const cardTotal = data.reduce((sum, item) => sum + item.value, 0);
-    
-    return (
-      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Icon className="h-5 w-5 text-primary" />
-            <CardTitle className="text-base">{title}</CardTitle>
-          </div>
-          {description && <CardDescription>{description}</CardDescription>}
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {data.map((item, idx) => {
-            const percentage = cardTotal > 0 ? (item.value / cardTotal) * 100 : 0;
-            return (
-              <div key={idx} className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${item.color}`} />
-                    <span>{item.name}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary">{item.value.toLocaleString()}</Badge>
-                    <span className="text-muted-foreground w-14 text-left">{percentage.toFixed(1)}%</span>
-                  </div>
-                </div>
-                <Progress value={percentage} className="h-2" />
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-    );
-  };
-
-  // Stats Table Component
-  const StatsTable = ({ 
-    data, 
-    title, 
-    description 
-  }: { 
-    data: { name: string; count: number; capacity: number; beneficiaries?: number }[];
-    title: string;
-    description?: string;
-  }) => (
-    <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="text-base">{title}</CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
-          <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-card">
-              <tr className="border-b">
-                <th className="text-right py-2 px-2 font-medium">الاسم</th>
-                <th className="text-center py-2 px-2 font-medium">المؤسسات</th>
-                <th className="text-center py-2 px-2 font-medium">الطاقة</th>
-                <th className="text-center py-2 px-2 font-medium">المستفيدون</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item, idx) => (
-                <tr key={idx} className="border-b border-border/50 hover:bg-muted/50">
-                  <td className="py-2 px-2">{item.name}</td>
-                  <td className="text-center py-2 px-2">
-                    <Badge variant="outline">{item.count}</Badge>
-                  </td>
-                  <td className="text-center py-2 px-2">{item.capacity.toLocaleString()}</td>
-                  <td className="text-center py-2 px-2">{item.beneficiaries?.toLocaleString() || "—"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  // Summary Cards Component
-  const SummaryCards = ({ data }: { data: typeof filteredStats }) => (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <StatCard
-        title="إجمالي المؤسسات"
-        value={data.totalInstitutions}
-        icon={Building2}
-        color="text-blue-500"
-        description="مؤسسة مسجلة"
-      />
-      <StatCard
-        title="الطاقة الاستيعابية"
-        value={data.totalCapacity}
-        icon={Users}
-        color="text-green-500"
-        description={`متوسط ${stats.averageCapacity?.toFixed(0) || Math.round(data.totalCapacity / (data.totalInstitutions || 1))} لكل مؤسسة`}
-      />
-      <StatCard
-        title="المستفيدون"
-        value={data.totalBeneficiaries}
-        icon={GraduationCap}
-        color="text-purple-500"
-        description="مستفيد حالي"
-      />
-      <StatCard
-        title="الموظفون"
-        value={stats.totalStaffCount || "—"}
-        icon={Users}
-        color="text-orange-500"
-        description="موظف في المؤسسات"
-      />
-    </div>
-  );
-
-  // Services Cards
-  const ServicesCards = () => (
-    <div className="grid gap-4 md:grid-cols-2">
-      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Home className="h-5 w-5 text-blue-500" />
-            <CardTitle className="text-base">خدمة الإيواء</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">المؤسسات التي توفر الإيواء</span>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold">{stats.institutionsWithHousing?.toLocaleString() || "—"}</span>
-              {stats.institutionsWithHousing && (
-                <Badge variant="secondary">
-                  {((stats.institutionsWithHousing / total) * 100).toFixed(1)}%
-                </Badge>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Utensils className="h-5 w-5 text-orange-500" />
-            <CardTitle className="text-base">خدمة الإطعام</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">المؤسسات التي توفر الإطعام</span>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold">{stats.institutionsWithMeals?.toLocaleString() || "—"}</span>
-              {stats.institutionsWithMeals && (
-                <Badge variant="secondary">
-                  {((stats.institutionsWithMeals / total) * 100).toFixed(1)}%
-                </Badge>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
 
   // Region data for table
   const regionTableData = (stats.byRegion || [])
     .map(r => ({
       name: r.regionName || `جهة ${r.regionId}`,
       count: r.count,
-      capacity: r.capacity,
-      beneficiaries: r.beneficiaries,
+      capacity: r.totalCapacity || 0,
+      beneficiaries: r.totalBeneficiaries || 0,
     }))
     .sort((a, b) => b.count - a.count);
 
@@ -387,15 +117,14 @@ export default function AdminDashboardPage() {
   const prefectureTableData = (stats.byPrefecture || [])
     .filter(p => {
       if (selectedRegion === "all") return true;
-      // Filter by selected region's prefectures
       const regionPrefIds = prefectures?.map(pf => pf.id) || [];
       return regionPrefIds.includes(p.prefectureId);
     })
     .map(p => ({
       name: p.prefectureName || `إقليم ${p.prefectureId}`,
       count: p.count,
-      capacity: p.capacity,
-      beneficiaries: p.beneficiaries,
+      capacity: p.totalCapacity || 0,
+      beneficiaries: p.totalBeneficiaries || 0,
     }))
     .sort((a, b) => b.count - a.count);
 
@@ -412,143 +141,940 @@ export default function AdminDashboardPage() {
                 مرحباً {user?.firstName}، إليك نظرة عامة على المؤسسات
               </p>
             </div>
-            <Badge variant="outline" className="text-sm">
-              آخر تحديث: {new Date().toLocaleDateString("ar-MA")}
-            </Badge>
+            <div className="flex gap-3">
+              <Select value={selectedRegion} onValueChange={(v) => { setSelectedRegion(v); setSelectedPrefecture("all"); }}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="اختر الجهة" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">جميع الجهات</SelectItem>
+                  {regions?.map((r) => (
+                    <SelectItem key={r.id} value={r.id.toString()}>{r.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              {selectedRegion !== "all" && (
+                <Select value={selectedPrefecture} onValueChange={setSelectedPrefecture}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="اختر الإقليم" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">جميع الأقاليم</SelectItem>
+                    {prefectures?.map((p) => (
+                      <SelectItem key={p.id} value={p.id.toString()}>{p.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          </div>
+
+          {/* Main Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">إجمالي المؤسسات</CardTitle>
+                <Building2 className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{formatNumber(stats.totalInstitutions)}</div>
+                <p className="text-xs text-muted-foreground">
+                  {formatNumber(stats.licensedCount)} مرخصة • {formatNumber(stats.unlicensedCount)} غير مرخصة
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">الطاقة الاستيعابية</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{formatNumber(stats.totalCapacity)}</div>
+                <p className="text-xs text-muted-foreground">
+                  متوسط {formatNumber(stats.averageCapacity)} لكل مؤسسة
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">المستفيدون 2025-2026</CardTitle>
+                <GraduationCap className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{formatNumber(stats.beneficiaries?.season2526?.total)}</div>
+                <p className="text-xs text-muted-foreground">
+                  {formatNumber(stats.beneficiaries?.season2526?.male)} ذكور • {formatNumber(stats.beneficiaries?.season2526?.female)} إناث
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">الموارد البشرية</CardTitle>
+                <UserCog className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{formatNumber(stats.humanResources?.totalStaff)}</div>
+                <p className="text-xs text-muted-foreground">
+                  {formatNumber(stats.humanResources?.totalWithCnss)} مسجل بـ CNSS
+                </p>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full max-w-md grid-cols-3">
-              <TabsTrigger value="global">عام</TabsTrigger>
-              <TabsTrigger value="region">حسب الجهة</TabsTrigger>
-              <TabsTrigger value="prefecture">حسب الإقليم</TabsTrigger>
+            <TabsList className="flex flex-wrap h-auto gap-1">
+              <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
+              <TabsTrigger value="types">حسب النوع</TabsTrigger>
+              <TabsTrigger value="levels">المستويات</TabsTrigger>
+              <TabsTrigger value="beneficiaries">المستفيدون</TabsTrigger>
+              <TabsTrigger value="meals">الإطعام</TabsTrigger>
+              <TabsTrigger value="financing">التمويل</TabsTrigger>
+              <TabsTrigger value="hr">الموارد البشرية</TabsTrigger>
+              <TabsTrigger value="regions">الجهات</TabsTrigger>
             </TabsList>
 
-            {/* Global Tab */}
-            <TabsContent value="global" className="space-y-6">
-              <SummaryCards data={stats} />
-              
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <DistributionCard
-                  title="توزيع حسب النوع"
-                  description="أنواع المؤسسات"
-                  icon={Building}
-                  data={typeData}
-                />
+            {/* Overview Tab */}
+            <TabsContent value="overview" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Type Distribution */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Building className="h-4 w-4" />
+                      توزيع المؤسسات حسب النوع
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>دار الطالب</span>
+                        <span>{formatNumber(stats.darTalibCount)} ({getPercent(stats.darTalibCount, total)}%)</span>
+                      </div>
+                      <Progress value={getPercent(stats.darTalibCount, total)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>دار الطالبة</span>
+                        <span>{formatNumber(stats.darTalibaCount)} ({getPercent(stats.darTalibaCount, total)}%)</span>
+                      </div>
+                      <Progress value={getPercent(stats.darTalibaCount, total)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>دار الطالب والطالبة</span>
+                        <span>{formatNumber(stats.mixedCount)} ({getPercent(stats.mixedCount, total)}%)</span>
+                      </div>
+                      <Progress value={getPercent(stats.mixedCount, total)} className="h-2" />
+                    </div>
+                  </CardContent>
+                </Card>
 
-                <DistributionCard
-                  title="توزيع حسب الوسط"
-                  description="حضري / قروي"
-                  icon={MapPin}
-                  data={milieuData}
-                />
+                {/* Milieu Distribution */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <MapPin className="h-4 w-4" />
+                      توزيع المؤسسات حسب الوسط
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>حضري</span>
+                        <span>{formatNumber(stats.urbanCount)} ({getPercent(stats.urbanCount, total)}%)</span>
+                      </div>
+                      <Progress value={getPercent(stats.urbanCount, total)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>قروي</span>
+                        <span>{formatNumber(stats.ruralCount)} ({getPercent(stats.ruralCount, total)}%)</span>
+                      </div>
+                      <Progress value={getPercent(stats.ruralCount, total)} className="h-2" />
+                    </div>
+                  </CardContent>
+                </Card>
 
-                <DistributionCard
-                  title="الوضعية القانونية"
-                  description="مرخصة / غير مرخصة"
-                  icon={CheckCircle}
-                  data={statusData}
-                />
-              </div>
+                {/* Legal Status */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4" />
+                      الوضعية القانونية
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="flex items-center gap-2">
+                          <CheckCircle className="h-3 w-3 text-green-500" />
+                          مرخصة
+                        </span>
+                        <span>{formatNumber(stats.licensedCount)} ({getPercent(stats.licensedCount, total)}%)</span>
+                      </div>
+                      <Progress value={getPercent(stats.licensedCount, total)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="flex items-center gap-2">
+                          <XCircle className="h-3 w-3 text-red-500" />
+                          غير مرخصة
+                        </span>
+                        <span>{formatNumber(stats.unlicensedCount)} ({getPercent(stats.unlicensedCount, total)}%)</span>
+                      </div>
+                      <Progress value={getPercent(stats.unlicensedCount, total)} className="h-2" />
+                    </div>
+                  </CardContent>
+                </Card>
 
-              <ServicesCards />
+                {/* Services */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Home className="h-4 w-4" />
+                      الخدمات المقدمة
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">مؤسسات توفر الإيواء</span>
+                      <Badge variant="secondary">{formatNumber(stats.institutionsWithHousing)}</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">مؤسسات توفر الإطعام</span>
+                      <Badge variant="secondary">{formatNumber(stats.institutionsWithMeals)}</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <StatsTable
-                  title="التوزيع حسب الجهات"
-                  description="إحصائيات كل جهة"
-                  data={regionTableData}
-                />
+                {/* Target Levels */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <BookOpen className="h-4 w-4" />
+                      المستويات المستهدفة
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>ابتدائي</span>
+                        <span>{formatNumber(stats.targetLevels?.primary)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.targetLevels?.primary, total)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>إعدادي</span>
+                        <span>{formatNumber(stats.targetLevels?.middleSchool)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.targetLevels?.middleSchool, total)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>ثانوي</span>
+                        <span>{formatNumber(stats.targetLevels?.highSchool)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.targetLevels?.highSchool, total)} className="h-2" />
+                    </div>
+                  </CardContent>
+                </Card>
 
-                <StatsTable
-                  title="أكبر الأقاليم"
-                  description="الأقاليم الأكثر مؤسسات"
-                  data={prefectureTableData.slice(0, 15)}
-                />
+                {/* Meal Service */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Utensils className="h-4 w-4" />
+                      خدمة الإطعام
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>مطبخ المؤسسة</span>
+                        <span>{formatNumber(stats.mealService?.institutionKitchen)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.mealService?.institutionKitchen, total)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>وجبات جاهزة</span>
+                        <span>{formatNumber(stats.mealService?.readyMeals)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.mealService?.readyMeals, total)} className="h-2" />
+                    </div>
+                    <div className="pt-2 border-t">
+                      <div className="flex justify-between text-sm font-medium">
+                        <span>إجمالي المستفيدين</span>
+                        <span>{formatNumber(stats.mealService?.totalMealBeneficiaries)}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
 
-            {/* Region Tab */}
-            <TabsContent value="region" className="space-y-6">
-              <div className="flex items-center gap-4">
-                <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-                  <SelectTrigger className="w-64">
-                    <SelectValue placeholder="اختر الجهة" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">جميع الجهات</SelectItem>
-                    {regions?.map((region) => (
-                      <SelectItem key={region.id} value={String(region.id)}>
-                        {region.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* Types Tab */}
+            <TabsContent value="types" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Dar Talib */}
+                <Card className="border-blue-200 dark:border-blue-800">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-blue-500" />
+                      دار الطالب
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-3xl font-bold">{formatNumber(stats.typeStats?.darTalib?.total)}</div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">مرخصة</p>
+                        <p className="font-medium text-green-600">{formatNumber(stats.typeStats?.darTalib?.licensed)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">غير مرخصة</p>
+                        <p className="font-medium text-red-600">{formatNumber(stats.typeStats?.darTalib?.unlicensed)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">حضري</p>
+                        <p className="font-medium">{formatNumber(stats.typeStats?.darTalib?.urban)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">قروي</p>
+                        <p className="font-medium">{formatNumber(stats.typeStats?.darTalib?.rural)}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Dar Taliba */}
+                <Card className="border-pink-200 dark:border-pink-800">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-pink-500" />
+                      دار الطالبة
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-3xl font-bold">{formatNumber(stats.typeStats?.darTaliba?.total)}</div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">مرخصة</p>
+                        <p className="font-medium text-green-600">{formatNumber(stats.typeStats?.darTaliba?.licensed)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">غير مرخصة</p>
+                        <p className="font-medium text-red-600">{formatNumber(stats.typeStats?.darTaliba?.unlicensed)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">حضري</p>
+                        <p className="font-medium">{formatNumber(stats.typeStats?.darTaliba?.urban)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">قروي</p>
+                        <p className="font-medium">{formatNumber(stats.typeStats?.darTaliba?.rural)}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Mixed */}
+                <Card className="border-purple-200 dark:border-purple-800">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-purple-500" />
+                      دار الطالب والطالبة
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-3xl font-bold">{formatNumber(stats.typeStats?.mixed?.total)}</div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">مرخصة</p>
+                        <p className="font-medium text-green-600">{formatNumber(stats.typeStats?.mixed?.licensed)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">غير مرخصة</p>
+                        <p className="font-medium text-red-600">{formatNumber(stats.typeStats?.mixed?.unlicensed)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">حضري</p>
+                        <p className="font-medium">{formatNumber(stats.typeStats?.mixed?.urban)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground">قروي</p>
+                        <p className="font-medium">{formatNumber(stats.typeStats?.mixed?.rural)}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-
-              <SummaryCards data={filteredStats} />
-
-              <StatsTable
-                title="التوزيع حسب الجهات"
-                description="إحصائيات المؤسسات في كل جهة"
-                data={regionTableData}
-              />
             </TabsContent>
 
-            {/* Prefecture Tab */}
-            <TabsContent value="prefecture" className="space-y-6">
-              <div className="flex flex-wrap items-center gap-4">
-                <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-                  <SelectTrigger className="w-64">
-                    <SelectValue placeholder="اختر الجهة" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">جميع الجهات</SelectItem>
-                    {regions?.map((region) => (
-                      <SelectItem key={region.id} value={String(region.id)}>
-                        {region.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* Target Levels Tab */}
+            <TabsContent value="levels" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">ابتدائي</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{formatNumber(stats.targetLevels?.primary)}</div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {getPercent(stats.targetLevels?.primary, total)}% من المؤسسات
+                    </p>
+                    <Progress value={getPercent(stats.targetLevels?.primary, total)} className="h-2 mt-2" />
+                  </CardContent>
+                </Card>
 
-                {selectedRegion !== "all" && prefectures && (
-                  <Select value={selectedPrefecture} onValueChange={setSelectedPrefecture}>
-                    <SelectTrigger className="w-64">
-                      <SelectValue placeholder="اختر الإقليم" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">جميع الأقاليم</SelectItem>
-                      {prefectures.map((pref) => (
-                        <SelectItem key={pref.id} value={String(pref.id)}>
-                          {pref.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">إعدادي</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{formatNumber(stats.targetLevels?.middleSchool)}</div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {getPercent(stats.targetLevels?.middleSchool, total)}% من المؤسسات
+                    </p>
+                    <Progress value={getPercent(stats.targetLevels?.middleSchool, total)} className="h-2 mt-2" />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">ثانوي</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{formatNumber(stats.targetLevels?.highSchool)}</div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {getPercent(stats.targetLevels?.highSchool, total)}% من المؤسسات
+                    </p>
+                    <Progress value={getPercent(stats.targetLevels?.highSchool, total)} className="h-2 mt-2" />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">آخر</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{formatNumber(stats.targetLevels?.other)}</div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {getPercent(stats.targetLevels?.other, total)}% من المؤسسات
+                    </p>
+                    <Progress value={getPercent(stats.targetLevels?.other, total)} className="h-2 mt-2" />
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Beneficiaries Tab */}
+            <TabsContent value="beneficiaries" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Season 2023-2024 */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">الموسم 2023-2024</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-3xl font-bold">{formatNumber(stats.beneficiaries?.season2324?.total)}</div>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="p-2 bg-muted rounded">
+                        <p className="text-muted-foreground">ذكور</p>
+                        <p className="font-medium">{formatNumber(stats.beneficiaries?.season2324?.male)}</p>
+                      </div>
+                      <div className="p-2 bg-muted rounded">
+                        <p className="text-muted-foreground">إناث</p>
+                        <p className="font-medium">{formatNumber(stats.beneficiaries?.season2324?.female)}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 pt-2 border-t">
+                      <div className="flex justify-between text-sm">
+                        <span>ابتدائي</span>
+                        <span>{formatNumber(stats.beneficiaries?.season2324?.primary)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>إعدادي</span>
+                        <span>{formatNumber(stats.beneficiaries?.season2324?.middle)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>ثانوي</span>
+                        <span>{formatNumber(stats.beneficiaries?.season2324?.high)}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Season 2024-2025 */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">الموسم 2024-2025</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-3xl font-bold">{formatNumber(stats.beneficiaries?.season2425?.total)}</div>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="p-2 bg-muted rounded">
+                        <p className="text-muted-foreground">ذكور</p>
+                        <p className="font-medium">{formatNumber(stats.beneficiaries?.season2425?.male)}</p>
+                      </div>
+                      <div className="p-2 bg-muted rounded">
+                        <p className="text-muted-foreground">إناث</p>
+                        <p className="font-medium">{formatNumber(stats.beneficiaries?.season2425?.female)}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 pt-2 border-t">
+                      <div className="flex justify-between text-sm">
+                        <span>ابتدائي</span>
+                        <span>{formatNumber(stats.beneficiaries?.season2425?.primary)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>إعدادي</span>
+                        <span>{formatNumber(stats.beneficiaries?.season2425?.middle)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>ثانوي</span>
+                        <span>{formatNumber(stats.beneficiaries?.season2425?.high)}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Season 2025-2026 */}
+                <Card className="border-primary">
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      الموسم 2025-2026
+                      <Badge>الحالي</Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-3xl font-bold text-primary">{formatNumber(stats.beneficiaries?.season2526?.total)}</div>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="p-2 bg-primary/10 rounded">
+                        <p className="text-muted-foreground">ذكور</p>
+                        <p className="font-medium">{formatNumber(stats.beneficiaries?.season2526?.male)}</p>
+                      </div>
+                      <div className="p-2 bg-primary/10 rounded">
+                        <p className="text-muted-foreground">إناث</p>
+                        <p className="font-medium">{formatNumber(stats.beneficiaries?.season2526?.female)}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 pt-2 border-t">
+                      <div className="flex justify-between text-sm">
+                        <span>ابتدائي</span>
+                        <span>{formatNumber(stats.beneficiaries?.season2526?.primary)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>إعدادي</span>
+                        <span>{formatNumber(stats.beneficiaries?.season2526?.middle)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>ثانوي</span>
+                        <span>{formatNumber(stats.beneficiaries?.season2526?.high)}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Meals Tab */}
+            <TabsContent value="meals" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Utensils className="h-5 w-5" />
+                      كيفية تقديم الوجبات
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                      <span>مطبخ المؤسسة</span>
+                      <Badge variant="secondary">{formatNumber(stats.mealService?.institutionKitchen)}</Badge>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                      <span>وجبات جاهزة</span>
+                      <Badge variant="secondary">{formatNumber(stats.mealService?.readyMeals)}</Badge>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                      <span>أخرى</span>
+                      <Badge variant="secondary">{formatNumber(stats.mealService?.other)}</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">المستفيدون من الإطعام</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center p-6">
+                      <div className="text-4xl font-bold text-primary">{formatNumber(stats.mealService?.totalMealBeneficiaries)}</div>
+                      <p className="text-muted-foreground mt-2">مستفيد من خدمة الإطعام 2025-2026</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Financing Tab */}
+            <TabsContent value="financing" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Building Financing */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Building className="h-5 w-5" />
+                      تمويل بناء المؤسسة
+                    </CardTitle>
+                    <CardDescription>عدد المؤسسات حسب مصدر التمويل</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>وزارة التضامن</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.buildingFinancing?.solidarityMinistry)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>التعاون الوطني</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.buildingFinancing?.nationalEntraide)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>المبادرة الوطنية للتنمية البشرية</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.buildingFinancing?.indh)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>الجماعة</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.buildingFinancing?.commune)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>مؤسسة محمد الخامس للتضامن</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.buildingFinancing?.fondationMohammed5)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>الإنعاش الوطني</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.buildingFinancing?.nationalRevival)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>الجمعية</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.buildingFinancing?.association)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>أخرى</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.buildingFinancing?.other)}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                    <div className="mt-4 p-3 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">إجمالي تكلفة البناء</p>
+                      <p className="text-lg font-bold">{formatCurrency(stats.buildingFinancing?.totalCost)}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Equipment Financing */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Briefcase className="h-5 w-5" />
+                      تمويل تجهيز المؤسسة
+                    </CardTitle>
+                    <CardDescription>عدد المؤسسات حسب مصدر التمويل</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>وزارة التضامن</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.equipmentFinancing?.solidarityMinistry)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>التعاون الوطني</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.equipmentFinancing?.nationalEntraide)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>المبادرة الوطنية للتنمية البشرية</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.equipmentFinancing?.indh)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>الجماعة</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.equipmentFinancing?.commune)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>مؤسسة محمد الخامس للتضامن</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.equipmentFinancing?.fondationMohammed5)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>الجمعية</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.equipmentFinancing?.association)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>أخرى</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.equipmentFinancing?.other)}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+
+                {/* Operating Costs */}
+                <Card className="md:col-span-2">
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Banknote className="h-5 w-5" />
+                      تكاليف التسيير
+                    </CardTitle>
+                    <CardDescription>إجمالي التكاليف السنوية ومصادر التمويل</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                      <div className="p-4 bg-muted rounded-lg text-center">
+                        <p className="text-sm text-muted-foreground">تكلفة التسيير السنوية</p>
+                        <p className="text-lg font-bold">{formatCurrency(stats.operatingFinancing?.annualManagementCost)}</p>
+                      </div>
+                      <div className="p-4 bg-muted rounded-lg text-center">
+                        <p className="text-sm text-muted-foreground">تكلفة الموارد البشرية</p>
+                        <p className="text-lg font-bold">{formatCurrency(stats.operatingFinancing?.annualHRCost)}</p>
+                      </div>
+                      <div className="p-4 bg-muted rounded-lg text-center">
+                        <p className="text-sm text-muted-foreground">تكلفة الإطعام</p>
+                        <p className="text-lg font-bold">{formatCurrency(stats.operatingFinancing?.annualMealsCost)}</p>
+                      </div>
+                      <div className="p-4 bg-muted rounded-lg text-center">
+                        <p className="text-sm text-muted-foreground">تكلفة الفرد السنوية</p>
+                        <p className="text-lg font-bold">{formatCurrency(stats.operatingFinancing?.individualAnnualCost)}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="text-center p-4 bg-primary/10 rounded-lg">
+                        <p className="text-sm text-muted-foreground">حصة الجمعية</p>
+                        <p className="text-2xl font-bold text-primary">{stats.operatingFinancing?.associationShare ?? 0}%</p>
+                      </div>
+                      <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
+                        <p className="text-sm text-muted-foreground">حصة التربية الوطنية</p>
+                        <p className="text-2xl font-bold text-green-600">{stats.operatingFinancing?.educationShare ?? 0}%</p>
+                      </div>
+                      <div className="text-center p-4 bg-amber-50 dark:bg-amber-950 rounded-lg">
+                        <p className="text-sm text-muted-foreground">حصص أخرى</p>
+                        <p className="text-2xl font-bold text-amber-600">{stats.operatingFinancing?.otherShare ?? 0}%</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* HR Tab */}
+            <TabsContent value="hr" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">المديرون</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{formatNumber(stats.humanResources?.directors?.total)}</div>
+                    <div className="mt-2 space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">CNSS</span>
+                        <span>{formatNumber(stats.humanResources?.directors?.cnss)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">SMIG</span>
+                        <span>{formatNumber(stats.humanResources?.directors?.smig)}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">المربون</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{formatNumber(stats.humanResources?.educators?.total)}</div>
+                    <div className="mt-2 space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">CNSS</span>
+                        <span>{formatNumber(stats.humanResources?.educators?.cnss)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">SMIG</span>
+                        <span>{formatNumber(stats.humanResources?.educators?.smig)}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">الطباخون</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{formatNumber(stats.humanResources?.cooks?.total)}</div>
+                    <div className="mt-2 space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">CNSS</span>
+                        <span>{formatNumber(stats.humanResources?.cooks?.cnss)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">SMIG</span>
+                        <span>{formatNumber(stats.humanResources?.cooks?.smig)}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">الحراس</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{formatNumber(stats.humanResources?.guards?.total)}</div>
+                    <div className="mt-2 space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">CNSS</span>
+                        <span>{formatNumber(stats.humanResources?.guards?.cnss)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">SMIG</span>
+                        <span>{formatNumber(stats.humanResources?.guards?.smig)}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">آخرون</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{formatNumber(stats.humanResources?.other?.total)}</div>
+                    <div className="mt-2 space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">CNSS</span>
+                        <span>{formatNumber(stats.humanResources?.other?.cnss)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">SMIG</span>
+                        <span>{formatNumber(stats.humanResources?.other?.smig)}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
 
-              <SummaryCards data={filteredStats} />
+              {/* HR Summary */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">ملخص الموارد البشرية</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center p-4 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">إجمالي الموظفين</p>
+                      <p className="text-3xl font-bold">{formatNumber(stats.humanResources?.totalStaff)}</p>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
+                      <p className="text-sm text-muted-foreground">مسجلون في CNSS</p>
+                      <p className="text-3xl font-bold text-green-600">{formatNumber(stats.humanResources?.totalWithCnss)}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {getPercent(stats.humanResources?.totalWithCnss, stats.humanResources?.totalStaff)}%
+                      </p>
+                    </div>
+                    <div className="text-center p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                      <p className="text-sm text-muted-foreground">يتقاضون SMIG</p>
+                      <p className="text-3xl font-bold text-blue-600">{formatNumber(stats.humanResources?.totalWithSmig)}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {getPercent(stats.humanResources?.totalWithSmig, stats.humanResources?.totalStaff)}%
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-              <StatsTable
-                title="التوزيع حسب الأقاليم"
-                description={selectedRegion !== "all" ? "أقاليم الجهة المختارة" : "جميع الأقاليم"}
-                data={prefectureTableData}
-              />
+            {/* Regions Tab */}
+            <TabsContent value="regions" className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Regions Table */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Globe className="h-5 w-5" />
+                      إحصائيات الجهات
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="max-h-[400px] overflow-y-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>الجهة</TableHead>
+                            <TableHead className="text-center">المؤسسات</TableHead>
+                            <TableHead className="text-center">الطاقة</TableHead>
+                            <TableHead className="text-center">المستفيدون</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {regionTableData.map((region, idx) => (
+                            <TableRow key={idx}>
+                              <TableCell className="font-medium">{region.name}</TableCell>
+                              <TableCell className="text-center">{formatNumber(region.count)}</TableCell>
+                              <TableCell className="text-center">{formatNumber(region.capacity)}</TableCell>
+                              <TableCell className="text-center">{formatNumber(region.beneficiaries)}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Prefectures Table */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Building2 className="h-5 w-5" />
+                      إحصائيات الأقاليم
+                    </CardTitle>
+                    <CardDescription>أعلى 20 إقليم</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="max-h-[400px] overflow-y-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>الإقليم</TableHead>
+                            <TableHead className="text-center">المؤسسات</TableHead>
+                            <TableHead className="text-center">الطاقة</TableHead>
+                            <TableHead className="text-center">المستفيدون</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {prefectureTableData.slice(0, 20).map((pref, idx) => (
+                            <TableRow key={idx}>
+                              <TableCell className="font-medium">{pref.name}</TableCell>
+                              <TableCell className="text-center">{formatNumber(pref.count)}</TableCell>
+                              <TableCell className="text-center">{formatNumber(pref.capacity)}</TableCell>
+                              <TableCell className="text-center">{formatNumber(pref.beneficiaries)}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
           </Tabs>
-
-          {/* Note about extended KPIs */}
-          <Card className="border-border/50 bg-muted/50">
-            <CardContent className="pt-6">
-              <p className="text-sm text-muted-foreground text-center">
-                للحصول على إحصائيات أكثر تفصيلاً (التمويل، الموارد البشرية، المستفيدين حسب المستوى...)، 
-                يرجى تحديث واجهة برمجة التطبيقات الخلفية لتوفير هذه البيانات في نقطة النهاية الإحصائية.
-              </p>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </ProtectedRoute>
