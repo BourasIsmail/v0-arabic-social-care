@@ -376,6 +376,8 @@ export interface InstitutionSummary {
   latitude?: number;
   longitude?: number;
   totalCapacity?: number;
+  milieu?: Milieu;
+  legalStatus?: LegalStatus;
   createdAt: string;
 }
 
