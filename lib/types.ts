@@ -425,6 +425,83 @@ export interface DashboardStats {
   averageCapacity?: number;
   institutionsWithHousing?: number;
   institutionsWithMeals?: number;
+  
+  // Type breakdown by milieu and status
+  typeStats?: {
+    darTalib: { total: number; licensed: number; unlicensed: number; urban: number; rural: number };
+    darTaliba: { total: number; licensed: number; unlicensed: number; urban: number; rural: number };
+    mixed: { total: number; licensed: number; unlicensed: number; urban: number; rural: number };
+  };
+  
+  // Target levels (المستويات المستهدفة)
+  targetLevels?: {
+    primary: number;
+    middleSchool: number;
+    highSchool: number;
+    other: number;
+  };
+  
+  // Building financing (تمويل بناء المؤسسة)
+  buildingFinancing?: {
+    solidarityMinistry: number;
+    nationalEntraide: number;
+    indh: number;
+    commune: number;
+    fondationMohammed5: number;
+    nationalRevival: number;
+    association: number;
+    other: number;
+    totalCost: number;
+  };
+  
+  // Equipment financing (تمويل تجهيز المؤسسة)
+  equipmentFinancing?: {
+    solidarityMinistry: number;
+    nationalEntraide: number;
+    indh: number;
+    commune: number;
+    fondationMohammed5: number;
+    association: number;
+    other: number;
+  };
+  
+  // Operating financing (مصادر تمويل تسيير المؤسسة)
+  operatingFinancing?: {
+    associationShare: number;
+    educationShare: number;
+    otherShare: number;
+    annualManagementCost: number;
+    annualHRCost: number;
+    annualMealsCost: number;
+    individualAnnualCost: number;
+  };
+  
+  // Meal service (خدمة الإطعام)
+  mealService?: {
+    institutionKitchen: number;
+    readyMeals: number;
+    other: number;
+    totalMealBeneficiaries: number;
+  };
+  
+  // Beneficiaries (المستفيدين من الإيواء والإطعام)
+  beneficiaries?: {
+    season2324: { total: number; male: number; female: number; primary: number; middle: number; high: number };
+    season2425: { total: number; male: number; female: number; primary: number; middle: number; high: number };
+    season2526: { total: number; male: number; female: number; primary: number; middle: number; high: number };
+  };
+  
+  // Human resources (الموارد البشرية)
+  humanResources?: {
+    directors: { total: number; cnss: number; smig: number };
+    educators: { total: number; cnss: number; smig: number };
+    cooks: { total: number; cnss: number; smig: number };
+    guards: { total: number; cnss: number; smig: number };
+    other: { total: number; cnss: number; smig: number };
+    totalStaff: number;
+    totalWithCnss: number;
+    totalWithSmig: number;
+  };
 }
 
 // Form step type
