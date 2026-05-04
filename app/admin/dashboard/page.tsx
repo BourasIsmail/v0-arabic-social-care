@@ -2,19 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Bar,
-  BarChart,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Cell,
-  Pie,
-  PieChart,
-  Legend,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -22,39 +9,34 @@ import { useAuth } from "@/lib/auth-context";
 import { useAuthSWR } from "@/lib/use-auth-swr";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { AppHeader } from "@/components/layout/app-header";
-import type { DashboardStats, RegionStats, PrefectureStats, InstitutionSummary, PageResponse } from "@/lib/types";
+import type { DashboardStats, InstitutionSummary, PageResponse } from "@/lib/types";
 import { 
-  Building2, Users, MapPin, CheckCircle, Home, Loader2, UserCog, Utensils, 
-  TrendingUp, Globe, Map, Building, BarChart3, PieChartIcon, AlertTriangle,
-  GraduationCap, Heart, Stethoscope, BookOpen
+  Building2, Users, MapPin, CheckCircle, Home, Loader2, Utensils, 
+  TrendingUp, Globe, Map, Building, BarChart3, GraduationCap, Heart
 } from "lucide-react";
 import { API_ENDPOINTS, buildApiUrl } from "@/lib/api-config";
+import { Progress } from "@/components/ui/progress";
 
-// Chart colors
-const COLORS = {
-  primary: "#2563eb",
-  secondary: "#16a34a", 
-  accent: "#dc2626",
-  muted: "#6b7280",
-  urban: "#3b82f6",
-  rural: "#22c55e",
-  licensed: "#10b981",
-  unlicensed: "#ef4444",
-  inProgress: "#f59e0b",
-  darTalib: "#2563eb",
-  darTaliba: "#ec4899",
-  mixed: "#8b5cf6",
-  housing: "#06b6d4",
-  meals: "#f97316",
-  education: "#8b5cf6",
-  health: "#ef4444",
-  culture: "#14b8a6",
+// Type/Milieu/Status labels
+const typeLabels: Record<string, string> = {
+  DAR_TALIB: "دار الطالب",
+  DAR_TALIBA: "دار الطالبة",
+  DAR_TALIB_TALIBA: "دار الطالب والطالبة",
+  DAR_ATFAL: "دار الأطفال",
 };
 
-const CHART_COLORS = [
-  "#2563eb", "#ec4899", "#8b5cf6", "#10b981", "#f59e0b", 
-  "#06b6d4", "#ef4444", "#84cc16", "#6366f1", "#f43f5e"
-];
+const milieuLabels: Record<string, string> = {
+  URBAN: "حضري",
+  URBAIN: "حضري",
+  RURAL: "قروي",
+  SEMI_URBAN: "شبه حضري",
+};
+
+const statusLabels: Record<string, string> = {
+  LICENSED: "مرخصة",
+  UNLICENSED: "غير مرخصة",
+  IN_PROGRESS: "في طور الترخيص",
+};
 
 export default function AdminDashboardPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -71,7 +53,7 @@ export default function AdminDashboardPage() {
   }, [user, isAuthLoading, router]);
 
   // Fetch dashboard stats
-  const { data: stats, isLoading, error } = useAuthSWR<DashboardStats>(
+  const { data: stats, isLoading } = useAuthSWR<DashboardStats>(
     (user?.role === "ADMIN" || user?.role === "VIEW_ONLY") ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) : null
   );
 
@@ -109,264 +91,235 @@ export default function AdminDashboardPage() {
     return uniquePrefectures.sort();
   }, [institutions, selectedRegion]);
 
-  // Calculate statistics for filtered data
-  const filteredStats = useMemo(() => {
+  // Calculate statistics from filtered data
+  const calculatedStats = useMemo(() => {
     const data = filteredInstitutions;
+    const totalInstitutions = data.length;
+    const totalCapacity = data.reduce((sum, i) => sum + (i.totalCapacity || 0), 0);
+    
+    // Type distribution
+    const typeDistribution = data.reduce((acc, inst) => {
+      const type = inst.institutionType || "OTHER";
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Milieu distribution
+    const milieuDistribution = data.reduce((acc, inst) => {
+      const milieu = inst.milieu || "UNKNOWN";
+      acc[milieu] = (acc[milieu] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Legal status distribution
+    const statusDistribution = data.reduce((acc, inst) => {
+      const status = inst.legalStatus || "UNKNOWN";
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // By region stats
+    const regionStats = data.reduce((acc, inst) => {
+      const region = inst.regionName || "غير محدد";
+      if (!acc[region]) {
+        acc[region] = { count: 0, capacity: 0 };
+      }
+      acc[region].count += 1;
+      acc[region].capacity += inst.totalCapacity || 0;
+      return acc;
+    }, {} as Record<string, { count: number; capacity: number }>);
+
+    // By prefecture stats
+    const prefectureStats = data.reduce((acc, inst) => {
+      const prefecture = inst.prefectureName || "غير محدد";
+      if (!acc[prefecture]) {
+        acc[prefecture] = { count: 0, capacity: 0, region: inst.regionName || "" };
+      }
+      acc[prefecture].count += 1;
+      acc[prefecture].capacity += inst.totalCapacity || 0;
+      return acc;
+    }, {} as Record<string, { count: number; capacity: number; region: string }>);
+
     return {
-      total: data.length,
-      totalCapacity: data.reduce((sum, i) => sum + (i.totalCapacity || 0), 0),
-      darTalib: data.filter(i => i.institutionType === "DAR_TALIB").length,
-      darTaliba: data.filter(i => i.institutionType === "DAR_TALIBA").length,
-      mixed: data.filter(i => i.institutionType === "DAR_TALIB_TALIBA").length,
-      urban: data.filter(i => i.milieu === "URBAIN" || i.milieu === "URBAN").length,
-      rural: data.filter(i => i.milieu === "RURAL").length,
-      licensed: data.filter(i => i.legalStatus === "LICENSED").length,
-      unlicensed: data.filter(i => i.legalStatus === "UNLICENSED").length,
-      inProgress: data.filter(i => i.legalStatus === "IN_PROGRESS").length,
+      totalInstitutions,
+      totalCapacity,
+      typeDistribution,
+      milieuDistribution,
+      statusDistribution,
+      regionStats,
+      prefectureStats,
     };
   }, [filteredInstitutions]);
 
-  // Prepare chart data for regions
-  const regionChartData = useMemo(() => {
-    const regionMap = new Map<string, { count: number; capacity: number }>();
-    institutions.forEach(inst => {
-      if (inst.regionName) {
-        const existing = regionMap.get(inst.regionName) || { count: 0, capacity: 0 };
-        regionMap.set(inst.regionName, {
-          count: existing.count + 1,
-          capacity: existing.capacity + (inst.totalCapacity || 0),
-        });
-      }
-    });
-    return Array.from(regionMap.entries())
-      .map(([name, data]) => ({ name: name.substring(0, 20), fullName: name, ...data }))
-      .sort((a, b) => b.count - a.count);
-  }, [institutions]);
-
-  // Prepare chart data for prefectures (filtered by region if selected)
-  const prefectureChartData = useMemo(() => {
-    const data = selectedRegion !== "all" 
-      ? institutions.filter(i => i.regionName === selectedRegion)
-      : institutions;
-    
-    const prefectureMap = new Map<string, { count: number; capacity: number }>();
-    data.forEach(inst => {
-      if (inst.prefectureName) {
-        const existing = prefectureMap.get(inst.prefectureName) || { count: 0, capacity: 0 };
-        prefectureMap.set(inst.prefectureName, {
-          count: existing.count + 1,
-          capacity: existing.capacity + (inst.totalCapacity || 0),
-        });
-      }
-    });
-    return Array.from(prefectureMap.entries())
-      .map(([name, data]) => ({ name: name.substring(0, 18), fullName: name, ...data }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 15);
-  }, [institutions, selectedRegion]);
-
-  // Type distribution by region
-  const typeByRegionData = useMemo(() => {
-    const regionMap = new Map<string, { darTalib: number; darTaliba: number; mixed: number }>();
-    institutions.forEach(inst => {
-      if (inst.regionName) {
-        const existing = regionMap.get(inst.regionName) || { darTalib: 0, darTaliba: 0, mixed: 0 };
-        if (inst.institutionType === "DAR_TALIB") existing.darTalib++;
-        else if (inst.institutionType === "DAR_TALIBA") existing.darTaliba++;
-        else if (inst.institutionType === "DAR_TALIB_TALIBA") existing.mixed++;
-        regionMap.set(inst.regionName, existing);
-      }
-    });
-    return Array.from(regionMap.entries())
-      .map(([name, data]) => ({ name: name.substring(0, 15), ...data }))
-      .sort((a, b) => (b.darTalib + b.darTaliba + b.mixed) - (a.darTalib + a.darTaliba + a.mixed))
-      .slice(0, 12);
-  }, [institutions]);
-
-  // Milieu distribution by region
-  const milieuByRegionData = useMemo(() => {
-    const regionMap = new Map<string, { urban: number; rural: number }>();
-    institutions.forEach(inst => {
-      if (inst.regionName) {
-        const existing = regionMap.get(inst.regionName) || { urban: 0, rural: 0 };
-        if (inst.milieu === "URBAIN" || inst.milieu === "URBAN") existing.urban++;
-        else if (inst.milieu === "RURAL") existing.rural++;
-        regionMap.set(inst.regionName, existing);
-      }
-    });
-    return Array.from(regionMap.entries())
-      .map(([name, data]) => ({ name: name.substring(0, 15), ...data }))
-      .sort((a, b) => (b.urban + b.rural) - (a.urban + a.rural))
-      .slice(0, 12);
-  }, [institutions]);
-
-  // Capacity comparison by region
-  const capacityByRegionData = useMemo(() => {
-    return regionChartData.slice(0, 12).map(r => ({
-      name: r.name,
-      capacity: r.capacity,
-      avgCapacity: r.count > 0 ? Math.round(r.capacity / r.count) : 0,
-    }));
-  }, [regionChartData]);
+  // Reset prefecture when region changes
+  useEffect(() => {
+    setSelectedPrefecture("all");
+  }, [selectedRegion]);
 
   if (isAuthLoading || isLoading) {
     return (
-      <ProtectedRoute>
-        <div className="min-h-screen bg-background flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-muted-foreground">جاري تحميل لوحة التحكم...</p>
+      <ProtectedRoute allowedRoles={["ADMIN", "VIEW_ONLY"]}>
+        <div className="min-h-screen bg-background">
+          <AppHeader />
+          <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+            <div className="flex flex-col items-center gap-4">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-muted-foreground">جاري تحميل البيانات...</p>
+            </div>
           </div>
         </div>
       </ProtectedRoute>
     );
   }
 
-  if (error) {
-    return (
-      <ProtectedRoute>
-        <div className="min-h-screen bg-background flex items-center justify-center">
-          <Card className="max-w-md">
-            <CardHeader>
-              <CardTitle className="text-destructive">خطأ في التحميل</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>حدث خطأ أثناء تحميل الإحصائيات. يرجى المحاولة مرة أخرى.</p>
-            </CardContent>
-          </Card>
-        </div>
-      </ProtectedRoute>
-    );
-  }
-
-  // Prepare pie chart data
-  const typeDistributionData = [
-    { name: "دار الطالب", value: filteredStats.darTalib, fill: COLORS.darTalib },
-    { name: "دار الطالبة", value: filteredStats.darTaliba, fill: COLORS.darTaliba },
-    { name: "دار الطالب والطالبة", value: filteredStats.mixed, fill: COLORS.mixed },
-  ];
-
-  const milieuData = [
-    { name: "حضري", value: filteredStats.urban, fill: COLORS.urban },
-    { name: "قروي", value: filteredStats.rural, fill: COLORS.rural },
-  ];
-
-  const legalStatusData = [
-    { name: "مرخصة", value: filteredStats.licensed, fill: COLORS.licensed },
-    { name: "غير مرخصة", value: filteredStats.unlicensed, fill: COLORS.unlicensed },
-    { name: "في طور الترخيص", value: filteredStats.inProgress, fill: COLORS.inProgress },
-  ].filter(d => d.value > 0);
-
-
-
-  const renderStatCard = (
-    title: string, 
-    value: number | string, 
-    icon: React.ReactNode, 
-    color: string,
-    subtitle?: string
-  ) => (
-    <Card className="border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-md transition-shadow">
+  // Stats Card Component
+  const StatCard = ({ 
+    title, 
+    value, 
+    icon: Icon, 
+    description,
+    color = "text-primary"
+  }: { 
+    title: string; 
+    value: string | number; 
+    icon: React.ElementType;
+    description?: string;
+    color?: string;
+  }) => (
+    <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <div className={`h-9 w-9 rounded-lg ${color} flex items-center justify-center`}>
-          {icon}
-        </div>
+        <Icon className={`h-5 w-5 ${color}`} />
       </CardHeader>
       <CardContent>
-        <div className="text-3xl font-bold">{typeof value === 'number' ? value.toLocaleString() : value}</div>
-        {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
+        <div className="text-2xl font-bold">{typeof value === 'number' ? value.toLocaleString() : value}</div>
+        {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
       </CardContent>
     </Card>
   );
 
-  const renderPieChart = (data: any[], title: string, description: string) => (
-    <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="text-lg">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[220px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={55}
-                outerRadius={85}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
+  // Distribution Card Component
+  const DistributionCard = ({ 
+    title, 
+    data, 
+    labels,
+    icon: Icon 
+  }: { 
+    title: string; 
+    data: Record<string, number>; 
+    labels: Record<string, string>;
+    icon: React.ElementType;
+  }) => {
+    const total = Object.values(data).reduce((sum, val) => sum + val, 0);
+    const colors = ["bg-blue-500", "bg-pink-500", "bg-purple-500", "bg-green-500", "bg-yellow-500", "bg-cyan-500"];
+    
+    return (
+      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+        <CardHeader className="flex flex-row items-center gap-2">
+          <Icon className="h-5 w-5 text-primary" />
+          <CardTitle className="text-lg">{title}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {Object.entries(data).map(([key, value], index) => {
+            const percentage = total > 0 ? (value / total) * 100 : 0;
+            const label = labels[key] || key;
+            return (
+              <div key={key} className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>{label}</span>
+                  <span className="font-medium">{value} ({percentage.toFixed(1)}%)</span>
+                </div>
+                <Progress value={percentage} className={`h-2 ${colors[index % colors.length]}`} />
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
+    );
+  };
+
+  // Table Card Component for region/prefecture data
+  const StatsTableCard = ({ 
+    title, 
+    data, 
+    showRegion = false,
+    icon: Icon 
+  }: { 
+    title: string; 
+    data: Record<string, { count: number; capacity: number; region?: string }>; 
+    showRegion?: boolean;
+    icon: React.ElementType;
+  }) => {
+    const sortedData = Object.entries(data).sort((a, b) => b[1].count - a[1].count);
+    
+    return (
+      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+        <CardHeader className="flex flex-row items-center gap-2">
+          <Icon className="h-5 w-5 text-primary" />
+          <CardTitle className="text-lg">{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="max-h-[400px] overflow-y-auto">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-card">
+                <tr className="border-b">
+                  <th className="text-right py-2 font-medium">الاسم</th>
+                  {showRegion && <th className="text-right py-2 font-medium">الجهة</th>}
+                  <th className="text-center py-2 font-medium">العدد</th>
+                  <th className="text-center py-2 font-medium">الطاقة</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedData.map(([name, stats]) => (
+                  <tr key={name} className="border-b border-border/30 hover:bg-muted/30">
+                    <td className="py-2">{name}</td>
+                    {showRegion && <td className="py-2 text-muted-foreground text-xs">{stats.region}</td>}
+                    <td className="text-center py-2 font-medium">{stats.count}</td>
+                    <td className="text-center py-2 text-muted-foreground">{stats.capacity.toLocaleString()}</td>
+                  </tr>
                 ))}
-              </Pie>
-              <Tooltip 
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const d = payload[0].payload;
-                    const total = data.reduce((sum, item) => sum + item.value, 0);
-                    const percent = total > 0 ? ((d.value / total) * 100).toFixed(1) : 0;
-                    return (
-                      <div className="bg-background border rounded-lg shadow-lg p-3 text-sm">
-                        <p className="font-medium">{d.name}</p>
-                        <p className="text-muted-foreground">{d.value} مؤسسة ({percent}%)</p>
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="flex flex-wrap justify-center gap-3 mt-2">
-          {data.map((item, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.fill }} />
-              <span className="text-sm">{item.name}: {item.value}</span>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   return (
-    <ProtectedRoute requiredRole="ADMIN">
-      <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background" dir="rtl">
-        <AppHeader subtitle="لوحة التحكم - إحصائيات المؤسسات" />
-
+    <ProtectedRoute allowedRoles={["ADMIN", "VIEW_ONLY"]}>
+      <div className="min-h-screen bg-background">
+        <AppHeader />
         <main className="container mx-auto px-4 py-6">
-          {/* Tabs for different views */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <TabsList className="grid grid-cols-3 w-full sm:w-auto">
-                <TabsTrigger value="global" className="flex items-center gap-2">
-                  <Globe className="h-4 w-4" />
-                  <span className="hidden sm:inline">عام</span>
-                </TabsTrigger>
-                <TabsTrigger value="region" className="flex items-center gap-2">
-                  <Map className="h-4 w-4" />
-                  <span className="hidden sm:inline">حسب الجهة</span>
-                </TabsTrigger>
-                <TabsTrigger value="prefecture" className="flex items-center gap-2">
-                  <Building className="h-4 w-4" />
-                  <span className="hidden sm:inline">حسب الإقليم</span>
-                </TabsTrigger>
-              </TabsList>
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold">لوحة المعلومات</h1>
+            <p className="text-muted-foreground">إحصائيات شاملة حول المؤسسات</p>
+          </div>
 
-              {/* Filters */}
-              <div className="flex gap-3 w-full sm:w-auto">
-                {(activeTab === "region" || activeTab === "prefecture") && (
-                  <Select value={selectedRegion} onValueChange={(val) => {
-                    setSelectedRegion(val);
-                    setSelectedPrefecture("all");
-                  }}>
-                    <SelectTrigger className="w-full sm:w-[200px]">
-                      <SelectValue placeholder="اختر ال��هة" />
+          <Tabs value={activeTab} onValueChange={setActiveTab} dir="rtl">
+            <TabsList className="mb-6">
+              <TabsTrigger value="global" className="flex items-center gap-2">
+                <Globe className="h-4 w-4" />
+                عام
+              </TabsTrigger>
+              <TabsTrigger value="region" className="flex items-center gap-2">
+                <Map className="h-4 w-4" />
+                حسب الجهة
+              </TabsTrigger>
+              <TabsTrigger value="prefecture" className="flex items-center gap-2">
+                <Building className="h-4 w-4" />
+                حسب الإقليم
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Filters */}
+            {(activeTab === "region" || activeTab === "prefecture") && (
+              <div className="flex flex-wrap gap-4 mb-6">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium">الجهة:</label>
+                  <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="جميع الجهات" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">جميع الجهات</SelectItem>
@@ -375,483 +328,251 @@ export default function AdminDashboardPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                )}
+                </div>
+
                 {activeTab === "prefecture" && (
-                  <Select value={selectedPrefecture} onValueChange={setSelectedPrefecture}>
-                    <SelectTrigger className="w-full sm:w-[200px]">
-                      <SelectValue placeholder="اختر الإقليم" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">جميع الأقاليم</SelectItem>
-                      {prefectures.map(prefecture => (
-                        <SelectItem key={prefecture} value={prefecture!}>{prefecture}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium">الإقليم:</label>
+                    <Select value={selectedPrefecture} onValueChange={setSelectedPrefecture}>
+                      <SelectTrigger className="w-[200px]">
+                        <SelectValue placeholder="جميع الأقاليم" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">جميع الأقاليم</SelectItem>
+                        {prefectures.map(pref => (
+                          <SelectItem key={pref} value={pref!}>{pref}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 )}
               </div>
-            </div>
+            )}
 
-            {/* Global View */}
+            {/* Global Tab */}
             <TabsContent value="global" className="space-y-6">
-              {/* Summary Cards Row 1 */}
-              <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-                {renderStatCard(
-                  "إجمالي المؤسسات",
-                  stats?.totalInstitutions || 0,
-                  <Building2 className="h-5 w-5 text-primary" />,
-                  "bg-primary/10"
-                )}
-                {renderStatCard(
-                  "الطاقة الاستيعابية",
-                  stats?.totalCapacity || 0,
-                  <Home className="h-5 w-5 text-green-600" />,
-                  "bg-green-500/10",
-                  `معدل ${stats?.averageCapacity?.toLocaleString() || 0} لكل مؤسسة`
-                )}
-                {renderStatCard(
-                  "المستفيدون",
-                  stats?.totalBeneficiaries || 0,
-                  <Users className="h-5 w-5 text-blue-600" />,
-                  "bg-blue-500/10"
-                )}
-                {renderStatCard(
-                  "المؤسسات المرخصة",
-                  stats?.licensedCount || 0,
-                  <CheckCircle className="h-5 w-5 text-emerald-600" />,
-                  "bg-emerald-500/10",
-                  `${stats?.totalInstitutions ? Math.round((stats.licensedCount || 0) / stats.totalInstitutions * 100) : 0}% من المؤسسات`
-                )}
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard 
+                  title="إجمالي المؤسسات" 
+                  value={stats?.totalInstitutions || calculatedStats.totalInstitutions} 
+                  icon={Building2}
+                  color="text-blue-500"
+                />
+                <StatCard 
+                  title="الطاقة الاستيعابية الإجمالية" 
+                  value={stats?.totalCapacity || calculatedStats.totalCapacity} 
+                  icon={Users}
+                  color="text-green-500"
+                />
+                <StatCard 
+                  title="عدد الجهات" 
+                  value={regions.length} 
+                  icon={Map}
+                  color="text-purple-500"
+                />
+                <StatCard 
+                  title="عدد الأقاليم" 
+                  value={Object.keys(calculatedStats.prefectureStats).length} 
+                  icon={MapPin}
+                  color="text-orange-500"
+                />
               </div>
 
-              {/* Summary Cards Row 2 */}
-              <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-                {renderStatCard(
-                  "إجمالي الموظفين",
-                  stats?.totalStaffCount || 0,
-                  <UserCog className="h-5 w-5 text-orange-600" />,
-                  "bg-orange-500/10"
-                )}
-                {renderStatCard(
-                  "مؤسسات بالإيواء",
-                  stats?.institutionsWithHousing || 0,
-                  <Home className="h-5 w-5 text-cyan-600" />,
-                  "bg-cyan-500/10",
-                  `${stats?.totalInstitutions ? Math.round((stats.institutionsWithHousing || 0) / stats.totalInstitutions * 100) : 0}% من المؤسسات`
-                )}
-                {renderStatCard(
-                  "مؤسسات بالإطعام",
-                  stats?.institutionsWithMeals || 0,
-                  <Utensils className="h-5 w-5 text-amber-600" />,
-                  "bg-amber-500/10",
-                  `${stats?.totalInstitutions ? Math.round((stats.institutionsWithMeals || 0) / stats.totalInstitutions * 100) : 0}% من المؤسسات`
-                )}
-                {renderStatCard(
-                  "غير مرخصة",
-                  stats?.unlicensedCount || 0,
-                  <AlertTriangle className="h-5 w-5 text-red-600" />,
-                  "bg-red-500/10",
-                  `${stats?.totalInstitutions ? Math.round((stats.unlicensedCount || 0) / stats.totalInstitutions * 100) : 0}% تحتاج ترخيص`
-                )}
+              {/* Distribution Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <DistributionCard 
+                  title="التوزيع حسب النوع" 
+                  data={calculatedStats.typeDistribution}
+                  labels={typeLabels}
+                  icon={Building2}
+                />
+                <DistributionCard 
+                  title="التوزيع حسب الوسط" 
+                  data={calculatedStats.milieuDistribution}
+                  labels={milieuLabels}
+                  icon={Home}
+                />
+                <DistributionCard 
+                  title="التوزيع حسب الوضعية القانونية" 
+                  data={calculatedStats.statusDistribution}
+                  labels={statusLabels}
+                  icon={CheckCircle}
+                />
               </div>
 
-              {/* Type Distribution Cards */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <Card className="border-border/50 bg-card/80 backdrop-blur-sm border-r-4 border-r-blue-500">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-muted-foreground">دور الطالب</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-blue-600">{stats?.darTalibCount || 0}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {stats?.totalInstitutions ? Math.round((stats.darTalibCount || 0) / stats.totalInstitutions * 100) : 0}%
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-border/50 bg-card/80 backdrop-blur-sm border-r-4 border-r-pink-500">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-muted-foreground">دور الطالبة</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-pink-600">{stats?.darTalibaCount || 0}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {stats?.totalInstitutions ? Math.round((stats.darTalibaCount || 0) / stats.totalInstitutions * 100) : 0}%
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-border/50 bg-card/80 backdrop-blur-sm border-r-4 border-r-violet-500">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-muted-foreground">دار الطالب والطالبة</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-violet-600">{stats?.mixedCount || 0}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {stats?.totalInstitutions ? Math.round((stats.mixedCount || 0) / stats.totalInstitutions * 100) : 0}%
-                    </p>
-                  </CardContent>
-                </Card>
+              {/* Tables */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <StatsTableCard 
+                  title="إحصائيات الجهات" 
+                  data={calculatedStats.regionStats}
+                  icon={Map}
+                />
+                <StatsTableCard 
+                  title="أعلى 20 إقليم" 
+                  data={Object.fromEntries(
+                    Object.entries(calculatedStats.prefectureStats)
+                      .sort((a, b) => b[1].count - a[1].count)
+                      .slice(0, 20)
+                  )}
+                  showRegion
+                  icon={Building}
+                />
               </div>
-
-              {/* Charts Row */}
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {renderPieChart(typeDistributionData, "توزيع المؤسسات حسب النوع", "دار الطالب، دار الطالبة، ومختلطة")}
-                {renderPieChart(milieuData, "التوزيع حسب الوسط", "حضري وقروي")}
-                {renderPieChart(legalStatusData, "الوضع القانوني", "حالة الترخيص")}
-              </div>
-
-              {/* Region Bar Chart */}
-              <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>المؤسسات حسب الجهة</CardTitle>
-                  <CardDescription>عدد المؤسسات في كل جهة</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[400px]"><ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={regionChartData}
-                      layout="vertical"
-                      margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                      <XAxis type="number" />
-                      <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11 }} />
-                      <Tooltip 
-                        content={({ active, payload }) => {
-                          if (active && payload && payload.length) {
-                            const d = payload[0].payload;
-                            return (
-                              <div className="bg-background border rounded-lg shadow-lg p-3 text-sm">
-                                <p className="font-medium">{d.fullName}</p>
-                                <p className="text-muted-foreground">عدد المؤسسات: {d.count}</p>
-                                <p className="text-muted-foreground">الطاقة الاستيعابية: {d.capacity?.toLocaleString()}</p>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                      <Bar dataKey="count" name="عدد المؤسسات" fill={COLORS.primary} radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer></div>
-                </CardContent>
-              </Card>
-
-              {/* Type by Region Stacked Bar */}
-              <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>توزيع أنواع المؤسسات حسب الجهة</CardTitle>
-                  <CardDescription>مقارنة أنواع المؤسسات في كل جهة</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[400px]"><ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={typeByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="darTalib" name="دار الطالب" stackId="a" fill={COLORS.darTalib} />
-                      <Bar dataKey="darTaliba" name="دار الطالبة" stackId="a" fill={COLORS.darTaliba} />
-                      <Bar dataKey="mixed" name="دار الطالب والطالبة" stackId="a" fill={COLORS.mixed} />
-                    </BarChart>
-                  </ResponsiveContainer></div>
-                </CardContent>
-              </Card>
-
-              {/* Milieu by Region */}
-              <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>توزيع الوسط حسب الجهة</CardTitle>
-                  <CardDescription>مقارنة المؤسسات الحضرية والقروية في كل جهة</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[400px]"><ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={milieuByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="urban" name="حضري" fill={COLORS.urban} />
-                      <Bar dataKey="rural" name="قروي" fill={COLORS.rural} />
-                    </BarChart>
-                  </ResponsiveContainer></div>
-                </CardContent>
-              </Card>
-
-              {/* Capacity by Region */}
-              <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>الطاقة الاستيعابية حسب الجهة</CardTitle>
-                  <CardDescription>إجمالي ومتوسط الطاقة الاستيعابية</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[400px]"><ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={capacityByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
-                      <YAxis yAxisId="left" orientation="left" />
-                      <YAxis yAxisId="right" orientation="right" />
-                      <Tooltip />
-                      <Legend />
-                      <Bar yAxisId="left" dataKey="capacity" name="إجمالي الطاقة" fill={COLORS.primary} />
-                      <Bar yAxisId="right" dataKey="avgCapacity" name="متوسط الطاقة" fill={COLORS.secondary} />
-                    </BarChart>
-                  </ResponsiveContainer></div>
-                </CardContent>
-              </Card>
             </TabsContent>
 
-            {/* Region View */}
+            {/* Region Tab */}
             <TabsContent value="region" className="space-y-6">
               {/* Summary for selected region */}
-              <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-                {renderStatCard(
-                  "عدد المؤسسات",
-                  filteredStats.total,
-                  <Building2 className="h-5 w-5 text-primary" />,
-                  "bg-primary/10"
-                )}
-                {renderStatCard(
-                  "الطاقة الاستيعابية",
-                  filteredStats.totalCapacity,
-                  <Home className="h-5 w-5 text-green-600" />,
-                  "bg-green-500/10",
-                  filteredStats.total > 0 ? `معدل ${Math.round(filteredStats.totalCapacity / filteredStats.total)} لكل مؤسسة` : undefined
-                )}
-                {renderStatCard(
-                  "مرخصة",
-                  filteredStats.licensed,
-                  <CheckCircle className="h-5 w-5 text-emerald-600" />,
-                  "bg-emerald-500/10",
-                  `${filteredStats.total > 0 ? Math.round(filteredStats.licensed / filteredStats.total * 100) : 0}%`
-                )}
-                {renderStatCard(
-                  "غير مرخصة",
-                  filteredStats.unlicensed,
-                  <AlertTriangle className="h-5 w-5 text-red-600" />,
-                  "bg-red-500/10",
-                  `${filteredStats.total > 0 ? Math.round(filteredStats.unlicensed / filteredStats.total * 100) : 0}%`
-                )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard 
+                  title="عدد المؤسسات" 
+                  value={calculatedStats.totalInstitutions} 
+                  icon={Building2}
+                  description={selectedRegion === "all" ? "جميع الجهات" : selectedRegion}
+                  color="text-blue-500"
+                />
+                <StatCard 
+                  title="الطاقة الاستيعابية" 
+                  value={calculatedStats.totalCapacity} 
+                  icon={Users}
+                  color="text-green-500"
+                />
+                <StatCard 
+                  title="متوسط الطاقة لكل مؤسسة" 
+                  value={calculatedStats.totalInstitutions > 0 
+                    ? Math.round(calculatedStats.totalCapacity / calculatedStats.totalInstitutions) 
+                    : 0} 
+                  icon={TrendingUp}
+                  color="text-purple-500"
+                />
+                <StatCard 
+                  title="عدد الأقاليم" 
+                  value={Object.keys(calculatedStats.prefectureStats).length} 
+                  icon={MapPin}
+                  color="text-orange-500"
+                />
               </div>
 
-              {/* Charts */}
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {renderPieChart(typeDistributionData, "توزيع المؤسسات حسب النوع", selectedRegion === "all" ? "جميع الجهات" : selectedRegion)}
-                {renderPieChart(milieuData, "التوزيع حسب الوسط", "حضري وقروي")}
-                {renderPieChart(legalStatusData, "الوضع القانوني", "حالة الترخيص")}
+              {/* Distribution Cards for selected region */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <DistributionCard 
+                  title="التوزيع حسب النوع" 
+                  data={calculatedStats.typeDistribution}
+                  labels={typeLabels}
+                  icon={Building2}
+                />
+                <DistributionCard 
+                  title="التوزيع حسب الوسط" 
+                  data={calculatedStats.milieuDistribution}
+                  labels={milieuLabels}
+                  icon={Home}
+                />
+                <DistributionCard 
+                  title="التوزيع حسب الوضعية" 
+                  data={calculatedStats.statusDistribution}
+                  labels={statusLabels}
+                  icon={CheckCircle}
+                />
               </div>
 
               {/* Prefecture breakdown for selected region */}
-              <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>المؤسسات حسب الإقليم</CardTitle>
-                  <CardDescription>
-                    {selectedRegion === "all" ? "جميع الأقاليم (أعلى 15)" : `أقاليم ${selectedRegion}`}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[400px]"><ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={prefectureChartData}
-                      layout="vertical"
-                      margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                      <XAxis type="number" />
-                      <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11 }} />
-                      <Tooltip 
-                        content={({ active, payload }) => {
-                          if (active && payload && payload.length) {
-                            const d = payload[0].payload;
-                            return (
-                              <div className="bg-background border rounded-lg shadow-lg p-3 text-sm">
-                                <p className="font-medium">{d.fullName}</p>
-                                <p className="text-muted-foreground">عدد المؤسسات: {d.count}</p>
-                                <p className="text-muted-foreground">الطاقة الاستيعابية: {d.capacity?.toLocaleString()}</p>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                        />
-                      <Bar dataKey="count" name="عدد المؤسسات" fill={COLORS.primary} radius={[0, 4, 4, 0]}>
-                        {prefectureChartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer></div>
-                </CardContent>
-              </Card>
-
-              {/* Prefecture Table */}
-              <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>تفاصيل الأقاليم</CardTitle>
-                  <CardDescription>جدول تفصيلي للمؤسسات في كل إقليم</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="text-right py-3 px-4 font-medium">الإقليم</th>
-                          <th className="text-right py-3 px-4 font-medium">عدد المؤسسات</th>
-                          <th className="text-right py-3 px-4 font-medium">الطاقة الاستيعابية</th>
-                          <th className="text-right py-3 px-4 font-medium">متوسط الطاقة</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {prefectureChartData.map((pref, idx) => (
-                          <tr key={idx} className="border-b hover:bg-muted/30">
-                            <td className="py-3 px-4 font-medium">{pref.fullName}</td>
-                            <td className="py-3 px-4">{pref.count}</td>
-                            <td className="py-3 px-4">{pref.capacity?.toLocaleString()}</td>
-                            <td className="py-3 px-4">{pref.count > 0 ? Math.round(pref.capacity / pref.count) : 0}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
+              <StatsTableCard 
+                title="الأقاليم في الجهة المختارة" 
+                data={calculatedStats.prefectureStats}
+                showRegion={selectedRegion === "all"}
+                icon={Building}
+              />
             </TabsContent>
 
-            {/* Prefecture View */}
+            {/* Prefecture Tab */}
             <TabsContent value="prefecture" className="space-y-6">
               {/* Summary for selected prefecture */}
-              <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-                {renderStatCard(
-                  "عدد المؤسسات",
-                  filteredStats.total,
-                  <Building2 className="h-5 w-5 text-primary" />,
-                  "bg-primary/10"
-                )}
-                {renderStatCard(
-                  "الطاقة الاستيعابية",
-                  filteredStats.totalCapacity,
-                  <Home className="h-5 w-5 text-green-600" />,
-                  "bg-green-500/10"
-                )}
-                {renderStatCard(
-                  "مرخصة",
-                  filteredStats.licensed,
-                  <CheckCircle className="h-5 w-5 text-emerald-600" />,
-                  "bg-emerald-500/10"
-                )}
-                {renderStatCard(
-                  "غير مرخصة",
-                  filteredStats.unlicensed,
-                  <AlertTriangle className="h-5 w-5 text-red-600" />,
-                  "bg-red-500/10"
-                )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard 
+                  title="عدد المؤسسات" 
+                  value={calculatedStats.totalInstitutions} 
+                  icon={Building2}
+                  description={selectedPrefecture === "all" 
+                    ? (selectedRegion === "all" ? "جميع الأقاليم" : `أقاليم ${selectedRegion}`)
+                    : selectedPrefecture}
+                  color="text-blue-500"
+                />
+                <StatCard 
+                  title="الطاقة الاستيعابية" 
+                  value={calculatedStats.totalCapacity} 
+                  icon={Users}
+                  color="text-green-500"
+                />
+                <StatCard 
+                  title="متوسط الطاقة لكل مؤسسة" 
+                  value={calculatedStats.totalInstitutions > 0 
+                    ? Math.round(calculatedStats.totalCapacity / calculatedStats.totalInstitutions) 
+                    : 0} 
+                  icon={TrendingUp}
+                  color="text-purple-500"
+                />
+                <StatCard 
+                  title="عدد الجماعات" 
+                  value={[...new Set(filteredInstitutions.map(i => i.communeName).filter(Boolean))].length} 
+                  icon={MapPin}
+                  color="text-orange-500"
+                />
               </div>
 
-              {/* Type breakdown cards */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <Card className="border-border/50 bg-card/80 backdrop-blur-sm border-r-4 border-r-blue-500">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-muted-foreground">دور الطالب</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-blue-600">{filteredStats.darTalib}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {filteredStats.total > 0 ? Math.round(filteredStats.darTalib / filteredStats.total * 100) : 0}%
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-border/50 bg-card/80 backdrop-blur-sm border-r-4 border-r-pink-500">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-muted-foreground">دور الطالبة</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-pink-600">{filteredStats.darTaliba}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {filteredStats.total > 0 ? Math.round(filteredStats.darTaliba / filteredStats.total * 100) : 0}%
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-border/50 bg-card/80 backdrop-blur-sm border-r-4 border-r-violet-500">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-muted-foreground">دار الطالب والطالبة</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-violet-600">{filteredStats.mixed}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {filteredStats.total > 0 ? Math.round(filteredStats.mixed / filteredStats.total * 100) : 0}%
-                    </p>
-                  </CardContent>
-                </Card>
+              {/* Distribution Cards for selected prefecture */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <DistributionCard 
+                  title="التوزيع حسب النوع" 
+                  data={calculatedStats.typeDistribution}
+                  labels={typeLabels}
+                  icon={Building2}
+                />
+                <DistributionCard 
+                  title="التوزيع حسب الوسط" 
+                  data={calculatedStats.milieuDistribution}
+                  labels={milieuLabels}
+                  icon={Home}
+                />
+                <DistributionCard 
+                  title="التوزيع حسب الوضعية" 
+                  data={calculatedStats.statusDistribution}
+                  labels={statusLabels}
+                  icon={CheckCircle}
+                />
               </div>
 
-              {/* Charts */}
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {renderPieChart(typeDistributionData, "توزيع المؤسسات حسب النوع", selectedPrefecture === "all" ? (selectedRegion === "all" ? "جميع الأقاليم" : selectedRegion) : selectedPrefecture)}
-                {renderPieChart(milieuData, "التوزيع حسب الوسط", "حضري وقروي")}
-                {renderPieChart(legalStatusData, "الوضع القانوني", "حالة الترخيص")}
-              </div>
-
-              {/* Institutions List */}
-              {filteredInstitutions.length > 0 && (
+              {/* Institution list for selected prefecture */}
+              {selectedPrefecture !== "all" && (
                 <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
                   <CardHeader>
-                    <CardTitle>قائمة المؤسسات</CardTitle>
-                    <CardDescription>
-                      {selectedPrefecture !== "all" ? selectedPrefecture : (selectedRegion !== "all" ? selectedRegion : "جميع المؤسسات")} - {filteredInstitutions.length} مؤسسة
-                    </CardDescription>
+                    <CardTitle className="flex items-center gap-2">
+                      <Building2 className="h-5 w-5 text-primary" />
+                      قائمة المؤسسات في {selectedPrefecture}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="overflow-x-auto">
+                    <div className="max-h-[400px] overflow-y-auto">
                       <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b bg-muted/50">
-                            <th className="text-right py-3 px-4 font-medium">اسم المؤسسة</th>
-                            <th className="text-right py-3 px-4 font-medium">النوع</th>
-                            <th className="text-right py-3 px-4 font-medium">الجماعة</th>
-                            <th className="text-right py-3 px-4 font-medium">الطاقة</th>
-                            <th className="text-right py-3 px-4 font-medium">الوضع القانوني</th>
+                        <thead className="sticky top-0 bg-card">
+                          <tr className="border-b">
+                            <th className="text-right py-2 font-medium">اسم المؤسسة</th>
+                            <th className="text-right py-2 font-medium">النوع</th>
+                            <th className="text-right py-2 font-medium">الجماعة</th>
+                            <th className="text-center py-2 font-medium">الطاقة</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredInstitutions.slice(0, 20).map((inst) => (
-                            <tr key={inst.id} className="border-b hover:bg-muted/30">
-                              <td className="py-3 px-4 font-medium">{inst.institutionName}</td>
-                              <td className="py-3 px-4">
-                                <span className={`inline-flex px-2 py-1 rounded-full text-xs ${
-                                  inst.institutionType === "DAR_TALIB" ? "bg-blue-100 text-blue-700" :
-                                  inst.institutionType === "DAR_TALIBA" ? "bg-pink-100 text-pink-700" :
-                                  "bg-violet-100 text-violet-700"
-                                }`}>
-                                  {inst.institutionType === "DAR_TALIB" ? "دار الطالب" :
-                                   inst.institutionType === "DAR_TALIBA" ? "دار الطالبة" : "دار الطالب والطالبة"}
-                                </span>
-                              </td>
-                              <td className="py-3 px-4">{inst.communeName || "—"}</td>
-                              <td className="py-3 px-4">{inst.totalCapacity || 0}</td>
-                              <td className="py-3 px-4">
-                                <span className={`inline-flex px-2 py-1 rounded-full text-xs ${
-                                  inst.legalStatus === "LICENSED" ? "bg-green-100 text-green-700" :
-                                  inst.legalStatus === "IN_PROGRESS" ? "bg-yellow-100 text-yellow-700" :
-                                  "bg-red-100 text-red-700"
-                                }`}>
-                                  {inst.legalStatus === "LICENSED" ? "مرخصة" :
-                                   inst.legalStatus === "IN_PROGRESS" ? "في طور الترخيص" : "غير مرخصة"}
-                                </span>
-                              </td>
+                          {filteredInstitutions.map((inst) => (
+                            <tr key={inst.id} className="border-b border-border/30 hover:bg-muted/30">
+                              <td className="py-2">{inst.institutionName}</td>
+                              <td className="py-2 text-muted-foreground">{typeLabels[inst.institutionType] || inst.institutionType}</td>
+                              <td className="py-2 text-muted-foreground">{inst.communeName || "—"}</td>
+                              <td className="text-center py-2 font-medium">{inst.totalCapacity || 0}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
-                      {filteredInstitutions.length > 20 && (
-                        <p className="text-center text-muted-foreground py-4">
-                          عرض أول 20 مؤسسة من أصل {filteredInstitutions.length}
-                        </p>
-                      )}
                     </div>
                   </CardContent>
                 </Card>
