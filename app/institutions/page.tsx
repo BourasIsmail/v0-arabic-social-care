@@ -254,176 +254,274 @@ export default function InstitutionsPage() {
         index === self.findIndex(i => i.id === inst.id)
       );
 
-      // Helper functions for label lookups
-      const yesNo = (val?: boolean) => val ? "نعم" : "لا";
-      const getLabel = <T extends string>(labels: Record<T, string>, val?: T) => val ? (labels[val] || val) : "";
+      // Labels matching PDF generator exactly
+      const pdfLabels = {
+        institutionType: {
+          DAR_TALIB: 'دار الطالب',
+          DAR_TALIBA: 'دار الطالبة',
+          DAR_TALIB_TALIBA: 'دار الطالب والطالبة',
+          DAR_ATFAL: 'دار الأطفال',
+        } as Record<string, string>,
+        milieu: {
+          URBAIN: 'حضري',
+          URBAN: 'حضري',
+          RURAL: 'قروي',
+          SEMI_URBAN: 'شبه حضري',
+        } as Record<string, string>,
+        legalStatus: {
+          LICENSED: 'مرخصة',
+          UNLICENSED: 'غير مرخصة',
+          IN_PROGRESS: 'في طور الترخيص',
+        } as Record<string, string>,
+        distance: {
+          INSIDE: 'داخل المؤسسة التعليمية',
+          LESS_THAN_1KM: 'أقل من 1 كلم',
+          LT_1KM: 'أقل من 1 كلم',
+          BETWEEN_1_5KM: 'بين 1 و 5 كلم',
+          BETWEEN_5_10KM: 'بين 5 و 10 كلم',
+          GT_5KM: 'أكثر من 5 كلم',
+          MORE_THAN_10KM: 'أكثر من 10 كلم',
+        } as Record<string, string>,
+        buildingStatus: {
+          RENTAL: 'إيجار',
+          OWNED: 'ملكية',
+          AT_DISPOSAL: 'وضع رهن إشارة المؤسسة',
+          LENT: 'معار',
+          OTHER: 'آخر',
+        } as Record<string, string>,
+        buildingCondition: {
+          GOOD: 'جيدة',
+          AVERAGE: 'بعض علامات التدهور',
+          SOME_DEGRADATION: 'بعض علامات التدهور',
+          POOR: 'متردية',
+          BAD: 'متردية',
+        } as Record<string, string>,
+        renovationCapability: {
+          EASY: 'سهلة',
+          DIFFICULT: 'صعبة',
+          NEEDS_RECONSTRUCTION: 'تتطلب إعادة البناء',
+          REBUILD: 'تتطلب إعادة البناء',
+        } as Record<string, string>,
+        landOwnership: {
+          STATE: 'أملاك الدولة',
+          STATE_DOMAIN: 'الملك العام للدولة',
+          COLLECTIVE: 'ملك جماعي',
+          COMMUNAL: 'جماعي',
+          PRIVATE: 'ملك خصوصي',
+          OTHER: 'آخر',
+        } as Record<string, string>,
+        mealType: {
+          IN_HOUSE: 'إعداد الوجبات في مطبخ المؤسسة',
+          READY_MEALS: 'وجبات جاهزة',
+          OTHER: 'آخر',
+        } as Record<string, string>,
+        selectionBody: {
+          ASSOCIATION_ALONE: 'الجمعية بمفردها',
+          COMMISSION: 'لجنة مختلطة',
+          OTHER: 'آخر',
+        } as Record<string, string>,
+      };
 
-      // CSV headers in Arabic - comprehensive list
+      // Helper functions matching PDF generator exactly
+      const getDisplayValue = (value: any, defaultValue: string = '—'): string => {
+        if (value === undefined || value === null || value === '') return defaultValue;
+        return String(value);
+      };
+      const getCheckbox = (val?: boolean) => val ? "☑" : "☐";
+      const getLabel = (labelMap: Record<string, string>, val?: string) => val ? (labelMap[val] || val) : "—";
+
+      // Headers matching PDF sections exactly
       const headers = [
-        // Basic Info
+        // Section I: معطيات حول المؤسسة
+        "نوعية المؤسسة",
+        "اسم الجمعية المشرفة",
         "اسم المؤسسة",
-        "اسم الجمعية",
-        "نوع المؤسسة",
         "العنوان",
         "الجهة",
-        "العمالة/الإقليم",
+        "العمالة أو الإقليم",
         "الجماعة",
-        "الوسط",
-        "خط العرض",
-        "خط الطول",
-        "سنة الإنشاء",
-        "الوضعية القانونية",
-        "رقم الترخيص",
-        "تاريخ بداية الخدمة",
-        // Services
+        "المجال",
+        "الإحداثيات (خط العرض)",
+        "الإحداثيات (خط الطول)",
+        "سنة إحداث المؤسسة",
+        "الوضعية القانونية للمؤسسة",
+        "رقم وتاريخ الرخصة",
+        "تاريخ شروع المؤسسة في تقديم خدماتها",
+        // الخدمات المقدمة
         "الإيواء",
         "الإطعام",
-        "الدعم التربوي",
-        "الأنشطة الثقافية",
-        "الرعاية الصحية",
-        "التأمين",
-        "الدعم النفسي",
-        // Capacity
-        "الطاقة الاستيعابية الإجمالية",
-        "طاقة الذكور",
-        "طاقة الإناث",
-        // Target Levels
-        "الابتدائي",
-        "الإعدادي",
-        "الثانوي",
+        "التتبع التربوي والمواكبة الاجتماعية",
+        "التنشيط الثقافي والرياضي والترفيهي",
+        "العلاجات الصحية الأولية",
+        "الدعم والمواكبة الطبية والنفسية",
+        // الطاقة الاستيعابية
+        "الطاقة الاستيعابية الإجمالية المرخصة",
+        "الطاقة الاستيعابية المرخصة ذكور",
+        "الطاقة الاستيعابية المرخصة إناث",
+        // السلك التعليمي
+        "ابتدائي",
+        "ثانوي إعدادي",
+        "ثانوي تأهيلي",
         "آخر",
-        // Distance
-        "المسافة إلى المؤسسة التعليمية",
-        "المسافة إلى الداخلية الوطنية",
-        // Building
+        // البعد الجغرافي
+        "البعد الجغرافي عن أقرب مؤسسة تعليمية",
+        "البعد الجغرافي عن أقرب داخلية تابعة لقطاع التربية الوطنية",
+        // Section II: معطيات حول البناية
         "وضعية البناية",
-        "حالة البناية",
-        "قابلية التجديد",
+        "الحالة العامة للبناية",
+        "إمكانية الترميم",
         "نوع المالك",
-        "اتفاقية شراكة",
-        // Season 2023-2024
-        "المستفيدون 2023-2024 (إجمالي)",
-        "المستفيدون 2023-2024 (ذكور)",
-        "المستفيدون 2023-2024 (إناث)",
-        "المستفيدون 2023-2024 (ابتدائي)",
-        "المستفيدون 2023-2024 (إعدادي)",
-        "المستفيدون 2023-2024 (ثانوي)",
-        // Season 2024-2025
-        "المستفيدون 2024-2025 (إجمالي)",
-        "المستفيدون 2024-2025 (ذكور)",
-        "المستفيدون 2024-2025 (إناث)",
-        "المستفيدون 2024-2025 (ابتدائي)",
-        "المستفيدون 2024-2025 (إعدادي)",
-        "المستفيدون 2024-2025 (ثانوي)",
-        // Season 2025-2026
-        "المستفيدون 2025-2026 (إجمالي)",
-        "المستفيدون 2025-2026 (ذكور)",
-        "المستفيدون 2025-2026 (إناث)",
-        "المستفيدون 2025-2026 (ابتدائي)",
-        "المستفيدون 2025-2026 (إعدادي)",
-        "المستفيدون 2025-2026 (ثانوي)",
-        // Meals
+        "وجود اتفاقية شراكة",
+        // Section III: الإيواء والإطعام - الموسم 2023-2024
+        "المستفيدون من الإيواء 2023-2024 (إجمالي)",
+        "المستفيدون من الإيواء 2023-2024 (ذكور)",
+        "المستفيدون من الإيواء 2023-2024 (إناث)",
+        "المستفيدون من الإيواء 2023-2024 (ابتدائي)",
+        "المستفيدون من الإيواء 2023-2024 (إعدادي)",
+        "المستفيدون من الإيواء 2023-2024 (تأهيلي)",
+        // الموسم 2024-2025
+        "المستفيدون من الإيواء 2024-2025 (إجمالي)",
+        "المستفيدون من الإيواء 2024-2025 (ذكور)",
+        "المستفيدون من الإيواء 2024-2025 (إناث)",
+        "المستفيدون من الإيواء 2024-2025 (ابتدائي)",
+        "المستفيدون من الإيواء 2024-2025 (إعدادي)",
+        "المستفيدون من الإيواء 2024-2025 (تأهيلي)",
+        // الموسم 2025-2026
+        "المستفيدون من الإيواء 2025-2026 (إجمالي)",
+        "المستفيدون من الإيواء 2025-2026 (ذكور)",
+        "المستفيدون من الإيواء 2025-2026 (إناث)",
+        "المستفيدون من الإيواء 2025-2026 (ابتدائي)",
+        "المستفيدون من الإيواء 2025-2026 (إعدادي)",
+        "المستفيدون من الإيواء 2025-2026 (تأهيلي)",
+        // الإطعام
         "المستفيدون من الإطعام 2025-2026",
-        "نوع خدمة الإطعام",
-        // Targeting
-        "هيئة الانتقاء",
-        "الخدمات مجانية",
-        "نوع التعريفة",
-        "الطلبات غير الملباة",
-        // Financing
-        "تكلفة البناء الإجمالية",
-        "التكلفة السنوية للتسيير",
-        "التكلفة السنوية للموارد البشرية",
-        "التكلفة السنوية للوجبات",
-        "المصاريف السنوية الأخرى",
-        "التكلفة الفردية السنوية",
-        // Dates
-        "تاريخ الإنشاء",
-        "تاريخ التحديث"
+        "كيفية تقديم الوجبات",
+        // Section IV: الاستهداف
+        "معايير الانتقاء - الوضعية الاجتماعية",
+        "معايير الانتقاء - البعد عن المؤسسة التعليمية",
+        "معايير الانتقاء - النتائج الدراسية",
+        "معايير الانتقاء - الحصول على منحة",
+        "معايير الانتقاء - أخرى",
+        "الجهة المكلفة بالانتقاء",
+        "هل الخدمات مجانية",
+        "عدد الطلبات غير الملباة",
+        // Section V: التمويل
+        "تمويل البناء - وزارة التضامن",
+        "تمويل البناء - التعاون الوطني",
+        "تمويل البناء - المبادرة الوطنية للتنمية البشرية",
+        "تمويل البناء - الجماعة",
+        "تمويل البناء - مؤسسة محمد الخامس",
+        "تمويل البناء - الإنعاش الوطني",
+        "تمويل البناء - الجمعية",
+        "تمويل البناء - أخرى",
+        "التكلفة الإجمالية للبناء (درهم)",
+        "التكلفة السنوية للتسيير (درهم)",
+        "التكلفة السنوية للموارد البشرية (درهم)",
+        "التكلفة السنوية للإطعام (درهم)",
+        "التكلفة السنوية للفرد (درهم)",
+        "حصة الجمعية (%)",
+        "حصة التربية الوطنية (%)",
+        "حصص أخرى (%)",
+        // تاريخ
+        "تاريخ إنشاء السجل",
+        "تاريخ آخر تحديث"
       ];
 
-      // Convert data to CSV rows
+      // Convert data to rows matching PDF format exactly
       const rows = uniqueData.map((inst: InstitutionResponse) => [
-        // Basic Info
-        inst.institutionName || "",
-        inst.associationName || "",
-        getLabel(institutionTypeLabels, inst.institutionType),
-        inst.address || "",
-        inst.regionName || "",
-        inst.prefectureName || "",
-        inst.communeName || "",
-        getLabel(milieuLabels, inst.milieu),
-        inst.latitude?.toString() || "",
-        inst.longitude?.toString() || "",
-        inst.creationYear?.toString() || "",
-        getLabel(legalStatusLabels, inst.legalStatus),
-        inst.licenseNumber || "",
-        inst.serviceStartDate || "",
-        // Services
-        yesNo(inst.housing),
-        yesNo(inst.meals),
-        yesNo(inst.educationalSupport),
-        yesNo(inst.culturalActivities),
-        yesNo(inst.healthCare),
-        yesNo(inst.insurance),
-        yesNo(inst.psychologicalSupport),
-        // Capacity
-        inst.totalCapacity?.toString() || "",
-        inst.maleCapacity?.toString() || "",
-        inst.femaleCapacity?.toString() || "",
-        // Target Levels
-        yesNo(inst.primary),
-        yesNo(inst.middleSchool),
-        yesNo(inst.highSchool),
-        inst.other ? (inst.otherDetail || "نعم") : "لا",
-        // Distance
-        getLabel(distanceLabels, inst.distanceToSchool),
-        getLabel(distanceLabels, inst.distanceToNationalBoardingSchool),
-        // Building
-        getLabel(buildingStatusLabels, inst.building?.buildingStatus),
-        getLabel(buildingConditionLabels, inst.building?.buildingCondition),
-        getLabel(renovationCapacityLabels, inst.building?.renovationCapacity),
-        getLabel(ownerTypeLabels, inst.building?.ownerType),
-        yesNo(inst.building?.hasPartnershipAgreement),
-        // Season 2023-2024
-        inst.housingMeals?.season2324?.totalBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2324?.maleBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2324?.femaleBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2324?.primaryBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2324?.middleSchoolBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2324?.highSchoolBeneficiaries?.toString() || "",
-        // Season 2024-2025
-        inst.housingMeals?.season2425?.totalBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2425?.maleBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2425?.femaleBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2425?.primaryBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2425?.middleSchoolBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2425?.highSchoolBeneficiaries?.toString() || "",
-        // Season 2025-2026
-        inst.housingMeals?.season2526?.totalBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2526?.maleBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2526?.femaleBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2526?.primaryBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2526?.middleSchoolBeneficiaries?.toString() || "",
-        inst.housingMeals?.season2526?.highSchoolBeneficiaries?.toString() || "",
-        // Meals
-        inst.housingMeals?.totalMealBeneficiaries2526?.toString() || "",
-        getLabel(mealServiceTypeLabels, inst.housingMeals?.mealServiceType),
-        // Targeting
-        getLabel(selectionBodyLabels, inst.targeting?.selectionBody),
-        yesNo(inst.targeting?.servicesAreFree),
-        getLabel(tariffTypeLabels, inst.targeting?.tariffType),
-        inst.targeting?.unsatisfiedRequestsCount?.toString() || "",
-        // Financing
-        inst.financing?.totalConstructionCost?.toString() || "",
-        inst.financing?.annualManagementCost?.toString() || "",
-        inst.financing?.annualHRCost?.toString() || "",
-        inst.financing?.annualMealsCost?.toString() || "",
-        inst.financing?.annualOtherExpenses?.toString() || "",
-        inst.financing?.individualAnnualCost?.toString() || "",
-        // Dates
-        inst.createdAt ? new Date(inst.createdAt).toLocaleDateString("ar-MA") : "",
-        inst.updatedAt ? new Date(inst.updatedAt).toLocaleDateString("ar-MA") : ""
+        // Section I
+        getLabel(pdfLabels.institutionType, inst.institutionType),
+        getDisplayValue(inst.associationName),
+        getDisplayValue(inst.institutionName),
+        getDisplayValue(inst.address),
+        getDisplayValue(inst.regionName),
+        getDisplayValue(inst.prefectureName),
+        getDisplayValue(inst.communeName),
+        getLabel(pdfLabels.milieu, inst.milieu),
+        getDisplayValue(inst.latitude),
+        getDisplayValue(inst.longitude),
+        getDisplayValue(inst.creationYear),
+        getLabel(pdfLabels.legalStatus, inst.legalStatus),
+        getDisplayValue(inst.licenseNumber),
+        getDisplayValue(inst.serviceStartDate),
+        // الخدمات
+        getCheckbox(inst.housing),
+        getCheckbox(inst.meals),
+        getCheckbox(inst.educationalSupport),
+        getCheckbox(inst.culturalActivities),
+        getCheckbox(inst.healthCare),
+        getCheckbox(inst.psychologicalSupport),
+        // الطاقة الاستيعابية
+        getDisplayValue(inst.totalCapacity),
+        getDisplayValue(inst.maleCapacity),
+        getDisplayValue(inst.femaleCapacity),
+        // السلك التعليمي
+        getCheckbox(inst.primary),
+        getCheckbox(inst.middleSchool),
+        getCheckbox(inst.highSchool),
+        inst.other ? getDisplayValue(inst.otherDetail, "☑") : "☐",
+        // البعد الجغرافي
+        getLabel(pdfLabels.distance, inst.distanceToSchool),
+        getLabel(pdfLabels.distance, inst.distanceToNationalBoardingSchool),
+        // Section II: البناية
+        getLabel(pdfLabels.buildingStatus, inst.building?.buildingStatus),
+        getLabel(pdfLabels.buildingCondition, inst.building?.buildingCondition),
+        getLabel(pdfLabels.renovationCapability, inst.building?.renovationCapacity),
+        getLabel(pdfLabels.landOwnership, inst.building?.ownerType),
+        getCheckbox(inst.building?.hasPartnershipAgreement),
+        // Section III: الإيواء 2023-2024
+        getDisplayValue(inst.housingMeals?.season2324?.totalBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2324?.maleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2324?.femaleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2324?.primaryBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2324?.middleSchoolBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2324?.highSchoolBeneficiaries),
+        // 2024-2025
+        getDisplayValue(inst.housingMeals?.season2425?.totalBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2425?.maleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2425?.femaleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2425?.primaryBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2425?.middleSchoolBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2425?.highSchoolBeneficiaries),
+        // 2025-2026
+        getDisplayValue(inst.housingMeals?.season2526?.totalBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2526?.maleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2526?.femaleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2526?.primaryBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2526?.middleSchoolBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2526?.highSchoolBeneficiaries),
+        // الإطعام
+        getDisplayValue(inst.housingMeals?.totalMealBeneficiaries2526),
+        getLabel(pdfLabels.mealType, inst.housingMeals?.mealServiceType),
+        // Section IV: الاستهداف
+        getCheckbox(inst.targeting?.socialSituation),
+        getCheckbox(inst.targeting?.distance),
+        getCheckbox(inst.targeting?.schoolResults),
+        getCheckbox(inst.targeting?.scholarship),
+        inst.targeting?.otherCriteria ? getDisplayValue(inst.targeting?.otherCriteriaDetail, "☑") : "☐",
+        getLabel(pdfLabels.selectionBody, inst.targeting?.selectionBody),
+        getCheckbox(inst.targeting?.servicesAreFree),
+        getDisplayValue(inst.targeting?.unsatisfiedRequestsCount),
+        // Section V: التمويل
+        getCheckbox(inst.financing?.solidarityMinistry),
+        getCheckbox(inst.financing?.nationalEntraide),
+        getCheckbox(inst.financing?.indh),
+        getCheckbox(inst.financing?.commune),
+        getCheckbox(inst.financing?.fondationMohammed5),
+        getCheckbox(inst.financing?.nationalRevival),
+        getCheckbox(inst.financing?.association),
+        inst.financing?.otherConstruction ? getDisplayValue(inst.financing?.otherConstructionDetail, "☑") : "☐",
+        getDisplayValue(inst.financing?.totalConstructionCost),
+        getDisplayValue(inst.financing?.annualManagementCost),
+        getDisplayValue(inst.financing?.annualHRCost),
+        getDisplayValue(inst.financing?.annualMealsCost),
+        getDisplayValue(inst.financing?.individualAnnualCost),
+        getDisplayValue(inst.financing?.associationShare),
+        getDisplayValue(inst.financing?.educationShare),
+        getDisplayValue(inst.financing?.otherShare),
+        // تاريخ
+        inst.createdAt ? new Date(inst.createdAt).toLocaleDateString("ar-MA") : "—",
+        inst.updatedAt ? new Date(inst.updatedAt).toLocaleDateString("ar-MA") : "—"
       ]);
 
       // Create worksheet data with headers
