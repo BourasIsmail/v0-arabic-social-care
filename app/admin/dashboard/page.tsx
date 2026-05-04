@@ -108,8 +108,8 @@ export default function AdminDashboardPage() {
     .map(r => ({
       name: r.regionName || `جهة ${r.regionId}`,
       count: r.count,
-      capacity: r.totalCapacity || 0,
-      beneficiaries: r.totalBeneficiaries || 0,
+      capacity: r.capacity || 0,
+      beneficiaries: r.beneficiaries || 0,
     }))
     .sort((a, b) => b.count - a.count);
 
@@ -123,8 +123,8 @@ export default function AdminDashboardPage() {
     .map(p => ({
       name: p.prefectureName || `إقليم ${p.prefectureId}`,
       count: p.count,
-      capacity: p.totalCapacity || 0,
-      beneficiaries: p.totalBeneficiaries || 0,
+      capacity: p.capacity || 0,
+      beneficiaries: p.beneficiaries || 0,
     }))
     .sort((a, b) => b.count - a.count);
 
@@ -825,46 +825,95 @@ export default function AdminDashboardPage() {
                   </CardContent>
                 </Card>
 
-                {/* Operating Costs */}
-                <Card className="md:col-span-2">
+                {/* Operating Financing Sources */}
+                <Card>
                   <CardHeader>
                     <CardTitle className="text-base flex items-center gap-2">
                       <Banknote className="h-5 w-5" />
-                      تكاليف التسيير
+                      مصادر تمويل التسيير
                     </CardTitle>
-                    <CardDescription>إجمالي التكاليف السنوية ومصادر التمويل</CardDescription>
+                    <CardDescription>عدد المؤسسات حسب مصدر التمويل</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                      <div className="p-4 bg-muted rounded-lg text-center">
-                        <p className="text-sm text-muted-foreground">تكلفة التسيير السنوية</p>
-                        <p className="text-lg font-bold">{formatCurrency(stats.operatingFinancing?.annualManagementCost)}</p>
+                    <Table>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>المبادرة الوطنية للتنمية البشرية</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.operatingFinancing?.indh)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>التعاون الوطني</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.operatingFinancing?.nationalEntraide)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>وزارة التربية الوطنية</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.operatingFinancing?.nationalEducation)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>الجماعة</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.operatingFinancing?.commune)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>مساهمات أولياء الأمور</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.operatingFinancing?.parentContributions)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>المتبرعون</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.operatingFinancing?.donors)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>موارد الجمعية الخاصة</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.operatingFinancing?.associationOwnSources)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>أخرى</TableCell>
+                          <TableCell className="text-left font-medium">{formatNumber(stats.operatingFinancing?.other)}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+
+                {/* Operating Costs */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5" />
+                      تكاليف التسيير
+                    </CardTitle>
+                    <CardDescription>إجمالي التكاليف السنوية</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="p-3 bg-muted rounded-lg text-center">
+                        <p className="text-xs text-muted-foreground">تكلفة التسيير السنوية</p>
+                        <p className="text-sm font-bold">{formatCurrency(stats.operatingFinancing?.annualManagementCost)}</p>
                       </div>
-                      <div className="p-4 bg-muted rounded-lg text-center">
-                        <p className="text-sm text-muted-foreground">تكلفة الموارد البشرية</p>
-                        <p className="text-lg font-bold">{formatCurrency(stats.operatingFinancing?.annualHRCost)}</p>
+                      <div className="p-3 bg-muted rounded-lg text-center">
+                        <p className="text-xs text-muted-foreground">تكلفة الموارد البشرية</p>
+                        <p className="text-sm font-bold">{formatCurrency(stats.operatingFinancing?.annualHRCost)}</p>
                       </div>
-                      <div className="p-4 bg-muted rounded-lg text-center">
-                        <p className="text-sm text-muted-foreground">تكلفة الإطعام</p>
-                        <p className="text-lg font-bold">{formatCurrency(stats.operatingFinancing?.annualMealsCost)}</p>
+                      <div className="p-3 bg-muted rounded-lg text-center">
+                        <p className="text-xs text-muted-foreground">تكلفة الإطعام</p>
+                        <p className="text-sm font-bold">{formatCurrency(stats.operatingFinancing?.annualMealsCost)}</p>
                       </div>
-                      <div className="p-4 bg-muted rounded-lg text-center">
-                        <p className="text-sm text-muted-foreground">تكلفة الفرد السنوية</p>
-                        <p className="text-lg font-bold">{formatCurrency(stats.operatingFinancing?.individualAnnualCost)}</p>
+                      <div className="p-3 bg-muted rounded-lg text-center">
+                        <p className="text-xs text-muted-foreground">تكلفة الفرد السنوية</p>
+                        <p className="text-sm font-bold">{formatCurrency(stats.operatingFinancing?.individualAnnualCost)}</p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="text-center p-4 bg-primary/10 rounded-lg">
-                        <p className="text-sm text-muted-foreground">حصة الجمعية</p>
-                        <p className="text-2xl font-bold text-primary">{stats.operatingFinancing?.associationShare ?? 0}%</p>
+                    <div className="pt-3 border-t space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">متوسط حصة الجمعية</span>
+                        <Badge>{stats.operatingFinancing?.averageAssociationShare ?? 0}%</Badge>
                       </div>
-                      <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
-                        <p className="text-sm text-muted-foreground">حصة التربية الوطنية</p>
-                        <p className="text-2xl font-bold text-green-600">{stats.operatingFinancing?.educationShare ?? 0}%</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">متوسط حصة التربية الوطنية</span>
+                        <Badge variant="secondary">{stats.operatingFinancing?.averageEducationShare ?? 0}%</Badge>
                       </div>
-                      <div className="text-center p-4 bg-amber-50 dark:bg-amber-950 rounded-lg">
-                        <p className="text-sm text-muted-foreground">حصص أخرى</p>
-                        <p className="text-2xl font-bold text-amber-600">{stats.operatingFinancing?.otherShare ?? 0}%</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">متوسط حصص أخرى</span>
+                        <Badge variant="outline">{stats.operatingFinancing?.averageOtherShare ?? 0}%</Badge>
                       </div>
                     </div>
                   </CardContent>

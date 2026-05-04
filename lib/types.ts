@@ -467,13 +467,21 @@ export interface DashboardStats {
   
   // Operating financing (مصادر تمويل تسيير المؤسسة)
   operatingFinancing?: {
-    associationShare: number;
-    educationShare: number;
-    otherShare: number;
+    indh: number;
+    nationalEntraide: number;
+    nationalEducation: number;
+    commune: number;
+    parentContributions: number;
+    donors: number;
+    associationOwnSources: number;
+    other: number;
     annualManagementCost: number;
     annualHRCost: number;
     annualMealsCost: number;
     individualAnnualCost: number;
+    averageAssociationShare: number;
+    averageEducationShare: number;
+    averageOtherShare: number;
   };
   
   // Meal service (خدمة الإطعام)
@@ -493,14 +501,16 @@ export interface DashboardStats {
   
   // Human resources (الموارد البشرية)
   humanResources?: {
-    directors: { total: number; cnss: number; smig: number };
-    educators: { total: number; cnss: number; smig: number };
-    cooks: { total: number; cnss: number; smig: number };
-    guards: { total: number; cnss: number; smig: number };
-    other: { total: number; cnss: number; smig: number };
+    directors: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
+    educators: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
+    cooks: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
+    guards: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
+    other: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
     totalStaff: number;
     totalWithCnss: number;
     totalWithSmig: number;
+    totalMonthlyCost: number;
+    totalAnnualCost: number;
   };
 }
 
@@ -571,7 +581,7 @@ export const selectionBodyLabels: Record<SelectionBody, string> = {
 };
 
 export const tariffTypeLabels: Record<TariffType, string> = {
-  [TariffType.UNIFORM]: "تعريفة موحدة",
+  [TariffType.UNIFORM]: "��عريفة موحدة",
   [TariffType.NON_UNIFORM]: "تعريفة غير موحدة",
 };
 
