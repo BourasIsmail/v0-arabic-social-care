@@ -222,9 +222,18 @@ export default function InstitutionsPage() {
       const batchSize = 10;
       const fullData: InstitutionResponse[] = [];
       
+      // Use a Set to track IDs and prevent duplicates
+      const seenIds = new Set<number>();
+      
       for (let i = 0; i < summaryData.length; i += batchSize) {
         const batch = summaryData.slice(i, i + batchSize);
         const batchPromises = batch.map(async (inst: InstitutionSummary) => {
+          // Skip if we've already fetched this institution
+          if (seenIds.has(inst.id)) {
+            return null;
+          }
+          seenIds.add(inst.id);
+          
           try {
             const response = await authFetch(buildApiUrl(`${API_ENDPOINTS.institutions.list}/${inst.id}`));
             if (response.ok) {
@@ -239,6 +248,11 @@ export default function InstitutionsPage() {
         const batchResults = await Promise.all(batchPromises);
         fullData.push(...batchResults.filter(Boolean) as InstitutionResponse[]);
       }
+      
+      // Remove any remaining duplicates by ID
+      const uniqueData = fullData.filter((inst, index, self) => 
+        index === self.findIndex(i => i.id === inst.id)
+      );
 
       // Helper functions for label lookups
       const yesNo = (val?: boolean) => val ? "نعم" : "لا";
@@ -329,7 +343,7 @@ export default function InstitutionsPage() {
       ];
 
       // Convert data to CSV rows
-      const rows = fullData.map((inst: InstitutionResponse) => [
+      const rows = uniqueData.map((inst: InstitutionResponse) => [
         // Basic Info
         inst.institutionName || "",
         inst.associationName || "",
@@ -437,7 +451,7 @@ export default function InstitutionsPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      toast.success("تم تصدير البيانات بنجاح");
+      toast.success(`تم تصدير ${uniqueData.length} مؤسسة بنجاح`);
     } catch (error) {
       toast.error("حدث خطأ أثناء التصدير");
     }
