@@ -11,21 +11,11 @@ import {
   Cell,
   Pie,
   PieChart,
-  LineChart,
-  Line,
   Legend,
   Tooltip,
-  AreaChart,
-  Area,
+  ResponsiveContainer,
 } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
-} from "@/components/ui/chart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/lib/auth-context";
@@ -267,16 +257,7 @@ export default function AdminDashboardPage() {
     { name: "في طور الترخيص", value: filteredStats.inProgress, fill: COLORS.inProgress },
   ].filter(d => d.value > 0);
 
-  const chartConfig = {
-    count: { label: "عدد المؤسسات", color: COLORS.primary },
-    capacity: { label: "الطاقة الاستيعابية", color: COLORS.secondary },
-    avgCapacity: { label: "متوسط الطاقة", color: COLORS.accent },
-    darTalib: { label: "دار الطالب", color: COLORS.darTalib },
-    darTaliba: { label: "دار الطالبة", color: COLORS.darTaliba },
-    mixed: { label: "دار الطالب والطالبة", color: COLORS.mixed },
-    urban: { label: "حضري", color: COLORS.urban },
-    rural: { label: "قروي", color: COLORS.rural },
-  };
+
 
   const renderStatCard = (
     title: string, 
@@ -307,7 +288,7 @@ export default function AdminDashboardPage() {
       </CardHeader>
       <CardContent>
         <div className="h-[220px]">
-          <ChartContainer config={chartConfig} className="h-full w-full">
+          <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
@@ -339,7 +320,7 @@ export default function AdminDashboardPage() {
                 }}
               />
             </PieChart>
-          </ChartContainer>
+          </ResponsiveContainer>
         </div>
         <div className="flex flex-wrap justify-center gap-3 mt-2">
           {data.map((item, index) => (
@@ -385,7 +366,7 @@ export default function AdminDashboardPage() {
                     setSelectedPrefecture("all");
                   }}>
                     <SelectTrigger className="w-full sm:w-[200px]">
-                      <SelectValue placeholder="اختر الجهة" />
+                      <SelectValue placeholder="اختر ال��هة" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">جميع الجهات</SelectItem>
@@ -527,7 +508,7 @@ export default function AdminDashboardPage() {
                   <CardDescription>عدد المؤسسات في كل جهة</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[400px]">
+                  <div className="h-[400px]"><ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={regionChartData}
                       layout="vertical"
@@ -536,7 +517,7 @@ export default function AdminDashboardPage() {
                       <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
                       <XAxis type="number" />
                       <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11 }} />
-                      <ChartTooltip 
+                      <Tooltip 
                         content={({ active, payload }) => {
                           if (active && payload && payload.length) {
                             const d = payload[0].payload;
@@ -553,7 +534,7 @@ export default function AdminDashboardPage() {
                       />
                       <Bar dataKey="count" name="عدد المؤسسات" fill={COLORS.primary} radius={[0, 4, 4, 0]} />
                     </BarChart>
-                  </ChartContainer>
+                  </ResponsiveContainer></div>
                 </CardContent>
               </Card>
 
@@ -564,7 +545,7 @@ export default function AdminDashboardPage() {
                   <CardDescription>مقارنة أنواع المؤسسات في كل جهة</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[400px]">
+                  <div className="h-[400px]"><ResponsiveContainer width="100%" height="100%">
                     <BarChart data={typeByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
@@ -575,7 +556,7 @@ export default function AdminDashboardPage() {
                       <Bar dataKey="darTaliba" name="دار الطالبة" stackId="a" fill={COLORS.darTaliba} />
                       <Bar dataKey="mixed" name="دار الطالب والطالبة" stackId="a" fill={COLORS.mixed} />
                     </BarChart>
-                  </ChartContainer>
+                  </ResponsiveContainer></div>
                 </CardContent>
               </Card>
 
@@ -586,7 +567,7 @@ export default function AdminDashboardPage() {
                   <CardDescription>مقارنة المؤسسات الحضرية والقروية في كل جهة</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[400px]">
+                  <div className="h-[400px]"><ResponsiveContainer width="100%" height="100%">
                     <BarChart data={milieuByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
@@ -596,7 +577,7 @@ export default function AdminDashboardPage() {
                       <Bar dataKey="urban" name="حضري" fill={COLORS.urban} />
                       <Bar dataKey="rural" name="قروي" fill={COLORS.rural} />
                     </BarChart>
-                  </ChartContainer>
+                  </ResponsiveContainer></div>
                 </CardContent>
               </Card>
 
@@ -607,7 +588,7 @@ export default function AdminDashboardPage() {
                   <CardDescription>إجمالي ومتوسط الطاقة الاستيعابية</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[400px]">
+                  <div className="h-[400px]"><ResponsiveContainer width="100%" height="100%">
                     <BarChart data={capacityByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
@@ -618,7 +599,7 @@ export default function AdminDashboardPage() {
                       <Bar yAxisId="left" dataKey="capacity" name="إجمالي الطاقة" fill={COLORS.primary} />
                       <Bar yAxisId="right" dataKey="avgCapacity" name="متوسط الطاقة" fill={COLORS.secondary} />
                     </BarChart>
-                  </ChartContainer>
+                  </ResponsiveContainer></div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -672,7 +653,7 @@ export default function AdminDashboardPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[400px]">
+                  <div className="h-[400px]"><ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={prefectureChartData}
                       layout="vertical"
@@ -681,7 +662,7 @@ export default function AdminDashboardPage() {
                       <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
                       <XAxis type="number" />
                       <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11 }} />
-                      <ChartTooltip 
+                      <Tooltip 
                         content={({ active, payload }) => {
                           if (active && payload && payload.length) {
                             const d = payload[0].payload;
@@ -702,7 +683,7 @@ export default function AdminDashboardPage() {
                         ))}
                       </Bar>
                     </BarChart>
-                  </ChartContainer>
+                  </ResponsiveContainer></div>
                 </CardContent>
               </Card>
 
