@@ -322,10 +322,13 @@ export default function InstitutionsPage() {
         } as Record<string, string>,
       };
 
-      // Helper functions for label lookups
-      const yesNo = (val?: boolean) => val ? "نعم" : "لا";
-      const getVal = (val: any) => val ?? "";
-      const getLabel = (labelMap: Record<string, string>, val?: string) => val ? (labelMap[val] || val) : "";
+      // Helper functions matching PDF generator exactly
+      const getDisplayValue = (value: any, defaultValue: string = '—'): string => {
+        if (value === undefined || value === null || value === '') return defaultValue;
+        return String(value);
+      };
+      const getCheckbox = (val?: boolean) => val ? "☑" : "☐";
+      const getLabel = (labelMap: Record<string, string>, val?: string) => val ? (labelMap[val] || val) : "—";
 
       // Headers matching PDF sections exactly
       const headers = [
@@ -424,39 +427,39 @@ export default function InstitutionsPage() {
         "تاريخ آخر تحديث"
       ];
 
-      // Convert data to rows matching PDF format
+      // Convert data to rows matching PDF format exactly
       const rows = uniqueData.map((inst: InstitutionResponse) => [
         // Section I
         getLabel(pdfLabels.institutionType, inst.institutionType),
-        getVal(inst.associationName),
-        getVal(inst.institutionName),
-        getVal(inst.address),
-        getVal(inst.regionName),
-        getVal(inst.prefectureName),
-        getVal(inst.communeName),
+        getDisplayValue(inst.associationName),
+        getDisplayValue(inst.institutionName),
+        getDisplayValue(inst.address),
+        getDisplayValue(inst.regionName),
+        getDisplayValue(inst.prefectureName),
+        getDisplayValue(inst.communeName),
         getLabel(pdfLabels.milieu, inst.milieu),
-        getVal(inst.latitude),
-        getVal(inst.longitude),
-        getVal(inst.creationYear),
+        getDisplayValue(inst.latitude),
+        getDisplayValue(inst.longitude),
+        getDisplayValue(inst.creationYear),
         getLabel(pdfLabels.legalStatus, inst.legalStatus),
-        getVal(inst.licenseNumber),
-        getVal(inst.serviceStartDate),
+        getDisplayValue(inst.licenseNumber),
+        getDisplayValue(inst.serviceStartDate),
         // الخدمات
-        yesNo(inst.housing),
-        yesNo(inst.meals),
-        yesNo(inst.educationalSupport),
-        yesNo(inst.culturalActivities),
-        yesNo(inst.healthCare),
-        yesNo(inst.psychologicalSupport),
+        getCheckbox(inst.housing),
+        getCheckbox(inst.meals),
+        getCheckbox(inst.educationalSupport),
+        getCheckbox(inst.culturalActivities),
+        getCheckbox(inst.healthCare),
+        getCheckbox(inst.psychologicalSupport),
         // الطاقة الاستيعابية
-        getVal(inst.totalCapacity),
-        getVal(inst.maleCapacity),
-        getVal(inst.femaleCapacity),
+        getDisplayValue(inst.totalCapacity),
+        getDisplayValue(inst.maleCapacity),
+        getDisplayValue(inst.femaleCapacity),
         // السلك التعليمي
-        yesNo(inst.primary),
-        yesNo(inst.middleSchool),
-        yesNo(inst.highSchool),
-        inst.other ? (inst.otherDetail || "نعم") : "لا",
+        getCheckbox(inst.primary),
+        getCheckbox(inst.middleSchool),
+        getCheckbox(inst.highSchool),
+        inst.other ? getDisplayValue(inst.otherDetail, "☑") : "☐",
         // البعد الجغرافي
         getLabel(pdfLabels.distance, inst.distanceToSchool),
         getLabel(pdfLabels.distance, inst.distanceToNationalBoardingSchool),
@@ -465,60 +468,60 @@ export default function InstitutionsPage() {
         getLabel(pdfLabels.buildingCondition, inst.building?.buildingCondition),
         getLabel(pdfLabels.renovationCapability, inst.building?.renovationCapacity),
         getLabel(pdfLabels.landOwnership, inst.building?.ownerType),
-        yesNo(inst.building?.hasPartnershipAgreement),
+        getCheckbox(inst.building?.hasPartnershipAgreement),
         // Section III: الإيواء 2023-2024
-        getVal(inst.housingMeals?.season2324?.totalBeneficiaries),
-        getVal(inst.housingMeals?.season2324?.maleBeneficiaries),
-        getVal(inst.housingMeals?.season2324?.femaleBeneficiaries),
-        getVal(inst.housingMeals?.season2324?.primaryBeneficiaries),
-        getVal(inst.housingMeals?.season2324?.middleSchoolBeneficiaries),
-        getVal(inst.housingMeals?.season2324?.highSchoolBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2324?.totalBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2324?.maleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2324?.femaleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2324?.primaryBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2324?.middleSchoolBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2324?.highSchoolBeneficiaries),
         // 2024-2025
-        getVal(inst.housingMeals?.season2425?.totalBeneficiaries),
-        getVal(inst.housingMeals?.season2425?.maleBeneficiaries),
-        getVal(inst.housingMeals?.season2425?.femaleBeneficiaries),
-        getVal(inst.housingMeals?.season2425?.primaryBeneficiaries),
-        getVal(inst.housingMeals?.season2425?.middleSchoolBeneficiaries),
-        getVal(inst.housingMeals?.season2425?.highSchoolBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2425?.totalBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2425?.maleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2425?.femaleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2425?.primaryBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2425?.middleSchoolBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2425?.highSchoolBeneficiaries),
         // 2025-2026
-        getVal(inst.housingMeals?.season2526?.totalBeneficiaries),
-        getVal(inst.housingMeals?.season2526?.maleBeneficiaries),
-        getVal(inst.housingMeals?.season2526?.femaleBeneficiaries),
-        getVal(inst.housingMeals?.season2526?.primaryBeneficiaries),
-        getVal(inst.housingMeals?.season2526?.middleSchoolBeneficiaries),
-        getVal(inst.housingMeals?.season2526?.highSchoolBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2526?.totalBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2526?.maleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2526?.femaleBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2526?.primaryBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2526?.middleSchoolBeneficiaries),
+        getDisplayValue(inst.housingMeals?.season2526?.highSchoolBeneficiaries),
         // الإطعام
-        getVal(inst.housingMeals?.totalMealBeneficiaries2526),
+        getDisplayValue(inst.housingMeals?.totalMealBeneficiaries2526),
         getLabel(pdfLabels.mealType, inst.housingMeals?.mealServiceType),
         // Section IV: الاستهداف
-        yesNo(inst.targeting?.socialSituation),
-        yesNo(inst.targeting?.distance),
-        yesNo(inst.targeting?.schoolResults),
-        yesNo(inst.targeting?.scholarship),
-        inst.targeting?.otherCriteria ? (inst.targeting?.otherCriteriaDetail || "نعم") : "لا",
+        getCheckbox(inst.targeting?.socialSituation),
+        getCheckbox(inst.targeting?.distance),
+        getCheckbox(inst.targeting?.schoolResults),
+        getCheckbox(inst.targeting?.scholarship),
+        inst.targeting?.otherCriteria ? getDisplayValue(inst.targeting?.otherCriteriaDetail, "☑") : "☐",
         getLabel(pdfLabels.selectionBody, inst.targeting?.selectionBody),
-        yesNo(inst.targeting?.servicesAreFree),
-        getVal(inst.targeting?.unsatisfiedRequestsCount),
+        getCheckbox(inst.targeting?.servicesAreFree),
+        getDisplayValue(inst.targeting?.unsatisfiedRequestsCount),
         // Section V: التمويل
-        yesNo(inst.financing?.solidarityMinistry),
-        yesNo(inst.financing?.nationalEntraide),
-        yesNo(inst.financing?.indh),
-        yesNo(inst.financing?.commune),
-        yesNo(inst.financing?.fondationMohammed5),
-        yesNo(inst.financing?.nationalRevival),
-        yesNo(inst.financing?.association),
-        inst.financing?.otherConstruction ? (inst.financing?.otherConstructionDetail || "نعم") : "لا",
-        getVal(inst.financing?.totalConstructionCost),
-        getVal(inst.financing?.annualManagementCost),
-        getVal(inst.financing?.annualHRCost),
-        getVal(inst.financing?.annualMealsCost),
-        getVal(inst.financing?.individualAnnualCost),
-        getVal(inst.financing?.associationShare),
-        getVal(inst.financing?.educationShare),
-        getVal(inst.financing?.otherShare),
+        getCheckbox(inst.financing?.solidarityMinistry),
+        getCheckbox(inst.financing?.nationalEntraide),
+        getCheckbox(inst.financing?.indh),
+        getCheckbox(inst.financing?.commune),
+        getCheckbox(inst.financing?.fondationMohammed5),
+        getCheckbox(inst.financing?.nationalRevival),
+        getCheckbox(inst.financing?.association),
+        inst.financing?.otherConstruction ? getDisplayValue(inst.financing?.otherConstructionDetail, "☑") : "☐",
+        getDisplayValue(inst.financing?.totalConstructionCost),
+        getDisplayValue(inst.financing?.annualManagementCost),
+        getDisplayValue(inst.financing?.annualHRCost),
+        getDisplayValue(inst.financing?.annualMealsCost),
+        getDisplayValue(inst.financing?.individualAnnualCost),
+        getDisplayValue(inst.financing?.associationShare),
+        getDisplayValue(inst.financing?.educationShare),
+        getDisplayValue(inst.financing?.otherShare),
         // تاريخ
-        inst.createdAt ? new Date(inst.createdAt).toLocaleDateString("ar-MA") : "",
-        inst.updatedAt ? new Date(inst.updatedAt).toLocaleDateString("ar-MA") : ""
+        inst.createdAt ? new Date(inst.createdAt).toLocaleDateString("ar-MA") : "—",
+        inst.updatedAt ? new Date(inst.updatedAt).toLocaleDateString("ar-MA") : "—"
       ]);
 
       // Create worksheet data with headers
