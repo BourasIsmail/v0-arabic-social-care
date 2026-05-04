@@ -11,7 +11,6 @@ import {
   Cell,
   Pie,
   PieChart,
-  ResponsiveContainer,
   LineChart,
   Line,
   Legend,
@@ -308,7 +307,7 @@ export default function AdminDashboardPage() {
       </CardHeader>
       <CardContent>
         <div className="h-[220px]">
-          <ResponsiveContainer width="100%" height="100%">
+          <ChartContainer config={chartConfig} className="h-full w-full">
             <PieChart>
               <Pie
                 data={data}
@@ -340,7 +339,7 @@ export default function AdminDashboardPage() {
                 }}
               />
             </PieChart>
-          </ResponsiveContainer>
+          </ChartContainer>
         </div>
         <div className="flex flex-wrap justify-center gap-3 mt-2">
           {data.map((item, index) => (
@@ -529,33 +528,31 @@ export default function AdminDashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <ChartContainer config={chartConfig} className="h-[400px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={regionChartData}
-                        layout="vertical"
-                        margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                        <XAxis type="number" />
-                        <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11 }} />
-                        <ChartTooltip 
-                          content={({ active, payload }) => {
-                            if (active && payload && payload.length) {
-                              const d = payload[0].payload;
-                              return (
-                                <div className="bg-background border rounded-lg shadow-lg p-3 text-sm">
-                                  <p className="font-medium">{d.fullName}</p>
-                                  <p className="text-muted-foreground">عدد المؤسسات: {d.count}</p>
-                                  <p className="text-muted-foreground">الطاقة الاستيعابية: {d.capacity?.toLocaleString()}</p>
-                                </div>
-                              );
-                            }
-                            return null;
-                          }}
-                        />
-                        <Bar dataKey="count" name="عدد المؤسسات" fill={COLORS.primary} radius={[0, 4, 4, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    <BarChart
+                      data={regionChartData}
+                      layout="vertical"
+                      margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                      <XAxis type="number" />
+                      <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11 }} />
+                      <ChartTooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const d = payload[0].payload;
+                            return (
+                              <div className="bg-background border rounded-lg shadow-lg p-3 text-sm">
+                                <p className="font-medium">{d.fullName}</p>
+                                <p className="text-muted-foreground">عدد المؤسسات: {d.count}</p>
+                                <p className="text-muted-foreground">الطاقة الاستيعابية: {d.capacity?.toLocaleString()}</p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Bar dataKey="count" name="عدد المؤسسات" fill={COLORS.primary} radius={[0, 4, 4, 0]} />
+                    </BarChart>
                   </ChartContainer>
                 </CardContent>
               </Card>
@@ -568,18 +565,16 @@ export default function AdminDashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <ChartContainer config={chartConfig} className="h-[400px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={typeByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="darTalib" name="دار الطالب" stackId="a" fill={COLORS.darTalib} />
-                        <Bar dataKey="darTaliba" name="دار الطالبة" stackId="a" fill={COLORS.darTaliba} />
-                        <Bar dataKey="mixed" name="دار الطالب والطالبة" stackId="a" fill={COLORS.mixed} />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    <BarChart data={typeByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="darTalib" name="دار الطالب" stackId="a" fill={COLORS.darTalib} />
+                      <Bar dataKey="darTaliba" name="دار الطالبة" stackId="a" fill={COLORS.darTaliba} />
+                      <Bar dataKey="mixed" name="دار الطالب والطالبة" stackId="a" fill={COLORS.mixed} />
+                    </BarChart>
                   </ChartContainer>
                 </CardContent>
               </Card>
@@ -592,17 +587,15 @@ export default function AdminDashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <ChartContainer config={chartConfig} className="h-[400px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={milieuByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="urban" name="حضري" fill={COLORS.urban} />
-                        <Bar dataKey="rural" name="قروي" fill={COLORS.rural} />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    <BarChart data={milieuByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="urban" name="حضري" fill={COLORS.urban} />
+                      <Bar dataKey="rural" name="قروي" fill={COLORS.rural} />
+                    </BarChart>
                   </ChartContainer>
                 </CardContent>
               </Card>
@@ -615,18 +608,16 @@ export default function AdminDashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <ChartContainer config={chartConfig} className="h-[400px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={capacityByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
-                        <YAxis yAxisId="left" orientation="left" />
-                        <YAxis yAxisId="right" orientation="right" />
-                        <Tooltip />
-                        <Legend />
-                        <Bar yAxisId="left" dataKey="capacity" name="إجمالي الطاقة" fill={COLORS.primary} />
-                        <Bar yAxisId="right" dataKey="avgCapacity" name="متوسط الطاقة" fill={COLORS.secondary} />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    <BarChart data={capacityByRegionData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 10 }} />
+                      <YAxis yAxisId="left" orientation="left" />
+                      <YAxis yAxisId="right" orientation="right" />
+                      <Tooltip />
+                      <Legend />
+                      <Bar yAxisId="left" dataKey="capacity" name="إجمالي الطاقة" fill={COLORS.primary} />
+                      <Bar yAxisId="right" dataKey="avgCapacity" name="متوسط الطاقة" fill={COLORS.secondary} />
+                    </BarChart>
                   </ChartContainer>
                 </CardContent>
               </Card>
@@ -682,37 +673,35 @@ export default function AdminDashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <ChartContainer config={chartConfig} className="h-[400px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={prefectureChartData}
-                        layout="vertical"
-                        margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                        <XAxis type="number" />
-                        <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11 }} />
-                        <ChartTooltip 
-                          content={({ active, payload }) => {
-                            if (active && payload && payload.length) {
-                              const d = payload[0].payload;
-                              return (
-                                <div className="bg-background border rounded-lg shadow-lg p-3 text-sm">
-                                  <p className="font-medium">{d.fullName}</p>
-                                  <p className="text-muted-foreground">عدد المؤسسات: {d.count}</p>
-                                  <p className="text-muted-foreground">الطاقة الاستيعابية: {d.capacity?.toLocaleString()}</p>
-                                </div>
-                              );
-                            }
-                            return null;
-                          }}
+                    <BarChart
+                      data={prefectureChartData}
+                      layout="vertical"
+                      margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                      <XAxis type="number" />
+                      <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11 }} />
+                      <ChartTooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const d = payload[0].payload;
+                            return (
+                              <div className="bg-background border rounded-lg shadow-lg p-3 text-sm">
+                                <p className="font-medium">{d.fullName}</p>
+                                <p className="text-muted-foreground">عدد المؤسسات: {d.count}</p>
+                                <p className="text-muted-foreground">الطاقة الاستيعابية: {d.capacity?.toLocaleString()}</p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
                         />
-                        <Bar dataKey="count" name="عدد المؤسسات" fill={COLORS.primary} radius={[0, 4, 4, 0]}>
-                          {prefectureChartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
+                      <Bar dataKey="count" name="عدد المؤسسات" fill={COLORS.primary} radius={[0, 4, 4, 0]}>
+                        {prefectureChartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
                   </ChartContainer>
                 </CardContent>
               </Card>
