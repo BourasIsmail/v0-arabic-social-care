@@ -2,53 +2,53 @@
 // Base URL for all API calls - change this single value to update all endpoints
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://enfance.entraide.ma/api";
 
-// API endpoints - all paths are relative to API_BASE_URL (which includes /api)
+// API endpoints - all paths are relative to API_BASE_URL
 export const API_ENDPOINTS = {
   // Auth endpoints
   auth: {
-    login: "/v1/auth/login",
-    register: "/v1/auth/register",
-    refresh: "/v1/auth/refresh",
+    login: "/api/v1/auth/login",
+    register: "/api/v1/auth/register",
+    refresh: "/api/v1/auth/refresh",
   },
   
   // User endpoints
   users: {
-    list: "/v1/users",
-    byId: (id: number) => `/v1/users/${id}`,
+    list: "/api/v1/users",
+    byId: (id: number) => `/api/v1/users/${id}`,
   },
   
   // Profile endpoints (current user)
   profile: {
-    get: "/v1/profile",
-    update: "/v1/profile",
+    get: "/api/v1/profile",
+    update: "/api/v1/profile",
   },
   
   // Institution endpoints
   institutions: {
-    list: "/v1/institutions",
-    byId: (id: number | string) => `/v1/institutions/${id}`,
-    create: "/v1/institutions",
-    update: (id: number | string) => `/v1/institutions/${id}`,
-    delete: (id: number | string) => `/v1/institutions/${id}`,
-    exportCsv: "/v1/institutions/export/csv",
-    exportExcel: "/v1/institutions/export/excel",
+    list: "/api/v1/institutions",
+    byId: (id: number | string) => `/api/v1/institutions/${id}`,
+    create: "/api/v1/institutions",
+    update: (id: number | string) => `/api/v1/institutions/${id}`,
+    delete: (id: number | string) => `/api/v1/institutions/${id}`,
+    exportCsv: "/api/v1/institutions/export/csv",
+    exportExcel: "/api/v1/institutions/export/excel",
   },
   
   // Geographic endpoints
   geo: {
-    regions: "/v1/regions",
-    prefecturesByRegion: (regionId: number | string) => `/v1/regions/${regionId}/prefectures`,
-    communesByPrefecture: (prefectureId: number | string) => `/v1/prefectures/${prefectureId}/communes`,
+    regions: "/api/v1/regions",
+    prefecturesByRegion: (regionId: number | string) => `/api/v1/regions/${regionId}/prefectures`,
+    communesByPrefecture: (prefectureId: number | string) => `/api/v1/prefectures/${prefectureId}/communes`,
   },
   
   // Region endpoints (alias for geo)
   regions: {
-    list: "/v1/regions",
+    list: "/api/v1/regions",
   },
   
   // Prefecture endpoints (alias for geo)
   prefectures: {
-    byRegion: (regionId: number | string) => `/v1/regions/${regionId}/prefectures`,
+    byRegion: (regionId: number | string) => `/api/v1/regions/${regionId}/prefectures`,
   },
   
   // Statistics endpoints
@@ -58,7 +58,7 @@ export const API_ENDPOINTS = {
       if (regionId && regionId !== "all") params.append("regionId", String(regionId));
       if (prefectureId && prefectureId !== "all") params.append("prefectureId", String(prefectureId));
       const queryString = params.toString();
-      return `/v1/statistics/dashboard${queryString ? `?${queryString}` : ""}`;
+      return `/api/v1/statistics/dashboard${queryString ? `?${queryString}` : ""}`;
     },
   },
 } as const;
