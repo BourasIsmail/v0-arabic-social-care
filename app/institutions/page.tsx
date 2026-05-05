@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import * as XLSX from "xlsx";
 import { Building2, Plus, Search, Filter, Eye, Pencil, Trash2, Download } from "lucide-react";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserMenu } from "@/components/auth/user-menu";
@@ -193,142 +192,32 @@ export default function InstitutionsPage() {
 
   const handleExport = async () => {
     try {
-      toast.info("جاري تحميل البيانات الكاملة...");
+      toast.info("جاري تحميل ملف Excel...");
 
-      // For USER role, use filtered content; for ADMIN/VIEW_ONLY, fetch ALL institutions
-      let summaryData: InstitutionSummary[];
+      // Call backend Excel export endpoint
+      const response = await authFetch(buildApiUrl(API_ENDPOINTS.institutions.exportExcel));
       
-      if (isUserRole) {
-        // USER role - use already filtered data by prefecture
-        summaryData = filteredUserContent;
-      } else {
-        // ADMIN/VIEW_ONLY - fetch all institutions (not just current page)
-        const allDataResponse = await authFetch(buildApiUrl(`${API_ENDPOINTS.institutions.list}?size=10000`));
-        if (!allDataResponse.ok) {
-          throw new Error("Failed to fetch all institutions");
-        }
-        const allData = await allDataResponse.json();
-        summaryData = allData.content || [];
-      }
-      
-      if (summaryData.length === 0) {
-        toast.error("لا توجد بيانات للتصدير");
-        return;
+      if (!response.ok) {
+        throw new Error("Failed to export");
       }
 
-      toast.info(`جاري تحميل ${summaryData.length} مؤسسة...`);
+      // Download the Excel file
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `institutions_${new Date().toISOString().split("T")[0]}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
-      // Fetch full data for each institution in batches to avoid overwhelming the server
-      const batchSize = 10;
-      const fullData: InstitutionResponse[] = [];
-      
-      // Use a Set to track IDs and prevent duplicates
-      const seenIds = new Set<number>();
-      
-      for (let i = 0; i < summaryData.length; i += batchSize) {
-        const batch = summaryData.slice(i, i + batchSize);
-        const batchPromises = batch.map(async (inst: InstitutionSummary) => {
-          // Skip if we've already fetched this institution
-          if (seenIds.has(inst.id)) {
-            return null;
-          }
-          seenIds.add(inst.id);
-          
-          try {
-            const response = await authFetch(buildApiUrl(`${API_ENDPOINTS.institutions.list}/${inst.id}`));
-            if (response.ok) {
-              return await response.json();
-            }
-            return null;
-          } catch {
-            return null;
-          }
-        });
-        
-        const batchResults = await Promise.all(batchPromises);
-        fullData.push(...batchResults.filter(Boolean) as InstitutionResponse[]);
-      }
-      
-      // Remove any remaining duplicates by ID
-      const uniqueData = fullData.filter((inst, index, self) => 
-        index === self.findIndex(i => i.id === inst.id)
-      );
-
-      // Labels matching PDF generator exactly
-      const pdfLabels = {
-        institutionType: {
-          DAR_TALIB: 'دار الطالب',
-          DAR_TALIBA: 'دار الطالبة',
-          DAR_TALIB_TALIBA: 'دار الطالب والطالبة',
-          DAR_ATFAL: 'دار الأطفال',
-        } as Record<string, string>,
-        milieu: {
-          URBAIN: 'حضري',
-          URBAN: 'حضري',
-          RURAL: 'قروي',
-          SEMI_URBAN: 'شبه حضري',
-        } as Record<string, string>,
-        legalStatus: {
-          LICENSED: 'مرخصة',
-          UNLICENSED: 'غير مرخصة',
-          IN_PROGRESS: 'في طور الترخيص',
-        } as Record<string, string>,
-        distance: {
-          INSIDE: 'داخل المؤسسة التعليمية',
-          LESS_THAN_1KM: 'أقل من 1 كلم',
-          LT_1KM: 'أقل من 1 كلم',
-          BETWEEN_1_5KM: 'بين 1 و 5 كلم',
-          BETWEEN_5_10KM: 'بين 5 و 10 كلم',
-          GT_5KM: 'أكثر من 5 كلم',
-          MORE_THAN_10KM: 'أكثر من 10 كلم',
-        } as Record<string, string>,
-        buildingStatus: {
-          RENTAL: 'إيجار',
-          OWNED: 'ملكية',
-          AT_DISPOSAL: 'وضع رهن إشارة المؤسسة',
-          LENT: 'معار',
-          OTHER: 'آخر',
-        } as Record<string, string>,
-        buildingCondition: {
-          GOOD: 'جيدة',
-          AVERAGE: 'بعض علامات التدهور',
-          SOME_DEGRADATION: 'بعض علامات التدهور',
-          POOR: 'متردية',
-          BAD: 'متردية',
-        } as Record<string, string>,
-        renovationCapability: {
-          EASY: 'سهلة',
-          DIFFICULT: 'صعبة',
-          NEEDS_RECONSTRUCTION: 'تتطلب إعادة البناء',
-          REBUILD: 'تتطلب إعادة البناء',
-        } as Record<string, string>,
-        landOwnership: {
-          STATE: 'أملاك الدولة',
-          STATE_DOMAIN: 'الملك العام للدولة',
-          COLLECTIVE: 'ملك جماعي',
-          COMMUNAL: 'جماعي',
-          PRIVATE: 'ملك خصوصي',
-          OTHER: 'آخر',
-        } as Record<string, string>,
-        mealType: {
-          IN_HOUSE: 'إعداد الوجبات في مطبخ المؤسسة',
-          INSTITUTION_KITCHEN: 'إعداد الوجبات في مطبخ المؤسسة',
-          READY_MEALS: 'وجبات جاهزة',
-          OTHER: 'آخر',
-        } as Record<string, string>,
-        selectionBody: {
-          ASSOCIATION_ALONE: 'الجمعية بمفردها',
-          COMMISSION: 'لجنة مختلطة',
-          MIXED_COMMITTEE: 'لجنة مختلطة',
-          OTHER: 'آخر',
-        } as Record<string, string>,
-        buildingConditionOther: {
-          OTHER: 'آخر',
-        } as Record<string, string>,
-        renovationCapabilityOther: {
-          OTHER: 'آخر',
-        } as Record<string, string>,
-      };
+      toast.success("تم تصدير البيانات بنجاح");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("حدث خطأ أثناء التصدير");
+    }
+  };
 
       // Helper functions matching PDF generator exactly
       const getDisplayValue = (value: any, defaultValue: string = '—'): string => {

@@ -34,6 +34,7 @@ public class InstitutionController {
 
     private final InstitutionService institutionService;
     private final CsvExportService csvExportService;
+    private final ExcelExportService excelExportService;
     private final UserRepository userRepository;
 
     /**
@@ -150,6 +151,24 @@ public class InstitutionController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(csvContent);
+    }
+
+    /**
+     * Export all institutions as Excel (XLSX)
+     * Comprehensive export matching PDF format with Arabic labels
+     */
+    @GetMapping("/export/excel")
+    public ResponseEntity<byte[]> exportToExcel() {
+        log.info("GET /api/v1/institutions/export/excel - Exporting institutions to Excel");
+        byte[] excelContent = excelExportService.exportInstitutionsToExcel();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentDispositionFormData("attachment", "institutions_export.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(excelContent);
     }
 
     /**
