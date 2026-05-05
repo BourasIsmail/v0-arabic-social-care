@@ -425,6 +425,93 @@ export interface DashboardStats {
   averageCapacity?: number;
   institutionsWithHousing?: number;
   institutionsWithMeals?: number;
+  
+  // Type breakdown by milieu and status
+  typeStats?: {
+    darTalib: { total: number; licensed: number; unlicensed: number; urban: number; rural: number };
+    darTaliba: { total: number; licensed: number; unlicensed: number; urban: number; rural: number };
+    mixed: { total: number; licensed: number; unlicensed: number; urban: number; rural: number };
+  };
+  
+  // Target levels (المستويات المستهدفة)
+  targetLevels?: {
+    primary: number;
+    middleSchool: number;
+    highSchool: number;
+    other: number;
+  };
+  
+  // Building financing (تمويل بناء المؤسسة)
+  buildingFinancing?: {
+    solidarityMinistry: number;
+    nationalEntraide: number;
+    indh: number;
+    commune: number;
+    fondationMohammed5: number;
+    nationalRevival: number;
+    association: number;
+    other: number;
+    totalCost: number;
+  };
+  
+  // Equipment financing (تمويل تجهيز المؤسسة)
+  equipmentFinancing?: {
+    solidarityMinistry: number;
+    nationalEntraide: number;
+    indh: number;
+    commune: number;
+    fondationMohammed5: number;
+    association: number;
+    other: number;
+  };
+  
+  // Operating financing (مصادر تمويل تسيير المؤسسة)
+  operatingFinancing?: {
+    indh: number;
+    nationalEntraide: number;
+    nationalEducation: number;
+    commune: number;
+    parentContributions: number;
+    donors: number;
+    associationOwnSources: number;
+    other: number;
+    annualManagementCost: number;
+    annualHRCost: number;
+    annualMealsCost: number;
+    individualAnnualCost: number;
+    averageAssociationShare: number;
+    averageEducationShare: number;
+    averageOtherShare: number;
+  };
+  
+  // Meal service (خدمة الإطعام)
+  mealService?: {
+    institutionKitchen: number;
+    readyMeals: number;
+    other: number;
+    totalMealBeneficiaries: number;
+  };
+  
+  // Beneficiaries (المستفيدين من الإيواء والإطعام)
+  beneficiaries?: {
+    season2324: { total: number; male: number; female: number; primary: number; middle: number; high: number };
+    season2425: { total: number; male: number; female: number; primary: number; middle: number; high: number };
+    season2526: { total: number; male: number; female: number; primary: number; middle: number; high: number };
+  };
+  
+  // Human resources (الموارد البشرية)
+  humanResources?: {
+    directors: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
+    educators: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
+    cooks: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
+    guards: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
+    other: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
+    totalStaff: number;
+    totalWithCnss: number;
+    totalWithSmig: number;
+    totalMonthlyCost: number;
+    totalAnnualCost: number;
+  };
 }
 
 // Form step type
@@ -494,7 +581,7 @@ export const selectionBodyLabels: Record<SelectionBody, string> = {
 };
 
 export const tariffTypeLabels: Record<TariffType, string> = {
-  [TariffType.UNIFORM]: "تعريفة موحدة",
+  [TariffType.UNIFORM]: "��عريفة موحدة",
   [TariffType.NON_UNIFORM]: "تعريفة غير موحدة",
 };
 
