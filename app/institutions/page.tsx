@@ -112,7 +112,7 @@ export default function InstitutionsPage() {
     darTalibaCount: number;
     mixedCount: number;
   }>(
-    shouldFetch && !isUserRole ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) : null
+    shouldFetch && !isUserRole ? buildApiUrl(API_ENDPOINTS.statistics.dashboard()) : null
   );
 
   // Fetch ALL institutions for USER role to calculate stats and display (no pagination)
