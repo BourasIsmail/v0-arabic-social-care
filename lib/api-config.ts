@@ -31,6 +31,7 @@ export const API_ENDPOINTS = {
     update: (id: number | string) => `/api/v1/institutions/${id}`,
     delete: (id: number | string) => `/api/v1/institutions/${id}`,
     exportCsv: "/api/v1/institutions/export/csv",
+    exportExcel: "/api/v1/institutions/export/excel",
   },
   
   // Geographic endpoints
