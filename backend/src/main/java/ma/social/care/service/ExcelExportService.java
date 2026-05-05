@@ -181,7 +181,7 @@ public class ExcelExportService {
     private String[] getHeaders() {
         return new String[] {
                 // Section I: معطيات حول المؤسسة
-                "نوعية المؤسسة",
+                "نوعية ا��مؤسسة",
                 "اسم الجمعية المشرفة",
                 "اسم المؤسسة",
                 "العنوان",
@@ -278,9 +278,9 @@ public class ExcelExportService {
 
     private String[] getRowData(InstitutionResponseDTO inst) {
         HousingMealsDTO hm = inst.getHousingMeals();
-        SeasonDataDTO s2324 = hm != null ? hm.getSeason2324() : null;
-        SeasonDataDTO s2425 = hm != null ? hm.getSeason2425() : null;
-        SeasonDataDTO s2526 = hm != null ? hm.getSeason2526() : null;
+        SeasonBeneficiariesDTO s2324 = hm != null ? hm.getSeason2324() : null;
+        SeasonBeneficiariesDTO s2425 = hm != null ? hm.getSeason2425() : null;
+        SeasonBeneficiariesDTO s2526 = hm != null ? hm.getSeason2526() : null;
         BuildingDTO bld = inst.getBuilding();
         TargetingDTO tgt = inst.getTargeting();
         FinancingDTO fin = inst.getFinancing();
