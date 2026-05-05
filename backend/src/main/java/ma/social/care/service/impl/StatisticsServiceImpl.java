@@ -404,9 +404,9 @@ public class StatisticsServiceImpl implements StatisticsService {
         
         // Recalculate using direct accumulation
         StaffCategoryDTO directors = computeStaffCategory(institutions, StaffType.DIRECTOR);
-        StaffCategoryDTO educators = computeStaffCategory(institutions, StaffType.EDUCATOR);
-        StaffCategoryDTO cooks = computeStaffCategory(institutions, StaffType.COOK);
-        StaffCategoryDTO guards = computeStaffCategory(institutions, StaffType.GUARD);
+        StaffCategoryDTO educators = computeStaffCategory(institutions, StaffType.EDUCATORS);
+        StaffCategoryDTO cooks = computeStaffCategory(institutions, StaffType.KITCHEN_AGENTS);
+        StaffCategoryDTO guards = computeStaffCategory(institutions, StaffType.SECURITY);
         StaffCategoryDTO otherStaff = computeStaffCategory(institutions, StaffType.OTHER);
         
         totalStaff = directors.getTotal() + educators.getTotal() + cooks.getTotal() + guards.getTotal() + otherStaff.getTotal();
