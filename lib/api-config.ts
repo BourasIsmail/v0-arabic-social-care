@@ -40,6 +40,16 @@ export const API_ENDPOINTS = {
     communesByPrefecture: (prefectureId: number | string) => `/api/v1/prefectures/${prefectureId}/communes`,
   },
   
+  // Region endpoints (alias for geo)
+  regions: {
+    list: "/api/v1/regions",
+  },
+  
+  // Prefecture endpoints (alias for geo)
+  prefectures: {
+    byRegion: (regionId: number | string) => `/api/v1/regions/${regionId}/prefectures`,
+  },
+  
   // Statistics endpoints
   statistics: {
     dashboard: "/api/v1/statistics/dashboard",
