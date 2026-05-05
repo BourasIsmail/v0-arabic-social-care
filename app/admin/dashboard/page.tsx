@@ -34,10 +34,10 @@ export default function AdminDashboardPage() {
     }
   }, [user, isAuthLoading, router]);
 
-  // Fetch dashboard stats from backend
+  // Fetch dashboard stats from backend with region/prefecture filters
   const { data: stats, isLoading, error } = useAuthSWR<DashboardStats>(
     (user?.role === "ADMIN" || user?.role === "VIEW_ONLY") 
-      ? buildApiUrl(API_ENDPOINTS.statistics.dashboard) 
+      ? buildApiUrl(API_ENDPOINTS.statistics.dashboard(selectedRegion, selectedPrefecture)) 
       : null
   );
 

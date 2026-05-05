@@ -52,7 +52,13 @@ export const API_ENDPOINTS = {
   
   // Statistics endpoints
   statistics: {
-    dashboard: "/api/v1/statistics/dashboard",
+    dashboard: (regionId?: string | number, prefectureId?: string | number) => {
+      const params = new URLSearchParams();
+      if (regionId && regionId !== "all") params.append("regionId", String(regionId));
+      if (prefectureId && prefectureId !== "all") params.append("prefectureId", String(prefectureId));
+      const queryString = params.toString();
+      return `/api/v1/statistics/dashboard${queryString ? `?${queryString}` : ""}`;
+    },
   },
 } as const;
 

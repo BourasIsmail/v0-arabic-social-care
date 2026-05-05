@@ -30,14 +30,25 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final StaffMemberRepository staffMemberRepository;
 
     @Override
-    public DashboardStatsDTO getDashboardStatistics() {
-        log.info("Computing comprehensive dashboard statistics");
+    public DashboardStatsDTO getDashboardStatistics(Long regionId, Long prefectureId) {
+        log.info("Computing comprehensive dashboard statistics (regionId={}, prefectureId={})", regionId, prefectureId);
         
         // Fetch all institutions with relations for comprehensive stats
         List<Institution> institutions = institutionRepository.findAllActiveWithRelations();
         
+        // Apply filters
+        if (prefectureId != null) {
+            institutions = institutions.stream()
+                    .filter(i -> i.getPrefecture() != null && prefectureId.equals(i.getPrefecture().getId()))
+                    .collect(Collectors.toList());
+        } else if (regionId != null) {
+            institutions = institutions.stream()
+                    .filter(i -> i.getRegion() != null && regionId.equals(i.getRegion().getId()))
+                    .collect(Collectors.toList());
+        }
+        
         if (institutions.isEmpty()) {
-            log.info("No institutions found, returning empty statistics");
+            log.info("No institutions found for filters, returning empty statistics");
             return buildEmptyStats();
         }
 
@@ -93,7 +104,13 @@ public class StatisticsServiceImpl implements StatisticsService {
         BeneficiariesDTO beneficiaries = computeBeneficiaries(institutions);
         
         // Fetch institutions with staff separately to avoid MultipleBagFetchException
-        List<Institution> institutionsWithStaff = institutionRepository.findAllActiveWithStaff();
+        // Get institution IDs from filtered list to filter staff data as well
+        Set<Long> filteredInstitutionIds = institutions.stream()
+                .map(Institution::getId)
+                .collect(Collectors.toSet());
+        List<Institution> institutionsWithStaff = institutionRepository.findAllActiveWithStaff().stream()
+                .filter(i -> filteredInstitutionIds.contains(i.getId()))
+                .collect(Collectors.toList());
         HumanResourcesDTO humanResources = computeHumanResources(institutionsWithStaff);
         
         DashboardStatsDTO stats = DashboardStatsDTO.builder()

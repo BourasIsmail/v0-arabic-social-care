@@ -19,11 +19,15 @@ public class StatisticsController {
     /**
      * Get comprehensive dashboard statistics
      * Includes counts, distributions, and geographic breakdowns
+     * @param regionId Optional region filter
+     * @param prefectureId Optional prefecture filter
      */
     @GetMapping("/dashboard")
-    public ResponseEntity<DashboardStatsDTO> getDashboardStatistics() {
-        log.info("GET /api/v1/statistics/dashboard - Fetching dashboard statistics");
-        DashboardStatsDTO stats = statisticsService.getDashboardStatistics();
+    public ResponseEntity<DashboardStatsDTO> getDashboardStatistics(
+            @RequestParam(required = false) Long regionId,
+            @RequestParam(required = false) Long prefectureId) {
+        log.info("GET /api/v1/statistics/dashboard - Fetching dashboard statistics (regionId={}, prefectureId={})", regionId, prefectureId);
+        DashboardStatsDTO stats = statisticsService.getDashboardStatistics(regionId, prefectureId);
         return ResponseEntity.ok(stats);
     }
 }
