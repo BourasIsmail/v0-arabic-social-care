@@ -1,6 +1,6 @@
 // Centralized API configuration
 // Base URL for all API calls - change this single value to update all endpoints
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://enfance.entraide.ma";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://enfance.entraide.ma/api";
 
 // API endpoints - all paths are relative to API_BASE_URL
 export const API_ENDPOINTS = {

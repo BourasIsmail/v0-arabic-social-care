@@ -78,6 +78,18 @@ public interface InstitutionRepository extends JpaRepository<Institution, Long> 
     @Query("SELECT COUNT(i) FROM Institution i WHERE i.isDeleted = false AND i.meals = true")
     long countWithMeals();
 
-    @Query("SELECT i FROM Institution i LEFT JOIN FETCH i.region LEFT JOIN FETCH i.prefecture LEFT JOIN FETCH i.housingMeals WHERE i.isDeleted = false")
+    @Query("SELECT DISTINCT i FROM Institution i " +
+            "LEFT JOIN FETCH i.region " +
+            "LEFT JOIN FETCH i.prefecture " +
+            "LEFT JOIN FETCH i.housingMeals " +
+            "LEFT JOIN FETCH i.financing " +
+            "LEFT JOIN FETCH i.building " +
+            "LEFT JOIN FETCH i.targeting " +
+            "WHERE i.isDeleted = false")
     List<Institution> findAllActiveWithRelations();
+    
+    @Query("SELECT DISTINCT i FROM Institution i " +
+            "LEFT JOIN FETCH i.staffMembers " +
+            "WHERE i.isDeleted = false")
+    List<Institution> findAllActiveWithStaff();
 }

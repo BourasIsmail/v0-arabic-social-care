@@ -91,7 +91,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         OperatingFinancingDTO operatingFinancing = computeOperatingFinancing(institutions);
         MealServiceDTO mealService = computeMealService(institutions);
         BeneficiariesDTO beneficiaries = computeBeneficiaries(institutions);
-        HumanResourcesDTO humanResources = computeHumanResources(institutions);
+        
+        // Fetch institutions with staff separately to avoid MultipleBagFetchException
+        List<Institution> institutionsWithStaff = institutionRepository.findAllActiveWithStaff();
+        HumanResourcesDTO humanResources = computeHumanResources(institutionsWithStaff);
         
         DashboardStatsDTO stats = DashboardStatsDTO.builder()
                 .totalInstitutions(totalInstitutions)
@@ -436,22 +439,23 @@ public class StatisticsServiceImpl implements StatisticsService {
         BigDecimal monthlyCost = BigDecimal.ZERO, annualCost = BigDecimal.ZERO;
         
         for (Institution inst : institutions) {
+            if (inst.getStaffMembers() == null) continue;
             for (StaffMember sm : inst.getStaffMembers()) {
-                if (sm.getStaffType() == type) {
-                    int assoc = sm.getNbAssociation() != null ? sm.getNbAssociation() : 0;
-                    int dep = sm.getNbDeployed() != null ? sm.getNbDeployed() : 0;
-                    int vol = sm.getNbVolunteers() != null ? sm.getNbVolunteers() : 0;
-                    
-                    total += assoc + dep + vol;
-                    association += assoc;
-                    deployed += dep;
-                    volunteers += vol;
-                    cnss += sm.getNbCNSS() != null ? sm.getNbCNSS() : 0;
-                    smig += sm.getNbSMIG() != null ? sm.getNbSMIG() : 0;
-                    
-                    if (sm.getMonthlyCost() != null) monthlyCost = monthlyCost.add(sm.getMonthlyCost());
-                    if (sm.getAnnualCost() != null) annualCost = annualCost.add(sm.getAnnualCost());
-                }
+                if (sm == null || sm.getStaffType() != type) continue;
+                
+                int assoc = sm.getNbAssociation() != null ? sm.getNbAssociation() : 0;
+                int dep = sm.getNbDeployed() != null ? sm.getNbDeployed() : 0;
+                int vol = sm.getNbVolunteers() != null ? sm.getNbVolunteers() : 0;
+                
+                total += assoc + dep + vol;
+                association += assoc;
+                deployed += dep;
+                volunteers += vol;
+                cnss += sm.getNbCNSS() != null ? sm.getNbCNSS() : 0;
+                smig += sm.getNbSMIG() != null ? sm.getNbSMIG() : 0;
+                
+                if (sm.getMonthlyCost() != null) monthlyCost = monthlyCost.add(sm.getMonthlyCost());
+                if (sm.getAnnualCost() != null) annualCost = annualCost.add(sm.getAnnualCost());
             }
         }
         
