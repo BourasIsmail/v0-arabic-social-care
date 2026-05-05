@@ -12,6 +12,8 @@ public interface StatisticsService {
      * - Distribution by legal status (Licensed, Unlicensed)
      * - Breakdown by region and prefecture
      * - Additional stats (staff count, housing, meals)
+     * @param regionId Optional region filter
+     * @param prefectureId Optional prefecture filter
      */
-    DashboardStatsDTO getDashboardStatistics();
+    DashboardStatsDTO getDashboardStatistics(Long regionId, Long prefectureId);
 }
