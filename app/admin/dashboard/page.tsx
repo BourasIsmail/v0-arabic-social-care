@@ -94,8 +94,14 @@ export default function AdminDashboardPage() {
     );
   }
 
-  const formatNumber = (n?: number) => n?.toLocaleString("ar-MA") ?? "0";
-  const formatCurrency = (n?: number) => n ? `${n.toLocaleString("ar-MA")} درهم` : "—";
+  const formatNumber = (n?: number | null) => {
+    if (n === undefined || n === null) return "0";
+    return n.toLocaleString("ar-MA");
+  };
+  const formatCurrency = (n?: number | null) => {
+    if (n === undefined || n === null || n === 0) return "—";
+    return `${n.toLocaleString("ar-MA")} درهم`;
+  };
   const getPercent = (part?: number, total?: number) => {
     if (!total || !part) return 0;
     return Math.round((part / total) * 100);
