@@ -505,11 +505,20 @@ export interface DashboardStats {
   
   // Human resources (الموارد البشرية)
   humanResources?: {
-    directors: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
-    educators: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
-    cooks: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
-    guards: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
-    other: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };
+    directors: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };          // المديرون
+    financialManagers: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };  // المسيرون الماليون
+    generalGuards: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };      // الحراس العامون
+    socialWorkers: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };      // المساعدون الاجتماعيون
+    doctors: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };            // الأطباء
+    nurses: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };             // الممرضون
+    psychologists: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };      // الأخصائيون النفسانيون
+    educators: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };          // المربون
+    kitchenManagers: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };    // مسؤولو المطبخ
+    kitchenAgents: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };      // عمال المطبخ
+    storageManagers: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };    // مسؤولو المخزن
+    security: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };           // الأمن
+    serviceAgents: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };      // عمال الخدمة
+    other: { total: number; association: number; deployed: number; volunteers: number; cnss: number; smig: number; monthlyCost: number; annualCost: number };              // آخرون
     totalStaff: number;
     totalWithCnss: number;
     totalWithSmig: number;
@@ -526,7 +535,7 @@ export interface DashboardStats {
     statusOther: number;   // آخر
     // Building Condition (الحالة العامة للبناية)
     good: number;              // جيدة
-    someDegradation: number;   // بعض علامات التدهور
+    someDegradation: number;   // بعض ��لامات التدهور
     bad: number;               // متردية
     conditionOther: number;    // آخر
     // Renovation Capacity (إمكانية الترميم)
@@ -541,6 +550,19 @@ export interface DashboardStats {
     // Partnership Agreement (اتفاقية شراكة)
     hasPartnership: number;    // نعم
     noPartnership: number;     // لا
+  };
+  
+  // Financial summary (الملخص المالي)
+  financialSummary?: {
+    annualMealsCost: number;                  // الكلفة الاجمالية السنوية المخصصة للاطعام
+    associationContributionPercent: number;   // نسبة مساهمة الجمعية
+    educationContributionPercent: number;     // نسبة مساهمة التربية الوطنية
+    otherContributionPercent: number;         // نسبة مساهمة جهات اخرى
+    annualOtherExpenses: number;              // الكلفة السنوية (ماء، كهرباء، غاز، مواد النظافة)
+    annualHRCost: number;                     // الكلفة السنوية المخصصة للموارد البشرية
+    annualManagementCost: number;             // الكلفة السنوية المخصصة لتسيير المؤسسة
+    unsatisfiedRequestsCount: number;         // عدد الطلبات التي لم تتم الاستجابة لها
+    totalHRCount: number;                     // عدد الاجمالي للموارد البشرية
   };
 }
 

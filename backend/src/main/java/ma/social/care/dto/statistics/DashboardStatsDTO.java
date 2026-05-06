@@ -68,6 +68,9 @@ public class DashboardStatsDTO {
     // Building stats (معطيات حول البناية)
     private BuildingStatsDTO buildingStats;
     
+    // Financial summary (الملخص المالي)
+    private FinancialSummaryDTO financialSummary;
+    
     // === Nested DTOs ===
     
     @Data
@@ -202,11 +205,20 @@ public class DashboardStatsDTO {
     @AllArgsConstructor
     @Builder
     public static class HumanResourcesDTO {
-        private StaffCategoryDTO directors;
-        private StaffCategoryDTO educators;
-        private StaffCategoryDTO cooks;
-        private StaffCategoryDTO guards;
-        private StaffCategoryDTO other;
+        private StaffCategoryDTO directors;          // المديرون
+        private StaffCategoryDTO financialManagers;  // المسيرون الماليون
+        private StaffCategoryDTO generalGuards;      // الحراس العامون
+        private StaffCategoryDTO socialWorkers;      // المساعدون الاجتماعيون
+        private StaffCategoryDTO doctors;            // الأطباء
+        private StaffCategoryDTO nurses;             // الممرضون
+        private StaffCategoryDTO psychologists;      // الأخصائيون النفسانيون
+        private StaffCategoryDTO educators;          // المربون
+        private StaffCategoryDTO kitchenManagers;    // مسؤولو المطبخ
+        private StaffCategoryDTO kitchenAgents;      // عمال المطبخ
+        private StaffCategoryDTO storageManagers;    // مسؤولو المخزن
+        private StaffCategoryDTO security;           // الأمن
+        private StaffCategoryDTO serviceAgents;      // عمال الخدمة
+        private StaffCategoryDTO other;              // آخرون
         private long totalStaff;
         private long totalWithCnss;
         private long totalWithSmig;
@@ -260,5 +272,34 @@ public class DashboardStatsDTO {
         // Partnership Agreement (اتفاقية شراكة)
         private long hasPartnership;    // نعم
         private long noPartnership;     // لا
+    }
+    
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class FinancialSummaryDTO {
+        // الكلفة الاجمالية السنوية المخصصة للاطعام
+        private BigDecimal annualMealsCost;
+        
+        // نسب المساهمة في تمويل الإطعام
+        private BigDecimal associationContributionPercent;  // نسبة مساهمة الجمعية
+        private BigDecimal educationContributionPercent;    // نسبة مساهمة التربية الوطنية
+        private BigDecimal otherContributionPercent;        // نسبة مساهمة جهات اخرى
+        
+        // الكلفة السنوية المخصصة لنفاقات اخرى (ماء، كهرباء، غاز، مواد النظافة)
+        private BigDecimal annualOtherExpenses;
+        
+        // الكلفة السنوية المخصصة للموارد البشرية
+        private BigDecimal annualHRCost;
+        
+        // الكلفة السنوية المخصصة لتسيير المؤسسة
+        private BigDecimal annualManagementCost;
+        
+        // عدد الطلبات التي لم تتم الاستجابة لها برسم الموسم الدراسي الحالي
+        private long unsatisfiedRequestsCount;
+        
+        // عدد الاجمالي للموارد البشرية
+        private long totalHRCount;
     }
 }
