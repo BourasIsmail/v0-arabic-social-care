@@ -490,13 +490,17 @@ export interface DashboardStats {
     readyMeals: number;
     other: number;
     totalMealBeneficiaries: number;
+    fullGrantBeneficiaries: number;      // عدد المستفيدين من منحة كاملة
+    halfGrantBeneficiaries: number;      // عدد المستفيدين من نصف منحة
+    associationMealBeneficiaries: number; // المستفيدون من الإطعام من الجمعية
+    educationMealBeneficiaries: number;   // المستفيدون من الإطعام من التربية الوطنية
   };
   
   // Beneficiaries (المستفيدين من الإيواء والإطعام)
   beneficiaries?: {
-    season2324: { total: number; male: number; female: number; primary: number; middle: number; high: number };
-    season2425: { total: number; male: number; female: number; primary: number; middle: number; high: number };
-    season2526: { total: number; male: number; female: number; primary: number; middle: number; high: number };
+    season2324: { total: number; male: number; female: number; primary: number; middle: number; high: number; orphans: number; disabled: number };
+    season2425: { total: number; male: number; female: number; primary: number; middle: number; high: number; orphans: number; disabled: number };
+    season2526: { total: number; male: number; female: number; primary: number; middle: number; high: number; orphans: number; disabled: number };
   };
   
   // Human resources (الموارد البشرية)

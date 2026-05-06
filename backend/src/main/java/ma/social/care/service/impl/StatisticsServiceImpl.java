@@ -324,6 +324,10 @@ public class StatisticsServiceImpl implements StatisticsService {
     private MealServiceDTO computeMealService(List<Institution> institutions) {
         long institutionKitchen = 0, readyMeals = 0, other = 0;
         long totalMealBeneficiaries = 0;
+        long fullGrantBeneficiaries = 0;
+        long halfGrantBeneficiaries = 0;
+        long associationMealBeneficiaries = 0;
+        long educationMealBeneficiaries = 0;
         
         for (Institution inst : institutions) {
             HousingMeals hm = inst.getHousingMeals();
@@ -335,6 +339,18 @@ public class StatisticsServiceImpl implements StatisticsService {
                 if (hm.getTotalMealBeneficiaries2526() != null) {
                     totalMealBeneficiaries += hm.getTotalMealBeneficiaries2526();
                 }
+                if (hm.getFullGrantCount() != null) {
+                    fullGrantBeneficiaries += hm.getFullGrantCount();
+                }
+                if (hm.getHalfGrantCount() != null) {
+                    halfGrantBeneficiaries += hm.getHalfGrantCount();
+                }
+                if (hm.getAssociationMealBeneficiaries() != null) {
+                    associationMealBeneficiaries += hm.getAssociationMealBeneficiaries();
+                }
+                if (hm.getEducationMealBeneficiaries() != null) {
+                    educationMealBeneficiaries += hm.getEducationMealBeneficiaries();
+                }
             }
         }
         
@@ -343,6 +359,10 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .readyMeals(readyMeals)
                 .other(other)
                 .totalMealBeneficiaries(totalMealBeneficiaries)
+                .fullGrantBeneficiaries(fullGrantBeneficiaries)
+                .halfGrantBeneficiaries(halfGrantBeneficiaries)
+                .associationMealBeneficiaries(associationMealBeneficiaries)
+                .educationMealBeneficiaries(educationMealBeneficiaries)
                 .build();
     }
     
@@ -361,6 +381,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     
     private SeasonBeneficiariesDTO computeSeasonBeneficiaries(List<Institution> institutions, String season) {
         long total = 0, male = 0, female = 0, primary = 0, middle = 0, high = 0;
+        long orphans = 0, disabled = 0;
         
         for (Institution inst : institutions) {
             HousingMeals hm = inst.getHousingMeals();
@@ -379,6 +400,8 @@ public class StatisticsServiceImpl implements StatisticsService {
                     if (sb.getPrimaryBeneficiaries() != null) primary += sb.getPrimaryBeneficiaries();
                     if (sb.getMiddleSchoolBeneficiaries() != null) middle += sb.getMiddleSchoolBeneficiaries();
                     if (sb.getHighSchoolBeneficiaries() != null) high += sb.getHighSchoolBeneficiaries();
+                    if (sb.getOrphans() != null) orphans += sb.getOrphans();
+                    if (sb.getDisabled() != null) disabled += sb.getDisabled();
                 }
             }
         }
@@ -390,6 +413,8 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .primary(primary)
                 .middle(middle)
                 .high(high)
+                .orphans(orphans)
+                .disabled(disabled)
                 .build();
     }
     
