@@ -516,6 +516,32 @@ export interface DashboardStats {
     totalMonthlyCost: number;
     totalAnnualCost: number;
   };
+  
+  // Building stats (معطيات حول البناية)
+  buildingStats?: {
+    // Building Status (وضعية البناية)
+    rental: number;        // إيجار
+    owned: number;         // ملكية
+    atDisposal: number;    // وضع رهن إشارة المؤسسة
+    statusOther: number;   // آخر
+    // Building Condition (الحالة العامة للبناية)
+    good: number;              // جيدة
+    someDegradation: number;   // بعض علامات التدهور
+    bad: number;               // متردية
+    conditionOther: number;    // آخر
+    // Renovation Capacity (إمكانية الترميم)
+    easy: number;              // سهلة
+    difficult: number;         // صعبة
+    needsReconstruction: number; // تتطلب إعادة البناء
+    // Owner Type (نوع المالك)
+    stateDomain: number;   // الملك العام للدولة
+    communal: number;      // جماعي
+    privateOwner: number;  // ملك خصوصي
+    ownerOther: number;    // آخر
+    // Partnership Agreement (اتفاقية شراكة)
+    hasPartnership: number;    // نعم
+    noPartnership: number;     // لا
+  };
 }
 
 // Form step type

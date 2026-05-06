@@ -239,6 +239,7 @@ export default function AdminDashboardPage() {
               <TabsTrigger value="levels">المستويات</TabsTrigger>
               <TabsTrigger value="beneficiaries">المستفيدون</TabsTrigger>
               <TabsTrigger value="meals">الإطعام</TabsTrigger>
+              <TabsTrigger value="building">البناية</TabsTrigger>
               <TabsTrigger value="financing">التمويل</TabsTrigger>
               <TabsTrigger value="hr">الموارد البشرية</TabsTrigger>
               <TabsTrigger value="regions">الجهات</TabsTrigger>
@@ -791,6 +792,183 @@ export default function AdminDashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-purple-600">{formatNumber(stats.mealService?.educationMealBeneficiaries)}</div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Building Tab */}
+            <TabsContent value="building" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Building Status */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Building className="h-5 w-5" />
+                      وضعية البناية
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>إيجار</span>
+                        <span className="font-medium">{formatNumber(stats.buildingStats?.rental)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.rental, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>ملكية</span>
+                        <span className="font-medium">{formatNumber(stats.buildingStats?.owned)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.owned, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>وضع رهن إشارة المؤسسة</span>
+                        <span className="font-medium">{formatNumber(stats.buildingStats?.atDisposal)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.atDisposal, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>آخر</span>
+                        <span className="font-medium">{formatNumber(stats.buildingStats?.statusOther)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.statusOther, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Building Condition */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">الحالة العامة للبناية</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>جيدة</span>
+                        <Badge variant="outline" className="bg-green-50 text-green-700">{formatNumber(stats.buildingStats?.good)}</Badge>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.good, stats.totalInstitutions)} className="h-2 bg-green-100" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>بعض علامات التدهور</span>
+                        <Badge variant="outline" className="bg-amber-50 text-amber-700">{formatNumber(stats.buildingStats?.someDegradation)}</Badge>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.someDegradation, stats.totalInstitutions)} className="h-2 bg-amber-100" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>متردية</span>
+                        <Badge variant="outline" className="bg-red-50 text-red-700">{formatNumber(stats.buildingStats?.bad)}</Badge>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.bad, stats.totalInstitutions)} className="h-2 bg-red-100" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>آخر</span>
+                        <Badge variant="outline">{formatNumber(stats.buildingStats?.conditionOther)}</Badge>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.conditionOther, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Renovation Capacity */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">إمكانية الترميم</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>سهلة</span>
+                        <Badge variant="outline" className="bg-green-50 text-green-700">{formatNumber(stats.buildingStats?.easy)}</Badge>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.easy, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>صعبة</span>
+                        <Badge variant="outline" className="bg-amber-50 text-amber-700">{formatNumber(stats.buildingStats?.difficult)}</Badge>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.difficult, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>تتطلب إعادة البناء</span>
+                        <Badge variant="outline" className="bg-red-50 text-red-700">{formatNumber(stats.buildingStats?.needsReconstruction)}</Badge>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.needsReconstruction, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Owner Type */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">نوع المالك</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>الملك العام للدولة</span>
+                        <span className="font-medium">{formatNumber(stats.buildingStats?.stateDomain)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.stateDomain, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>جماعي</span>
+                        <span className="font-medium">{formatNumber(stats.buildingStats?.communal)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.communal, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>ملك خصوصي</span>
+                        <span className="font-medium">{formatNumber(stats.buildingStats?.privateOwner)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.privateOwner, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>آخر</span>
+                        <span className="font-medium">{formatNumber(stats.buildingStats?.ownerOther)}</span>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.ownerOther, stats.totalInstitutions)} className="h-2" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Partnership Agreement */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">اتفاقية شراكة</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-4 rounded-lg bg-green-50 dark:bg-green-900/20">
+                        <div className="text-2xl font-bold text-green-600">{formatNumber(stats.buildingStats?.hasPartnership)}</div>
+                        <p className="text-sm text-muted-foreground mt-1">نعم</p>
+                      </div>
+                      <div className="text-center p-4 rounded-lg bg-red-50 dark:bg-red-900/20">
+                        <div className="text-2xl font-bold text-red-600">{formatNumber(stats.buildingStats?.noPartnership)}</div>
+                        <p className="text-sm text-muted-foreground mt-1">لا</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>نسبة التوفر على اتفاقية</span>
+                        <span className="font-medium">{getPercent(stats.buildingStats?.hasPartnership, (stats.buildingStats?.hasPartnership || 0) + (stats.buildingStats?.noPartnership || 0))}%</span>
+                      </div>
+                      <Progress value={getPercent(stats.buildingStats?.hasPartnership, (stats.buildingStats?.hasPartnership || 0) + (stats.buildingStats?.noPartnership || 0))} className="h-2" />
+                    </div>
                   </CardContent>
                 </Card>
               </div>

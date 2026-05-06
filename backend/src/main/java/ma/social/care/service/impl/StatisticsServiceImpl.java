@@ -102,6 +102,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         OperatingFinancingDTO operatingFinancing = computeOperatingFinancing(institutions);
         MealServiceDTO mealService = computeMealService(institutions);
         BeneficiariesDTO beneficiaries = computeBeneficiaries(institutions);
+        BuildingStatsDTO buildingStats = computeBuildingStats(institutions);
         
         // Fetch institutions with staff separately to avoid MultipleBagFetchException
         // Get institution IDs from filtered list to filter staff data as well
@@ -139,6 +140,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .mealService(mealService)
                 .beneficiaries(beneficiaries)
                 .humanResources(humanResources)
+                .buildingStats(buildingStats)
                 .build();
         
         log.info("Dashboard statistics computed: {} institutions, {} capacity, {} beneficiaries", 
@@ -512,6 +514,88 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .smig(smig)
                 .monthlyCost(monthlyCost)
                 .annualCost(annualCost)
+                .build();
+    }
+    
+    // === Building Stats ===
+    private BuildingStatsDTO computeBuildingStats(List<Institution> institutions) {
+        long rental = 0, owned = 0, atDisposal = 0, statusOther = 0;
+        long good = 0, someDegradation = 0, bad = 0, conditionOther = 0;
+        long easy = 0, difficult = 0, needsReconstruction = 0;
+        long stateDomain = 0, communal = 0, privateOwner = 0, ownerOther = 0;
+        long hasPartnership = 0, noPartnership = 0;
+        
+        for (Institution inst : institutions) {
+            Building b = inst.getBuilding();
+            if (b == null) continue;
+            
+            // Building Status
+            if (b.getBuildingStatus() != null) {
+                switch (b.getBuildingStatus()) {
+                    case RENTAL: rental++; break;
+                    case OWNED: owned++; break;
+                    case AT_DISPOSAL: atDisposal++; break;
+                    case OTHER: statusOther++; break;
+                }
+            }
+            
+            // Building Condition
+            if (b.getBuildingCondition() != null) {
+                switch (b.getBuildingCondition()) {
+                    case GOOD: good++; break;
+                    case SOME_DEGRADATION: someDegradation++; break;
+                    case BAD: bad++; break;
+                    case OTHER: conditionOther++; break;
+                }
+            }
+            
+            // Renovation Capacity
+            if (b.getRenovationCapacity() != null) {
+                switch (b.getRenovationCapacity()) {
+                    case EASY: easy++; break;
+                    case DIFFICULT: difficult++; break;
+                    case NEEDS_RECONSTRUCTION: needsReconstruction++; break;
+                }
+            }
+            
+            // Owner Type
+            if (b.getOwnerType() != null) {
+                switch (b.getOwnerType()) {
+                    case STATE_DOMAIN: stateDomain++; break;
+                    case COMMUNAL: communal++; break;
+                    case PRIVATE: privateOwner++; break;
+                    case OTHER: ownerOther++; break;
+                }
+            }
+            
+            // Partnership Agreement
+            if (b.getHasPartnershipAgreement() != null) {
+                if (b.getHasPartnershipAgreement()) {
+                    hasPartnership++;
+                } else {
+                    noPartnership++;
+                }
+            }
+        }
+        
+        return BuildingStatsDTO.builder()
+                .rental(rental)
+                .owned(owned)
+                .atDisposal(atDisposal)
+                .statusOther(statusOther)
+                .good(good)
+                .someDegradation(someDegradation)
+                .bad(bad)
+                .conditionOther(conditionOther)
+                .easy(easy)
+                .difficult(difficult)
+                .needsReconstruction(needsReconstruction)
+                .stateDomain(stateDomain)
+                .communal(communal)
+                .privateOwner(privateOwner)
+                .ownerOther(ownerOther)
+                .hasPartnership(hasPartnership)
+                .noPartnership(noPartnership)
                 .build();
     }
     
