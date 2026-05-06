@@ -65,6 +65,9 @@ public class DashboardStatsDTO {
     // Human resources (الموارد البشرية)
     private HumanResourcesDTO humanResources;
     
+    // Building stats (معطيات حول البناية)
+    private BuildingStatsDTO buildingStats;
+    
     // === Nested DTOs ===
     
     @Data
@@ -224,5 +227,38 @@ public class DashboardStatsDTO {
         private long smig;
         private BigDecimal monthlyCost;
         private BigDecimal annualCost;
+    }
+    
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class BuildingStatsDTO {
+        // Building Status (وضعية البناية)
+        private long rental;        // إيجار
+        private long owned;         // ملكية
+        private long atDisposal;    // وضع رهن إشارة المؤسسة
+        private long statusOther;   // آخر
+        
+        // Building Condition (الحالة العامة للبناية)
+        private long good;              // جيدة
+        private long someDegradation;   // بعض علامات التدهور
+        private long bad;               // متردية
+        private long conditionOther;    // آخر
+        
+        // Renovation Capacity (إمكانية الترميم)
+        private long easy;              // سهلة
+        private long difficult;         // صعبة
+        private long needsReconstruction; // تتطلب إعادة البناء
+        
+        // Owner Type (نوع المالك)
+        private long stateDomain;   // الملك العام للدولة
+        private long communal;      // جماعي
+        private long privateOwner;  // ملك خصوصي
+        private long ownerOther;    // آخر
+        
+        // Partnership Agreement (اتفاقية شراكة)
+        private long hasPartnership;    // نعم
+        private long noPartnership;     // لا
     }
 }
