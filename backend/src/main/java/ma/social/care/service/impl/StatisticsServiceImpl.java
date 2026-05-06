@@ -353,11 +353,14 @@ public class StatisticsServiceImpl implements StatisticsService {
         // educationMealBeneficiaries = fullGrantBeneficiaries + halfGrantBeneficiaries
         long educationMealBeneficiaries = fullGrantBeneficiaries + halfGrantBeneficiaries;
         
+        // totalMealBeneficiaries = associationMealBeneficiaries + educationMealBeneficiaries
+        long calculatedTotalMealBeneficiaries = associationMealBeneficiaries + educationMealBeneficiaries;
+        
         return MealServiceDTO.builder()
                 .institutionKitchen(institutionKitchen)
                 .readyMeals(readyMeals)
                 .other(other)
-                .totalMealBeneficiaries(totalMealBeneficiaries)
+                .totalMealBeneficiaries(calculatedTotalMealBeneficiaries)
                 .fullGrantBeneficiaries(fullGrantBeneficiaries)
                 .halfGrantBeneficiaries(halfGrantBeneficiaries)
                 .associationMealBeneficiaries(associationMealBeneficiaries)
