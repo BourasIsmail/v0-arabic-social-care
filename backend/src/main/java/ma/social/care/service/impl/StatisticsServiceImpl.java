@@ -451,26 +451,48 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
         }
         
-        // Recalculate using direct accumulation
+        // Compute all 14 staff types
         StaffCategoryDTO directors = computeStaffCategory(institutions, StaffType.DIRECTOR);
+        StaffCategoryDTO financialManagers = computeStaffCategory(institutions, StaffType.FINANCIAL_MANAGER);
+        StaffCategoryDTO generalGuards = computeStaffCategory(institutions, StaffType.GENERAL_GUARD);
+        StaffCategoryDTO socialWorkers = computeStaffCategory(institutions, StaffType.SOCIAL_WORKER);
+        StaffCategoryDTO doctors = computeStaffCategory(institutions, StaffType.DOCTOR);
+        StaffCategoryDTO nurses = computeStaffCategory(institutions, StaffType.NURSE);
+        StaffCategoryDTO psychologists = computeStaffCategory(institutions, StaffType.PSYCHOLOGIST);
         StaffCategoryDTO educators = computeStaffCategory(institutions, StaffType.EDUCATORS);
-        StaffCategoryDTO cooks = computeStaffCategory(institutions, StaffType.KITCHEN_AGENTS);
-        StaffCategoryDTO guards = computeStaffCategory(institutions, StaffType.SECURITY);
+        StaffCategoryDTO kitchenManagers = computeStaffCategory(institutions, StaffType.KITCHEN_MANAGER);
+        StaffCategoryDTO kitchenAgents = computeStaffCategory(institutions, StaffType.KITCHEN_AGENTS);
+        StaffCategoryDTO storageManagers = computeStaffCategory(institutions, StaffType.STORAGE_MANAGER);
+        StaffCategoryDTO security = computeStaffCategory(institutions, StaffType.SECURITY);
+        StaffCategoryDTO serviceAgents = computeStaffCategory(institutions, StaffType.SERVICE_AGENTS);
         StaffCategoryDTO otherStaff = computeStaffCategory(institutions, StaffType.OTHER);
         
-        totalStaff = directors.getTotal() + educators.getTotal() + cooks.getTotal() + guards.getTotal() + otherStaff.getTotal();
-        totalCnss = directors.getCnss() + educators.getCnss() + cooks.getCnss() + guards.getCnss() + otherStaff.getCnss();
-        totalSmig = directors.getSmig() + educators.getSmig() + cooks.getSmig() + guards.getSmig() + otherStaff.getSmig();
-        totalMonthlyCost = directors.getMonthlyCost().add(educators.getMonthlyCost()).add(cooks.getMonthlyCost())
-                .add(guards.getMonthlyCost()).add(otherStaff.getMonthlyCost());
-        totalAnnualCost = directors.getAnnualCost().add(educators.getAnnualCost()).add(cooks.getAnnualCost())
-                .add(guards.getAnnualCost()).add(otherStaff.getAnnualCost());
+        // Calculate totals from all 14 types
+        StaffCategoryDTO[] allCategories = {directors, financialManagers, generalGuards, socialWorkers, doctors, 
+            nurses, psychologists, educators, kitchenManagers, kitchenAgents, storageManagers, security, serviceAgents, otherStaff};
+        
+        for (StaffCategoryDTO cat : allCategories) {
+            totalStaff += cat.getTotal();
+            totalCnss += cat.getCnss();
+            totalSmig += cat.getSmig();
+            totalMonthlyCost = totalMonthlyCost.add(cat.getMonthlyCost());
+            totalAnnualCost = totalAnnualCost.add(cat.getAnnualCost());
+        }
         
         return HumanResourcesDTO.builder()
                 .directors(directors)
+                .financialManagers(financialManagers)
+                .generalGuards(generalGuards)
+                .socialWorkers(socialWorkers)
+                .doctors(doctors)
+                .nurses(nurses)
+                .psychologists(psychologists)
                 .educators(educators)
-                .cooks(cooks)
-                .guards(guards)
+                .kitchenManagers(kitchenManagers)
+                .kitchenAgents(kitchenAgents)
+                .storageManagers(storageManagers)
+                .security(security)
+                .serviceAgents(serviceAgents)
                 .other(otherStaff)
                 .totalStaff(totalStaff)
                 .totalWithCnss(totalCnss)

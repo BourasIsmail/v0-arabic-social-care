@@ -202,11 +202,20 @@ public class DashboardStatsDTO {
     @AllArgsConstructor
     @Builder
     public static class HumanResourcesDTO {
-        private StaffCategoryDTO directors;
-        private StaffCategoryDTO educators;
-        private StaffCategoryDTO cooks;
-        private StaffCategoryDTO guards;
-        private StaffCategoryDTO other;
+        private StaffCategoryDTO directors;          // المديرون
+        private StaffCategoryDTO financialManagers;  // المسيرون الماليون
+        private StaffCategoryDTO generalGuards;      // الحراس العامون
+        private StaffCategoryDTO socialWorkers;      // المساعدون الاجتماعيون
+        private StaffCategoryDTO doctors;            // الأطباء
+        private StaffCategoryDTO nurses;             // الممرضون
+        private StaffCategoryDTO psychologists;      // الأخصائيون النفسانيون
+        private StaffCategoryDTO educators;          // المربون
+        private StaffCategoryDTO kitchenManagers;    // مسؤولو المطبخ
+        private StaffCategoryDTO kitchenAgents;      // عمال المطبخ
+        private StaffCategoryDTO storageManagers;    // مسؤولو المخزن
+        private StaffCategoryDTO security;           // الأمن
+        private StaffCategoryDTO serviceAgents;      // عمال الخدمة
+        private StaffCategoryDTO other;              // آخرون
         private long totalStaff;
         private long totalWithCnss;
         private long totalWithSmig;

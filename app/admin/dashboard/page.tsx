@@ -1258,6 +1258,72 @@ export default function AdminDashboardPage() {
                           <TableCell className="text-center">{formatCurrency(stats.humanResources?.directors?.annualCost)}</TableCell>
                         </TableRow>
                         <TableRow>
+                          <TableCell className="font-medium">المسيرون الماليون</TableCell>
+                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.financialManagers?.total)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.financialManagers?.association)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.financialManagers?.deployed)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.financialManagers?.volunteers)}</TableCell>
+                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.financialManagers?.cnss)}</TableCell>
+                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.financialManagers?.smig)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.financialManagers?.monthlyCost)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.financialManagers?.annualCost)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium">الحراس العامون</TableCell>
+                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.generalGuards?.total)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.generalGuards?.association)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.generalGuards?.deployed)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.generalGuards?.volunteers)}</TableCell>
+                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.generalGuards?.cnss)}</TableCell>
+                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.generalGuards?.smig)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.generalGuards?.monthlyCost)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.generalGuards?.annualCost)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium">المساعدون الاجتماعيون</TableCell>
+                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.socialWorkers?.total)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.socialWorkers?.association)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.socialWorkers?.deployed)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.socialWorkers?.volunteers)}</TableCell>
+                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.socialWorkers?.cnss)}</TableCell>
+                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.socialWorkers?.smig)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.socialWorkers?.monthlyCost)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.socialWorkers?.annualCost)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium">الأطباء</TableCell>
+                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.doctors?.total)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.doctors?.association)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.doctors?.deployed)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.doctors?.volunteers)}</TableCell>
+                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.doctors?.cnss)}</TableCell>
+                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.doctors?.smig)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.doctors?.monthlyCost)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.doctors?.annualCost)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium">الممرضون</TableCell>
+                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.nurses?.total)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.nurses?.association)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.nurses?.deployed)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.nurses?.volunteers)}</TableCell>
+                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.nurses?.cnss)}</TableCell>
+                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.nurses?.smig)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.nurses?.monthlyCost)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.nurses?.annualCost)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium">الأخصائيون النفسانيون</TableCell>
+                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.psychologists?.total)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.psychologists?.association)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.psychologists?.deployed)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.psychologists?.volunteers)}</TableCell>
+                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.psychologists?.cnss)}</TableCell>
+                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.psychologists?.smig)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.psychologists?.monthlyCost)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.psychologists?.annualCost)}</TableCell>
+                        </TableRow>
+                        <TableRow>
                           <TableCell className="font-medium">المربون</TableCell>
                           <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.educators?.total)}</TableCell>
                           <TableCell className="text-center">{formatNumber(stats.humanResources?.educators?.association)}</TableCell>
@@ -1269,26 +1335,59 @@ export default function AdminDashboardPage() {
                           <TableCell className="text-center">{formatCurrency(stats.humanResources?.educators?.annualCost)}</TableCell>
                         </TableRow>
                         <TableRow>
-                          <TableCell className="font-medium">الطباخون</TableCell>
-                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.cooks?.total)}</TableCell>
-                          <TableCell className="text-center">{formatNumber(stats.humanResources?.cooks?.association)}</TableCell>
-                          <TableCell className="text-center">{formatNumber(stats.humanResources?.cooks?.deployed)}</TableCell>
-                          <TableCell className="text-center">{formatNumber(stats.humanResources?.cooks?.volunteers)}</TableCell>
-                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.cooks?.cnss)}</TableCell>
-                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.cooks?.smig)}</TableCell>
-                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.cooks?.monthlyCost)}</TableCell>
-                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.cooks?.annualCost)}</TableCell>
+                          <TableCell className="font-medium">مسؤولو المطبخ</TableCell>
+                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.kitchenManagers?.total)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.kitchenManagers?.association)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.kitchenManagers?.deployed)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.kitchenManagers?.volunteers)}</TableCell>
+                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.kitchenManagers?.cnss)}</TableCell>
+                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.kitchenManagers?.smig)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.kitchenManagers?.monthlyCost)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.kitchenManagers?.annualCost)}</TableCell>
                         </TableRow>
                         <TableRow>
-                          <TableCell className="font-medium">الحراس</TableCell>
-                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.guards?.total)}</TableCell>
-                          <TableCell className="text-center">{formatNumber(stats.humanResources?.guards?.association)}</TableCell>
-                          <TableCell className="text-center">{formatNumber(stats.humanResources?.guards?.deployed)}</TableCell>
-                          <TableCell className="text-center">{formatNumber(stats.humanResources?.guards?.volunteers)}</TableCell>
-                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.guards?.cnss)}</TableCell>
-                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.guards?.smig)}</TableCell>
-                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.guards?.monthlyCost)}</TableCell>
-                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.guards?.annualCost)}</TableCell>
+                          <TableCell className="font-medium">عمال المطبخ</TableCell>
+                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.kitchenAgents?.total)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.kitchenAgents?.association)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.kitchenAgents?.deployed)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.kitchenAgents?.volunteers)}</TableCell>
+                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.kitchenAgents?.cnss)}</TableCell>
+                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.kitchenAgents?.smig)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.kitchenAgents?.monthlyCost)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.kitchenAgents?.annualCost)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium">مسؤولو المخزن</TableCell>
+                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.storageManagers?.total)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.storageManagers?.association)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.storageManagers?.deployed)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.storageManagers?.volunteers)}</TableCell>
+                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.storageManagers?.cnss)}</TableCell>
+                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.storageManagers?.smig)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.storageManagers?.monthlyCost)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.storageManagers?.annualCost)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium">الأمن</TableCell>
+                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.security?.total)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.security?.association)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.security?.deployed)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.security?.volunteers)}</TableCell>
+                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.security?.cnss)}</TableCell>
+                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.security?.smig)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.security?.monthlyCost)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.security?.annualCost)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium">عمال الخدمة</TableCell>
+                          <TableCell className="text-center font-bold">{formatNumber(stats.humanResources?.serviceAgents?.total)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.serviceAgents?.association)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.serviceAgents?.deployed)}</TableCell>
+                          <TableCell className="text-center">{formatNumber(stats.humanResources?.serviceAgents?.volunteers)}</TableCell>
+                          <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.serviceAgents?.cnss)}</TableCell>
+                          <TableCell className="text-center text-blue-600">{formatNumber(stats.humanResources?.serviceAgents?.smig)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.serviceAgents?.monthlyCost)}</TableCell>
+                          <TableCell className="text-center">{formatCurrency(stats.humanResources?.serviceAgents?.annualCost)}</TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell className="font-medium">آخرون</TableCell>
@@ -1306,23 +1405,50 @@ export default function AdminDashboardPage() {
                           <TableCell className="text-center">{formatNumber(stats.humanResources?.totalStaff)}</TableCell>
                           <TableCell className="text-center">{formatNumber(
                             (stats.humanResources?.directors?.association || 0) +
+                            (stats.humanResources?.financialManagers?.association || 0) +
+                            (stats.humanResources?.generalGuards?.association || 0) +
+                            (stats.humanResources?.socialWorkers?.association || 0) +
+                            (stats.humanResources?.doctors?.association || 0) +
+                            (stats.humanResources?.nurses?.association || 0) +
+                            (stats.humanResources?.psychologists?.association || 0) +
                             (stats.humanResources?.educators?.association || 0) +
-                            (stats.humanResources?.cooks?.association || 0) +
-                            (stats.humanResources?.guards?.association || 0) +
+                            (stats.humanResources?.kitchenManagers?.association || 0) +
+                            (stats.humanResources?.kitchenAgents?.association || 0) +
+                            (stats.humanResources?.storageManagers?.association || 0) +
+                            (stats.humanResources?.security?.association || 0) +
+                            (stats.humanResources?.serviceAgents?.association || 0) +
                             (stats.humanResources?.other?.association || 0)
                           )}</TableCell>
                           <TableCell className="text-center">{formatNumber(
                             (stats.humanResources?.directors?.deployed || 0) +
+                            (stats.humanResources?.financialManagers?.deployed || 0) +
+                            (stats.humanResources?.generalGuards?.deployed || 0) +
+                            (stats.humanResources?.socialWorkers?.deployed || 0) +
+                            (stats.humanResources?.doctors?.deployed || 0) +
+                            (stats.humanResources?.nurses?.deployed || 0) +
+                            (stats.humanResources?.psychologists?.deployed || 0) +
                             (stats.humanResources?.educators?.deployed || 0) +
-                            (stats.humanResources?.cooks?.deployed || 0) +
-                            (stats.humanResources?.guards?.deployed || 0) +
+                            (stats.humanResources?.kitchenManagers?.deployed || 0) +
+                            (stats.humanResources?.kitchenAgents?.deployed || 0) +
+                            (stats.humanResources?.storageManagers?.deployed || 0) +
+                            (stats.humanResources?.security?.deployed || 0) +
+                            (stats.humanResources?.serviceAgents?.deployed || 0) +
                             (stats.humanResources?.other?.deployed || 0)
                           )}</TableCell>
                           <TableCell className="text-center">{formatNumber(
                             (stats.humanResources?.directors?.volunteers || 0) +
+                            (stats.humanResources?.financialManagers?.volunteers || 0) +
+                            (stats.humanResources?.generalGuards?.volunteers || 0) +
+                            (stats.humanResources?.socialWorkers?.volunteers || 0) +
+                            (stats.humanResources?.doctors?.volunteers || 0) +
+                            (stats.humanResources?.nurses?.volunteers || 0) +
+                            (stats.humanResources?.psychologists?.volunteers || 0) +
                             (stats.humanResources?.educators?.volunteers || 0) +
-                            (stats.humanResources?.cooks?.volunteers || 0) +
-                            (stats.humanResources?.guards?.volunteers || 0) +
+                            (stats.humanResources?.kitchenManagers?.volunteers || 0) +
+                            (stats.humanResources?.kitchenAgents?.volunteers || 0) +
+                            (stats.humanResources?.storageManagers?.volunteers || 0) +
+                            (stats.humanResources?.security?.volunteers || 0) +
+                            (stats.humanResources?.serviceAgents?.volunteers || 0) +
                             (stats.humanResources?.other?.volunteers || 0)
                           )}</TableCell>
                           <TableCell className="text-center text-green-600">{formatNumber(stats.humanResources?.totalWithCnss)}</TableCell>
@@ -1343,42 +1469,31 @@ export default function AdminDashboardPage() {
                   <CardHeader>
                     <CardTitle className="text-base">توزيع الموظفين حسب الفئة</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>المديرون</span>
-                        <span className="font-medium">{formatNumber(stats.humanResources?.directors?.total)}</span>
+                  <CardContent className="space-y-2 max-h-96 overflow-y-auto">
+                    {[
+                      { label: "المديرون", data: stats.humanResources?.directors },
+                      { label: "المسيرون الماليون", data: stats.humanResources?.financialManagers },
+                      { label: "الحراس العامون", data: stats.humanResources?.generalGuards },
+                      { label: "المساعدون الاجتماعيون", data: stats.humanResources?.socialWorkers },
+                      { label: "الأطباء", data: stats.humanResources?.doctors },
+                      { label: "الممرضون", data: stats.humanResources?.nurses },
+                      { label: "الأخصائيون النفسانيون", data: stats.humanResources?.psychologists },
+                      { label: "المربون", data: stats.humanResources?.educators },
+                      { label: "مسؤولو المطبخ", data: stats.humanResources?.kitchenManagers },
+                      { label: "عمال المطبخ", data: stats.humanResources?.kitchenAgents },
+                      { label: "مسؤولو المخزن", data: stats.humanResources?.storageManagers },
+                      { label: "الأمن", data: stats.humanResources?.security },
+                      { label: "عمال الخدمة", data: stats.humanResources?.serviceAgents },
+                      { label: "آخرون", data: stats.humanResources?.other },
+                    ].map((item, index) => (
+                      <div key={index} className="space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <span>{item.label}</span>
+                          <span className="font-medium">{formatNumber(item.data?.total)}</span>
+                        </div>
+                        <Progress value={getPercent(item.data?.total, stats.humanResources?.totalStaff)} className="h-2" />
                       </div>
-                      <Progress value={getPercent(stats.humanResources?.directors?.total, stats.humanResources?.totalStaff)} className="h-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>المربون</span>
-                        <span className="font-medium">{formatNumber(stats.humanResources?.educators?.total)}</span>
-                      </div>
-                      <Progress value={getPercent(stats.humanResources?.educators?.total, stats.humanResources?.totalStaff)} className="h-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>الطباخون</span>
-                        <span className="font-medium">{formatNumber(stats.humanResources?.cooks?.total)}</span>
-                      </div>
-                      <Progress value={getPercent(stats.humanResources?.cooks?.total, stats.humanResources?.totalStaff)} className="h-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>الحراس</span>
-                        <span className="font-medium">{formatNumber(stats.humanResources?.guards?.total)}</span>
-                      </div>
-                      <Progress value={getPercent(stats.humanResources?.guards?.total, stats.humanResources?.totalStaff)} className="h-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>آخرون</span>
-                        <span className="font-medium">{formatNumber(stats.humanResources?.other?.total)}</span>
-                      </div>
-                      <Progress value={getPercent(stats.humanResources?.other?.total, stats.humanResources?.totalStaff)} className="h-2" />
-                    </div>
+                    ))}
                   </CardContent>
                 </Card>
 
@@ -1393,9 +1508,18 @@ export default function AdminDashboardPage() {
                         <p className="text-xs text-muted-foreground">موظفو الجمعية</p>
                         <p className="text-xl font-bold text-blue-600">{formatNumber(
                           (stats.humanResources?.directors?.association || 0) +
+                          (stats.humanResources?.financialManagers?.association || 0) +
+                          (stats.humanResources?.generalGuards?.association || 0) +
+                          (stats.humanResources?.socialWorkers?.association || 0) +
+                          (stats.humanResources?.doctors?.association || 0) +
+                          (stats.humanResources?.nurses?.association || 0) +
+                          (stats.humanResources?.psychologists?.association || 0) +
                           (stats.humanResources?.educators?.association || 0) +
-                          (stats.humanResources?.cooks?.association || 0) +
-                          (stats.humanResources?.guards?.association || 0) +
+                          (stats.humanResources?.kitchenManagers?.association || 0) +
+                          (stats.humanResources?.kitchenAgents?.association || 0) +
+                          (stats.humanResources?.storageManagers?.association || 0) +
+                          (stats.humanResources?.security?.association || 0) +
+                          (stats.humanResources?.serviceAgents?.association || 0) +
                           (stats.humanResources?.other?.association || 0)
                         )}</p>
                       </div>
@@ -1403,9 +1527,18 @@ export default function AdminDashboardPage() {
                         <p className="text-xs text-muted-foreground">الملحقون</p>
                         <p className="text-xl font-bold text-green-600">{formatNumber(
                           (stats.humanResources?.directors?.deployed || 0) +
+                          (stats.humanResources?.financialManagers?.deployed || 0) +
+                          (stats.humanResources?.generalGuards?.deployed || 0) +
+                          (stats.humanResources?.socialWorkers?.deployed || 0) +
+                          (stats.humanResources?.doctors?.deployed || 0) +
+                          (stats.humanResources?.nurses?.deployed || 0) +
+                          (stats.humanResources?.psychologists?.deployed || 0) +
                           (stats.humanResources?.educators?.deployed || 0) +
-                          (stats.humanResources?.cooks?.deployed || 0) +
-                          (stats.humanResources?.guards?.deployed || 0) +
+                          (stats.humanResources?.kitchenManagers?.deployed || 0) +
+                          (stats.humanResources?.kitchenAgents?.deployed || 0) +
+                          (stats.humanResources?.storageManagers?.deployed || 0) +
+                          (stats.humanResources?.security?.deployed || 0) +
+                          (stats.humanResources?.serviceAgents?.deployed || 0) +
                           (stats.humanResources?.other?.deployed || 0)
                         )}</p>
                       </div>
@@ -1413,9 +1546,18 @@ export default function AdminDashboardPage() {
                         <p className="text-xs text-muted-foreground">المتطوعون</p>
                         <p className="text-xl font-bold text-purple-600">{formatNumber(
                           (stats.humanResources?.directors?.volunteers || 0) +
+                          (stats.humanResources?.financialManagers?.volunteers || 0) +
+                          (stats.humanResources?.generalGuards?.volunteers || 0) +
+                          (stats.humanResources?.socialWorkers?.volunteers || 0) +
+                          (stats.humanResources?.doctors?.volunteers || 0) +
+                          (stats.humanResources?.nurses?.volunteers || 0) +
+                          (stats.humanResources?.psychologists?.volunteers || 0) +
                           (stats.humanResources?.educators?.volunteers || 0) +
-                          (stats.humanResources?.cooks?.volunteers || 0) +
-                          (stats.humanResources?.guards?.volunteers || 0) +
+                          (stats.humanResources?.kitchenManagers?.volunteers || 0) +
+                          (stats.humanResources?.kitchenAgents?.volunteers || 0) +
+                          (stats.humanResources?.storageManagers?.volunteers || 0) +
+                          (stats.humanResources?.security?.volunteers || 0) +
+                          (stats.humanResources?.serviceAgents?.volunteers || 0) +
                           (stats.humanResources?.other?.volunteers || 0)
                         )}</p>
                       </div>
