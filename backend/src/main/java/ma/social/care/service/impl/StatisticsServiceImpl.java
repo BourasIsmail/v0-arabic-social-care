@@ -327,7 +327,6 @@ public class StatisticsServiceImpl implements StatisticsService {
         long fullGrantBeneficiaries = 0;
         long halfGrantBeneficiaries = 0;
         long associationMealBeneficiaries = 0;
-        long educationMealBeneficiaries = 0;
         
         for (Institution inst : institutions) {
             HousingMeals hm = inst.getHousingMeals();
@@ -348,11 +347,11 @@ public class StatisticsServiceImpl implements StatisticsService {
                 if (hm.getAssociationMealBeneficiaries() != null) {
                     associationMealBeneficiaries += hm.getAssociationMealBeneficiaries();
                 }
-                if (hm.getEducationMealBeneficiaries() != null) {
-                    educationMealBeneficiaries += hm.getEducationMealBeneficiaries();
-                }
             }
         }
+        
+        // educationMealBeneficiaries = fullGrantBeneficiaries + halfGrantBeneficiaries
+        long educationMealBeneficiaries = fullGrantBeneficiaries + halfGrantBeneficiaries;
         
         return MealServiceDTO.builder()
                 .institutionKitchen(institutionKitchen)
