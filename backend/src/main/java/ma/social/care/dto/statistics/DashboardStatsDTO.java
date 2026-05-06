@@ -68,6 +68,9 @@ public class DashboardStatsDTO {
     // Building stats (معطيات حول البناية)
     private BuildingStatsDTO buildingStats;
     
+    // Financial summary (الملخص المالي)
+    private FinancialSummaryDTO financialSummary;
+    
     // === Nested DTOs ===
     
     @Data
@@ -269,5 +272,34 @@ public class DashboardStatsDTO {
         // Partnership Agreement (اتفاقية شراكة)
         private long hasPartnership;    // نعم
         private long noPartnership;     // لا
+    }
+    
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class FinancialSummaryDTO {
+        // الكلفة الاجمالية السنوية المخصصة للاطعام
+        private BigDecimal annualMealsCost;
+        
+        // نسب المساهمة في تمويل الإطعام
+        private BigDecimal associationContributionPercent;  // نسبة مساهمة الجمعية
+        private BigDecimal educationContributionPercent;    // نسبة مساهمة التربية الوطنية
+        private BigDecimal otherContributionPercent;        // نسبة مساهمة جهات اخرى
+        
+        // الكلفة السنوية المخصصة لنفاقات اخرى (ماء، كهرباء، غاز، مواد النظافة)
+        private BigDecimal annualOtherExpenses;
+        
+        // الكلفة السنوية المخصصة للموارد البشرية
+        private BigDecimal annualHRCost;
+        
+        // الكلفة السنوية المخصصة لتسيير المؤسسة
+        private BigDecimal annualManagementCost;
+        
+        // عدد الطلبات التي لم تتم الاستجابة لها برسم الموسم الدراسي الحالي
+        private long unsatisfiedRequestsCount;
+        
+        // عدد الاجمالي للموارد البشرية
+        private long totalHRCount;
     }
 }

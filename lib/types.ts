@@ -535,7 +535,7 @@ export interface DashboardStats {
     statusOther: number;   // آخر
     // Building Condition (الحالة العامة للبناية)
     good: number;              // جيدة
-    someDegradation: number;   // بعض علامات التدهور
+    someDegradation: number;   // بعض ��لامات التدهور
     bad: number;               // متردية
     conditionOther: number;    // آخر
     // Renovation Capacity (إمكانية الترميم)
@@ -550,6 +550,19 @@ export interface DashboardStats {
     // Partnership Agreement (اتفاقية شراكة)
     hasPartnership: number;    // نعم
     noPartnership: number;     // لا
+  };
+  
+  // Financial summary (الملخص المالي)
+  financialSummary?: {
+    annualMealsCost: number;                  // الكلفة الاجمالية السنوية المخصصة للاطعام
+    associationContributionPercent: number;   // نسبة مساهمة الجمعية
+    educationContributionPercent: number;     // نسبة مساهمة التربية الوطنية
+    otherContributionPercent: number;         // نسبة مساهمة جهات اخرى
+    annualOtherExpenses: number;              // الكلفة السنوية (ماء، كهرباء، غاز، مواد النظافة)
+    annualHRCost: number;                     // الكلفة السنوية المخصصة للموارد البشرية
+    annualManagementCost: number;             // الكلفة السنوية المخصصة لتسيير المؤسسة
+    unsatisfiedRequestsCount: number;         // عدد الطلبات التي لم تتم الاستجابة لها
+    totalHRCount: number;                     // عدد الاجمالي للموارد البشرية
   };
 }
 

@@ -103,6 +103,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         MealServiceDTO mealService = computeMealService(institutions);
         BeneficiariesDTO beneficiaries = computeBeneficiaries(institutions);
         BuildingStatsDTO buildingStats = computeBuildingStats(institutions);
+        FinancialSummaryDTO financialSummary = computeFinancialSummary(institutions);
         
         // Fetch institutions with staff separately to avoid MultipleBagFetchException
         // Get institution IDs from filtered list to filter staff data as well
@@ -141,6 +142,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .beneficiaries(beneficiaries)
                 .humanResources(humanResources)
                 .buildingStats(buildingStats)
+                .financialSummary(financialSummary)
                 .build();
         
         log.info("Dashboard statistics computed: {} institutions, {} capacity, {} beneficiaries", 
@@ -618,6 +620,87 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .ownerOther(ownerOther)
                 .hasPartnership(hasPartnership)
                 .noPartnership(noPartnership)
+                .build();
+    }
+    
+    // === Financial Summary ===
+    private FinancialSummaryDTO computeFinancialSummary(List<Institution> institutions) {
+        BigDecimal annualMealsCost = BigDecimal.ZERO;
+        BigDecimal associationContribution = BigDecimal.ZERO;
+        BigDecimal educationContribution = BigDecimal.ZERO;
+        BigDecimal otherContribution = BigDecimal.ZERO;
+        BigDecimal annualOtherExpenses = BigDecimal.ZERO;
+        BigDecimal annualHRCost = BigDecimal.ZERO;
+        BigDecimal annualManagementCost = BigDecimal.ZERO;
+        long unsatisfiedRequestsCount = 0;
+        
+        for (Institution inst : institutions) {
+            Financing f = inst.getFinancing();
+            if (f != null) {
+                // الكلفة الاجمالية السنوية المخصصة للاطعام
+                if (f.getTotalMealsAmount() != null) {
+                    annualMealsCost = annualMealsCost.add(f.getTotalMealsAmount());
+                }
+                
+                // مساهمات الإطعام
+                if (f.getAssociationShare() != null) {
+                    associationContribution = associationContribution.add(f.getAssociationShare());
+                }
+                if (f.getEducationShare() != null) {
+                    educationContribution = educationContribution.add(f.getEducationShare());
+                }
+                if (f.getOtherShare() != null) {
+                    otherContribution = otherContribution.add(f.getOtherShare());
+                }
+                
+                // الكلفة السنوية المخصصة لنفاقات اخرى (ماء، كهرباء، غاز، مواد النظافة)
+                if (f.getAnnualOtherExpenses() != null) {
+                    annualOtherExpenses = annualOtherExpenses.add(f.getAnnualOtherExpenses());
+                }
+                
+                // الكلفة السنوية المخصصة للموارد البشرية
+                if (f.getAnnualHRCost() != null) {
+                    annualHRCost = annualHRCost.add(f.getAnnualHRCost());
+                }
+                
+                // الكلفة السنوية المخصصة لتسيير المؤسسة
+                if (f.getAnnualManagementCost() != null) {
+                    annualManagementCost = annualManagementCost.add(f.getAnnualManagementCost());
+                }
+            }
+            
+            // عدد الطلبات التي لم تتم الاستجابة لها
+            Targeting t = inst.getTargeting();
+            if (t != null && t.getUnsatisfiedRequestsCount() != null) {
+                unsatisfiedRequestsCount += t.getUnsatisfiedRequestsCount();
+            }
+        }
+        
+        // Calculate contribution percentages
+        BigDecimal totalContributions = associationContribution.add(educationContribution).add(otherContribution);
+        BigDecimal associationPercent = BigDecimal.ZERO;
+        BigDecimal educationPercent = BigDecimal.ZERO;
+        BigDecimal otherPercent = BigDecimal.ZERO;
+        
+        if (totalContributions.compareTo(BigDecimal.ZERO) > 0) {
+            associationPercent = associationContribution.multiply(BigDecimal.valueOf(100))
+                    .divide(totalContributions, 2, RoundingMode.HALF_UP);
+            educationPercent = educationContribution.multiply(BigDecimal.valueOf(100))
+                    .divide(totalContributions, 2, RoundingMode.HALF_UP);
+            otherPercent = otherContribution.multiply(BigDecimal.valueOf(100))
+                    .divide(totalContributions, 2, RoundingMode.HALF_UP);
+        }
+        
+        return FinancialSummaryDTO.builder()
+                .annualMealsCost(annualMealsCost)
+                .associationContributionPercent(associationPercent)
+                .educationContributionPercent(educationPercent)
+                .otherContributionPercent(otherPercent)
+                .annualOtherExpenses(annualOtherExpenses)
+                .annualHRCost(annualHRCost)
+                .annualManagementCost(annualManagementCost)
+                .unsatisfiedRequestsCount(unsatisfiedRequestsCount)
+                .totalHRCount(0) // Will be set from humanResources.totalStaff
                 .build();
     }
     

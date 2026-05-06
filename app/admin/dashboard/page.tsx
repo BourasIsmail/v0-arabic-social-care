@@ -235,6 +235,7 @@ export default function AdminDashboardPage() {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <TabsList className="flex flex-wrap h-auto gap-1">
               <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
+              <TabsTrigger value="summary">الملخص</TabsTrigger>
               <TabsTrigger value="types">حسب النوع</TabsTrigger>
               <TabsTrigger value="levels">الأسلاك التعليمية</TabsTrigger>
               <TabsTrigger value="beneficiaries">المستفيدون</TabsTrigger>
@@ -384,7 +385,7 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span>ثانوي</span>
+                        <span>ثانو��</span>
                         <span>{formatNumber(stats.targetLevels?.highSchool)}</span>
                       </div>
                       <Progress value={getPercent(stats.targetLevels?.highSchool, total)} className="h-2" />
@@ -522,6 +523,167 @@ export default function AdminDashboardPage() {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            {/* Summary Tab - Key KPIs */}
+            <TabsContent value="summary" className="space-y-4">
+              {/* Top KPIs Row */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-muted-foreground">إجمالي الموارد البشرية</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-blue-700 dark:text-blue-300">
+                      {formatNumber(stats.humanResources?.totalStaff)}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900 border-amber-200">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-muted-foreground">الطلبات غير المستجابة</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-amber-700 dark:text-amber-300">
+                      {formatNumber(stats.financialSummary?.unsatisfiedRequestsCount)}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">الموسم الدراسي الحالي</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-muted-foreground">كلفة الإطعام السنوية</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-green-700 dark:text-green-300">
+                      {formatCurrency(stats.financialSummary?.annualMealsCost)}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 border-purple-200">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-muted-foreground">كلفة الموارد البشرية</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                      {formatCurrency(stats.financialSummary?.annualHRCost)}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-950 dark:to-pink-900 border-pink-200">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-muted-foreground">كلفة تسيير المؤسسة</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-pink-700 dark:text-pink-300">
+                      {formatCurrency(stats.financialSummary?.annualManagementCost)}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Meal Financing Contributions */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">نسب المساهمة في تمويل الإطعام</CardTitle>
+                    <CardDescription>توزيع مساهمات الجهات المختلفة</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>مساهمة الجمعية</span>
+                        <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                          {stats.financialSummary?.associationContributionPercent?.toFixed(1) || 0}%
+                        </Badge>
+                      </div>
+                      <Progress value={stats.financialSummary?.associationContributionPercent || 0} className="h-3 bg-blue-100" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>مساهمة التربية الوطنية</span>
+                        <Badge variant="outline" className="bg-green-50 text-green-700">
+                          {stats.financialSummary?.educationContributionPercent?.toFixed(1) || 0}%
+                        </Badge>
+                      </div>
+                      <Progress value={stats.financialSummary?.educationContributionPercent || 0} className="h-3 bg-green-100" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>مساهمة جهات أخرى</span>
+                        <Badge variant="outline" className="bg-amber-50 text-amber-700">
+                          {stats.financialSummary?.otherContributionPercent?.toFixed(1) || 0}%
+                        </Badge>
+                      </div>
+                      <Progress value={stats.financialSummary?.otherContributionPercent || 0} className="h-3 bg-amber-100" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">النفقات الأخرى</CardTitle>
+                    <CardDescription>الماء، الكهرباء، الغاز، مواد النظافة</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-6">
+                      <div className="text-4xl font-bold text-primary">
+                        {formatCurrency(stats.financialSummary?.annualOtherExpenses)}
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">الكلفة السنوية الإجمالية</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t">
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">كلفة الموارد البشرية</p>
+                        <p className="text-lg font-semibold">{formatCurrency(stats.financialSummary?.annualHRCost)}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">كلفة التسيير</p>
+                        <p className="text-lg font-semibold">{formatCurrency(stats.financialSummary?.annualManagementCost)}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Quick Stats Summary */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">ملخص الإحصائيات الرئيسية</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <div className="text-center p-3 bg-muted rounded-lg">
+                      <p className="text-xs text-muted-foreground">إجمالي المؤسسات</p>
+                      <p className="text-xl font-bold">{formatNumber(stats.totalInstitutions)}</p>
+                    </div>
+                    <div className="text-center p-3 bg-muted rounded-lg">
+                      <p className="text-xs text-muted-foreground">الطاقة الاستيعابية</p>
+                      <p className="text-xl font-bold">{formatNumber(stats.totalCapacity)}</p>
+                    </div>
+                    <div className="text-center p-3 bg-muted rounded-lg">
+                      <p className="text-xs text-muted-foreground">المستفيدون</p>
+                      <p className="text-xl font-bold">{formatNumber(stats.totalBeneficiaries)}</p>
+                    </div>
+                    <div className="text-center p-3 bg-muted rounded-lg">
+                      <p className="text-xs text-muted-foreground">الموارد البشرية</p>
+                      <p className="text-xl font-bold">{formatNumber(stats.humanResources?.totalStaff)}</p>
+                    </div>
+                    <div className="text-center p-3 bg-muted rounded-lg">
+                      <p className="text-xs text-muted-foreground">المؤسسات المرخصة</p>
+                      <p className="text-xl font-bold text-green-600">{formatNumber(stats.licensedCount)}</p>
+                    </div>
+                    <div className="text-center p-3 bg-muted rounded-lg">
+                      <p className="text-xs text-muted-foreground">الطلبات غير المستجابة</p>
+                      <p className="text-xl font-bold text-amber-600">{formatNumber(stats.financialSummary?.unsatisfiedRequestsCount)}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             {/* Target Levels Tab */}
