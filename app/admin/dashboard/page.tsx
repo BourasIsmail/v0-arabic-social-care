@@ -409,7 +409,7 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span>وجبات جاهزة</span>
+                        <span>��جبات جاهزة</span>
                         <span>{formatNumber(stats.mealService?.readyMeals)}</span>
                       </div>
                       <Progress value={getPercent(stats.mealService?.readyMeals, total)} className="h-2" />
@@ -614,6 +614,16 @@ export default function AdminDashboardPage() {
                         <span>{formatNumber(stats.beneficiaries?.season2324?.high)}</span>
                       </div>
                     </div>
+                    <div className="space-y-2 pt-2 border-t">
+                      <div className="flex justify-between text-sm">
+                        <span>اليتامى</span>
+                        <Badge variant="outline">{formatNumber(stats.beneficiaries?.season2324?.orphans)}</Badge>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>ذوي الاحتياجات الخاصة</span>
+                        <Badge variant="outline">{formatNumber(stats.beneficiaries?.season2324?.disabled)}</Badge>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -646,6 +656,16 @@ export default function AdminDashboardPage() {
                       <div className="flex justify-between text-sm">
                         <span>ثانوي</span>
                         <span>{formatNumber(stats.beneficiaries?.season2425?.high)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2 pt-2 border-t">
+                      <div className="flex justify-between text-sm">
+                        <span>اليتامى</span>
+                        <Badge variant="outline">{formatNumber(stats.beneficiaries?.season2425?.orphans)}</Badge>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>ذوي الاحتياجات الخاصة</span>
+                        <Badge variant="outline">{formatNumber(stats.beneficiaries?.season2425?.disabled)}</Badge>
                       </div>
                     </div>
                   </CardContent>
@@ -683,6 +703,16 @@ export default function AdminDashboardPage() {
                       <div className="flex justify-between text-sm">
                         <span>ثانوي</span>
                         <span>{formatNumber(stats.beneficiaries?.season2526?.high)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2 pt-2 border-t">
+                      <div className="flex justify-between text-sm">
+                        <span>اليتامى</span>
+                        <Badge variant="outline">{formatNumber(stats.beneficiaries?.season2526?.orphans)}</Badge>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>ذوي الاحتياجات الخاصة</span>
+                        <Badge variant="outline">{formatNumber(stats.beneficiaries?.season2526?.disabled)}</Badge>
                       </div>
                     </div>
                   </CardContent>
@@ -725,6 +755,42 @@ export default function AdminDashboardPage() {
                       <div className="text-4xl font-bold text-primary">{formatNumber(stats.mealService?.totalMealBeneficiaries)}</div>
                       <p className="text-muted-foreground mt-2">مستفيد من خدمة الإطعام 2025-2026</p>
                     </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* New KPIs for Meals */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-muted-foreground">المستفيدون من منحة كاملة</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-green-600">{formatNumber(stats.mealService?.fullGrantBeneficiaries)}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-muted-foreground">المستفيدون من نصف منحة</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-amber-600">{formatNumber(stats.mealService?.halfGrantBeneficiaries)}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-muted-foreground">المستفيدون من الجمعية</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-blue-600">{formatNumber(stats.mealService?.associationMealBeneficiaries)}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-muted-foreground">المستفيدون من التربية الوطنية</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-purple-600">{formatNumber(stats.mealService?.educationMealBeneficiaries)}</div>
                   </CardContent>
                 </Card>
               </div>

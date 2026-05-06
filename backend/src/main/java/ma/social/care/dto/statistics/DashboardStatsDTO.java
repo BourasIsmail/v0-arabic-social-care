@@ -161,6 +161,11 @@ public class DashboardStatsDTO {
         private long readyMeals;
         private long other;
         private long totalMealBeneficiaries;
+        // New KPIs
+        private long fullGrantBeneficiaries;      // عدد المستفيدين من منحة كاملة
+        private long halfGrantBeneficiaries;      // عدد المستفيدين من نصف منحة
+        private long associationMealBeneficiaries; // المستفيدون من الإطعام من الجمعية
+        private long educationMealBeneficiaries;   // المستفيدون من الإطعام من التربية الوطنية
     }
     
     @Data
@@ -184,6 +189,9 @@ public class DashboardStatsDTO {
         private long primary;
         private long middle;
         private long high;
+        // Housing KPIs
+        private long orphans;    // اليتامى
+        private long disabled;   // ذوي الاحتياجات الخاصة
     }
     
     @Data
