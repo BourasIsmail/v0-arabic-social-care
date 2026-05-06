@@ -616,7 +616,7 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="space-y-2 pt-2 border-t">
                       <div className="flex justify-between text-sm">
-                        <span>اليتامى</span>
+                        <span>آخر</span>
                         <Badge variant="outline">{formatNumber(stats.beneficiaries?.season2324?.orphans)}</Badge>
                       </div>
                       <div className="flex justify-between text-sm">
@@ -660,7 +660,7 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="space-y-2 pt-2 border-t">
                       <div className="flex justify-between text-sm">
-                        <span>اليتامى</span>
+                        <span>آخر</span>
                         <Badge variant="outline">{formatNumber(stats.beneficiaries?.season2425?.orphans)}</Badge>
                       </div>
                       <div className="flex justify-between text-sm">
@@ -707,7 +707,7 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="space-y-2 pt-2 border-t">
                       <div className="flex justify-between text-sm">
-                        <span>اليتامى</span>
+                        <span>آخر</span>
                         <Badge variant="outline">{formatNumber(stats.beneficiaries?.season2526?.orphans)}</Badge>
                       </div>
                       <div className="flex justify-between text-sm">
