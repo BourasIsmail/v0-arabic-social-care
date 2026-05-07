@@ -626,31 +626,40 @@ public class StatisticsServiceImpl implements StatisticsService {
     // === Financial Summary ===
     private FinancialSummaryDTO computeFinancialSummary(List<Institution> institutions) {
         BigDecimal annualMealsCost = BigDecimal.ZERO;
-        BigDecimal associationContribution = BigDecimal.ZERO;
-        BigDecimal educationContribution = BigDecimal.ZERO;
-        BigDecimal otherContribution = BigDecimal.ZERO;
         BigDecimal annualOtherExpenses = BigDecimal.ZERO;
         BigDecimal annualHRCost = BigDecimal.ZERO;
         BigDecimal annualManagementCost = BigDecimal.ZERO;
         long unsatisfiedRequestsCount = 0;
         
+        // For weighted average of contribution percentages
+        BigDecimal weightedAssociation = BigDecimal.ZERO;
+        BigDecimal weightedEducation = BigDecimal.ZERO;
+        BigDecimal weightedOther = BigDecimal.ZERO;
+        BigDecimal totalMealsCostForWeighting = BigDecimal.ZERO;
+        
         for (Institution inst : institutions) {
             Financing f = inst.getFinancing();
             if (f != null) {
-                // الكلفة الاجمالية السنوية المخصصة للاطعام (use annualMealsCost - the field from the form)
-                if (f.getAnnualMealsCost() != null) {
-                    annualMealsCost = annualMealsCost.add(f.getAnnualMealsCost());
-                }
-                
-                // مساهمات الإطعام (Double -> BigDecimal)
-                if (f.getAssociationShare() != null) {
-                    associationContribution = associationContribution.add(BigDecimal.valueOf(f.getAssociationShare()));
-                }
-                if (f.getEducationShare() != null) {
-                    educationContribution = educationContribution.add(BigDecimal.valueOf(f.getEducationShare()));
-                }
-                if (f.getOtherShare() != null) {
-                    otherContribution = otherContribution.add(BigDecimal.valueOf(f.getOtherShare()));
+                // الكلفة الاجمالية السنوية المخصصة للاطعام
+                BigDecimal instMealsCost = f.getAnnualMealsCost();
+                if (instMealsCost != null) {
+                    annualMealsCost = annualMealsCost.add(instMealsCost);
+                    
+                    // Calculate weighted contribution percentages based on meals cost
+                    // Each institution's share is weighted by its meals cost
+                    if (f.getAssociationShare() != null) {
+                        weightedAssociation = weightedAssociation.add(
+                            instMealsCost.multiply(BigDecimal.valueOf(f.getAssociationShare())));
+                    }
+                    if (f.getEducationShare() != null) {
+                        weightedEducation = weightedEducation.add(
+                            instMealsCost.multiply(BigDecimal.valueOf(f.getEducationShare())));
+                    }
+                    if (f.getOtherShare() != null) {
+                        weightedOther = weightedOther.add(
+                            instMealsCost.multiply(BigDecimal.valueOf(f.getOtherShare())));
+                    }
+                    totalMealsCostForWeighting = totalMealsCostForWeighting.add(instMealsCost);
                 }
                 
                 // الكلفة السنوية المخصصة لنفاقات اخرى (ماء، كهرباء، غاز، مواد النظافة)
@@ -676,19 +685,15 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
         }
         
-        // Calculate contribution percentages
-        BigDecimal totalContributions = associationContribution.add(educationContribution).add(otherContribution);
+        // Calculate weighted average contribution percentages
         BigDecimal associationPercent = BigDecimal.ZERO;
         BigDecimal educationPercent = BigDecimal.ZERO;
         BigDecimal otherPercent = BigDecimal.ZERO;
         
-        if (totalContributions.compareTo(BigDecimal.ZERO) > 0) {
-            associationPercent = associationContribution.multiply(BigDecimal.valueOf(100))
-                    .divide(totalContributions, 2, RoundingMode.HALF_UP);
-            educationPercent = educationContribution.multiply(BigDecimal.valueOf(100))
-                    .divide(totalContributions, 2, RoundingMode.HALF_UP);
-            otherPercent = otherContribution.multiply(BigDecimal.valueOf(100))
-                    .divide(totalContributions, 2, RoundingMode.HALF_UP);
+        if (totalMealsCostForWeighting.compareTo(BigDecimal.ZERO) > 0) {
+            associationPercent = weightedAssociation.divide(totalMealsCostForWeighting, 2, RoundingMode.HALF_UP);
+            educationPercent = weightedEducation.divide(totalMealsCostForWeighting, 2, RoundingMode.HALF_UP);
+            otherPercent = weightedOther.divide(totalMealsCostForWeighting, 2, RoundingMode.HALF_UP);
         }
         
         return FinancialSummaryDTO.builder()
