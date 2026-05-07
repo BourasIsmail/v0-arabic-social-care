@@ -99,7 +99,8 @@ export default function AdminDashboardPage() {
     return n.toLocaleString("ar-MA");
   };
   const formatCurrency = (n?: number | null) => {
-    if (n === undefined || n === null || n === 0) return "—";
+    if (n === undefined || n === null) return "—";
+    if (n === 0) return "0 درهم";
     return `${n.toLocaleString("ar-MA")} درهم`;
   };
   const getPercent = (part?: number, total?: number) => {
