@@ -637,9 +637,11 @@ public class StatisticsServiceImpl implements StatisticsService {
         for (Institution inst : institutions) {
             Financing f = inst.getFinancing();
             if (f != null) {
-                // الكلفة الاجمالية السنوية المخصصة للاطعام
+                // الكلفة الاجمالية السنوية المخصصة للاطعام (try totalMealsAmount first, then annualMealsCost)
                 if (f.getTotalMealsAmount() != null) {
                     annualMealsCost = annualMealsCost.add(f.getTotalMealsAmount());
+                } else if (f.getAnnualMealsCost() != null) {
+                    annualMealsCost = annualMealsCost.add(f.getAnnualMealsCost());
                 }
                 
                 // مساهمات الإطعام (Double -> BigDecimal)
