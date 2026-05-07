@@ -642,15 +642,15 @@ public class StatisticsServiceImpl implements StatisticsService {
                     annualMealsCost = annualMealsCost.add(f.getTotalMealsAmount());
                 }
                 
-                // مساهمات الإطعام
+                // مساهمات الإطعام (Double -> BigDecimal)
                 if (f.getAssociationShare() != null) {
-                    associationContribution = associationContribution.add(f.getAssociationShare());
+                    associationContribution = associationContribution.add(BigDecimal.valueOf(f.getAssociationShare()));
                 }
                 if (f.getEducationShare() != null) {
-                    educationContribution = educationContribution.add(f.getEducationShare());
+                    educationContribution = educationContribution.add(BigDecimal.valueOf(f.getEducationShare()));
                 }
                 if (f.getOtherShare() != null) {
-                    otherContribution = otherContribution.add(f.getOtherShare());
+                    otherContribution = otherContribution.add(BigDecimal.valueOf(f.getOtherShare()));
                 }
                 
                 // الكلفة السنوية المخصصة لنفاقات اخرى (ماء، كهرباء، غاز، مواد النظافة)
