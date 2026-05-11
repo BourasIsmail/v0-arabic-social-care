@@ -100,6 +100,20 @@ public class ExcelExportService {
             "OTHER", "آخر"
     );
 
+    private static final Map<String, String> TARIFF_TYPE_LABELS = Map.of(
+            "FREE", "مجاني",
+            "UNIFORM", "موحد",
+            "BRACKETED", "حسب الشرائح",
+            "OTHER", "آخر"
+    );
+
+    private static final Map<String, String> TARIFF_BODY_LABELS = Map.of(
+            "ASSOCIATION", "الجمعية",
+            "COMMISSION", "لجنة",
+            "MIXED_COMMITTEE", "لجنة مختلطة",
+            "OTHER", "آخر"
+    );
+
     public byte[] exportInstitutionsToExcel() {
         log.info("Generating Excel export of all institutions");
 
@@ -211,14 +225,18 @@ public class ExcelExportService {
                 "ثانوي إعدادي",
                 "ثانوي تأهيلي",
                 "آخر",
+                "تفاصيل آخر (السلك التعليمي)",
                 // البعد الجغرافي
                 "البعد الجغرافي عن أقرب مؤسسة تعليمية",
                 "البعد الجغرافي عن أقرب داخلية تابعة لقطاع التربية الوطنية",
                 // Section II: معطيات حول البناية
                 "وضعية البناية",
+                "تفاصيل وضعية البناية (آخر)",
                 "الحالة العامة للبناية",
+                "تفاصيل الحالة العامة (آخر)",
                 "إمكانية الترميم",
                 "نوع المالك",
+                "تفاصيل نوع المالك (آخر)",
                 "وجود اتفاقية شراكة",
                 // Section III: الإيواء والإطعام - الموسم 2023-2024
                 "المستفيدون من الإيواء 2023-2024 (إجمالي)",
@@ -250,10 +268,36 @@ public class ExcelExportService {
                 "النتائج الدراسية",
                 "الحصول على منحة",
                 "معايير أخرى",
+                "تفاصيل معايير أخرى",
+                "الأولوية 1",
+                "الأولوية 2",
+                "الأولوية 3",
+                "الأولوية 4",
+                "الأولوية 5",
+                // أعضاء لجنة الانتقاء
+                "لجنة الانتقاء - الجمعية",
+                "لجنة الانتقاء - التعاون الوطني",
+                "لجنة الانتقاء - التربية الوطنية",
+                "لجنة الانتقاء - الجماعة",
+                "لجنة الانتقاء - السلطات المحلية",
+                "لجنة الانتقاء - عضو آخر",
+                "لجنة الانتقاء - تفاصيل العضو الآخر",
                 "الجهة المكلفة بالانتقاء",
                 "خدمات مجانية",
                 "عدد الطلبات غير الملباة",
-                // Section V: التمويل
+                // التعريفة
+                "نوع التعريفة",
+                "المبلغ الموحد",
+                "شريحة التعريفة",
+                "الجهة المحددة للتعريفة",
+                "لجنة التعريفة - الجمعية",
+                "لجنة التعريفة - التعاون الوطني",
+                "لجنة التعريفة - التربية الوطنية",
+                "لجنة التعريفة - الجماعة",
+                "لجنة التعريفة - السلطات المحلية",
+                "لجنة التعريفة - عضو آخر",
+                "لجنة التعريفة - تفاصيل العضو الآخر",
+                // Section V: التمويل - مصادر البناء
                 "وزارة التضامن (البناء)",
                 "التعاون الوطني (البناء)",
                 "المبادرة الوطنية (البناء)",
@@ -262,10 +306,33 @@ public class ExcelExportService {
                 "التجديد الوطني (البناء)",
                 "الجمعية (البناء)",
                 "مصدر آخر (البناء)",
+                "تفاصيل مصدر آخر (البناء)",
                 "التكلفة الإجمالية للبناء",
+                // مصادر التجهيز
+                "وزارة التضامن (التجهيز)",
+                "التعاون الوطني (التجهيز)",
+                "المبادرة الوطنية (التجهيز)",
+                "الجماعة (التجهيز)",
+                "مؤسسة محمد الخامس (التجهيز)",
+                "الجمعية (التجهيز)",
+                "مصدر آخر (التجهيز)",
+                "تفاصيل مصدر آخر (التجهيز)",
+                // مصادر التسيير
+                "المبادرة الوطنية (التسيير)",
+                "التعاون الوطني (التسيير)",
+                "التربية الوطنية (التسيير)",
+                "الجماعة (التسيير)",
+                "مساهمات الآباء (التسيير)",
+                "مبلغ مساهمة الآباء",
+                "المحسنون (التسيير)",
+                "موارد الجمعية الذاتية (التسيير)",
+                "مصدر آخر (التسيير)",
+                "تفاصيل مصدر آخر (التسيير)",
+                // التكاليف
                 "التكلفة السنوية للتسيير",
                 "التكلفة السنوية للموارد البشرية",
                 "التكلفة السنوية للإطعام",
+                "التكلفة السنوية لباقي النفقات",
                 "التكلفة السنوية للفرد",
                 "حصة الجمعية",
                 "حصة التربية الوطنية",
@@ -316,6 +383,10 @@ public class ExcelExportService {
                 "إجمالي الموارد البشرية",
                 "الكلفة الشهرية للموارد البشرية",
                 "الكلفة السنوية للموارد البشرية",
+                // Section VII: معلومات إضافية
+                "التأمين",
+                "سبب عدم الترخيص",
+                "رابط الاستبيان الموقع",
                 // تاريخ
                 "تاريخ الإنشاء",
                 "تاريخ التحديث"
@@ -374,14 +445,18 @@ public class ExcelExportService {
                 getCheckbox(inst.getMiddleSchool()),
                 getCheckbox(inst.getHighSchool()),
                 inst.getOther() != null && inst.getOther() ? getDisplayValue(inst.getOtherDetail(), "☑") : "☐",
+                getDisplayValue(inst.getOtherDetail()),
                 // البعد الجغرافي
                 getLabel(DISTANCE_LABELS, enumName(inst.getDistanceToSchool())),
                 getLabel(DISTANCE_LABELS, enumName(inst.getDistanceToNationalBoardingSchool())),
                 // Section II: البناية
                 getLabel(BUILDING_STATUS_LABELS, bld != null ? enumName(bld.getBuildingStatus()) : null),
+                getDisplayValue(bld != null ? bld.getBuildingStatusOther() : null),
                 getLabel(BUILDING_CONDITION_LABELS, bld != null ? enumName(bld.getBuildingCondition()) : null),
+                getDisplayValue(bld != null ? bld.getBuildingConditionOther() : null),
                 getLabel(RENOVATION_LABELS, bld != null ? enumName(bld.getRenovationCapacity()) : null),
                 getLabel(LAND_OWNERSHIP_LABELS, bld != null ? enumName(bld.getOwnerType()) : null),
+                getDisplayValue(bld != null ? bld.getOwnerTypeOther() : null),
                 getCheckbox(bld != null ? bld.getHasPartnershipAgreement() : null),
                 // Section III: الإيواء 2023-2024
                 getDisplayValue(s2324 != null ? s2324.getTotalBeneficiaries() : null),
@@ -413,10 +488,37 @@ public class ExcelExportService {
                 getCheckbox(tgt != null ? tgt.getSchoolResults() : null),
                 getCheckbox(tgt != null ? tgt.getScholarship() : null),
                 tgt != null && Boolean.TRUE.equals(tgt.getOtherCriteria()) ? getDisplayValue(tgt.getOtherCriteriaDetail(), "☑") : "☐",
+                getDisplayValue(tgt != null ? tgt.getOtherCriteriaDetail() : null),
+                // الأولويات
+                getDisplayValue(tgt != null ? tgt.getPriority1() : null),
+                getDisplayValue(tgt != null ? tgt.getPriority2() : null),
+                getDisplayValue(tgt != null ? tgt.getPriority3() : null),
+                getDisplayValue(tgt != null ? tgt.getPriority4() : null),
+                getDisplayValue(tgt != null ? tgt.getPriority5() : null),
+                // أعضاء لجنة الانتقاء
+                getCheckbox(tgt != null ? tgt.getCommitteeAssociation() : null),
+                getCheckbox(tgt != null ? tgt.getCommitteeNationalEntraide() : null),
+                getCheckbox(tgt != null ? tgt.getCommitteeNationalEducation() : null),
+                getCheckbox(tgt != null ? tgt.getCommitteeCommune() : null),
+                getCheckbox(tgt != null ? tgt.getCommitteeLocalAuthorities() : null),
+                getCheckbox(tgt != null ? tgt.getOtherMember() : null),
+                getDisplayValue(tgt != null ? tgt.getOtherMemberDetail() : null),
                 getLabel(SELECTION_BODY_LABELS, tgt != null ? enumName(tgt.getSelectionBody()) : null),
                 getCheckbox(tgt != null ? tgt.getServicesAreFree() : null),
                 getDisplayValue(tgt != null ? tgt.getUnsatisfiedRequestsCount() : null),
-                // Section V: التمويل
+                // التعريفة
+                getLabel(TARIFF_TYPE_LABELS, tgt != null ? enumName(tgt.getTariffType()) : null),
+                formatCurrency(tgt != null ? tgt.getUniformAmount() : null),
+                getDisplayValue(tgt != null ? tgt.getTariffBracket() : null),
+                getLabel(TARIFF_BODY_LABELS, tgt != null ? enumName(tgt.getTariffDeterminationBody()) : null),
+                getCheckbox(tgt != null ? tgt.getTariffCommitteeAssociation() : null),
+                getCheckbox(tgt != null ? tgt.getTariffCommitteeNationalEntraide() : null),
+                getCheckbox(tgt != null ? tgt.getTariffCommitteeNationalEducation() : null),
+                getCheckbox(tgt != null ? tgt.getTariffCommitteeCommune() : null),
+                getCheckbox(tgt != null ? tgt.getTariffCommitteeLocalAuthorities() : null),
+                getCheckbox(tgt != null ? tgt.getTariffOtherMember() : null),
+                getDisplayValue(tgt != null ? tgt.getTariffOtherMemberDetail() : null),
+                // Section V: التمويل - مصادر البناء
                 getCheckbox(fin != null ? fin.getSolidarityMinistry() : null),
                 getCheckbox(fin != null ? fin.getNationalEntraide() : null),
                 getCheckbox(fin != null ? fin.getIndh() : null),
@@ -425,10 +527,33 @@ public class ExcelExportService {
                 getCheckbox(fin != null ? fin.getNationalRevival() : null),
                 getCheckbox(fin != null ? fin.getAssociation() : null),
                 fin != null && Boolean.TRUE.equals(fin.getOtherConstruction()) ? getDisplayValue(fin.getOtherConstructionDetail(), "☑") : "☐",
+                getDisplayValue(fin != null ? fin.getOtherConstructionDetail() : null),
                 formatCurrency(fin != null ? fin.getTotalConstructionCost() : null),
+                // مصادر التجهيز
+                getCheckbox(fin != null ? fin.getEquipmentSolidarityMinistry() : null),
+                getCheckbox(fin != null ? fin.getEquipmentNationalEntraide() : null),
+                getCheckbox(fin != null ? fin.getEquipmentIndh() : null),
+                getCheckbox(fin != null ? fin.getEquipmentCommune() : null),
+                getCheckbox(fin != null ? fin.getEquipmentFondationMohammed5() : null),
+                getCheckbox(fin != null ? fin.getEquipmentAssociation() : null),
+                getCheckbox(fin != null ? fin.getEquipmentOther() : null),
+                getDisplayValue(fin != null ? fin.getEquipmentOtherDetail() : null),
+                // مصادر التسيير
+                getCheckbox(fin != null ? fin.getOperatingIndh() : null),
+                getCheckbox(fin != null ? fin.getOperatingNationalEntraide() : null),
+                getCheckbox(fin != null ? fin.getOperatingNationalEducation() : null),
+                getCheckbox(fin != null ? fin.getOperatingCommune() : null),
+                getCheckbox(fin != null ? fin.getOperatingParentContributions() : null),
+                formatCurrency(fin != null ? fin.getParentContributionAmount() : null),
+                getCheckbox(fin != null ? fin.getOperatingDonors() : null),
+                getCheckbox(fin != null ? fin.getOperatingAssociationOwnSources() : null),
+                getCheckbox(fin != null ? fin.getOperatingOther() : null),
+                getDisplayValue(fin != null ? fin.getOperatingOtherDetail() : null),
+                // التكاليف
                 formatCurrency(fin != null ? fin.getAnnualManagementCost() : null),
                 formatCurrency(fin != null ? fin.getAnnualHRCost() : null),
                 formatCurrency(fin != null ? fin.getAnnualMealsCost() : null),
+                formatCurrency(fin != null ? fin.getAnnualOtherExpenses() : null),
                 formatCurrency(fin != null ? fin.getIndividualAnnualCost() : null),
                 getDisplayValue(fin != null ? fin.getAssociationShare() : null),
                 getDisplayValue(fin != null ? fin.getEducationShare() : null),
@@ -479,6 +604,10 @@ public class ExcelExportService {
                 getTotalStaffCount(staff),
                 getTotalStaffMonthlyCost(staff),
                 getTotalStaffAnnualCost(staff),
+                // Section VII: معلومات إضافية
+                getCheckbox(inst.getInsurance()),
+                getDisplayValue(inst.getUnlicensedReason()),
+                getDisplayValue(inst.getSignedPdfUrl()),
                 // تاريخ
                 formatDateTime(inst.getCreatedAt()),
                 formatDateTime(inst.getUpdatedAt())
