@@ -181,7 +181,7 @@ public class ExcelExportService {
     private String[] getHeaders() {
         return new String[] {
                 // Section I: معطيات حول المؤسسة
-                "نوعية ا��مؤسسة",
+                "نوعية ا����مؤسسة",
                 "اسم الجمعية المشرفة",
                 "اسم المؤسسة",
                 "العنوان",
@@ -270,6 +270,52 @@ public class ExcelExportService {
                 "حصة الجمعية",
                 "حصة التربية الوطنية",
                 "حصص أخرى",
+                // Section VI: الموارد البشرية
+                "المديرون (الجمعية)",
+                "المديرون (وضع رهن الإشارة)",
+                "المديرون (متطوعون)",
+                "المسيرون الماليون (الجمعية)",
+                "المسيرون الماليون (وضع رهن الإشارة)",
+                "المسيرون الماليون (متطوعون)",
+                "الحراس العامون (الجمعية)",
+                "الحراس العامون (وضع رهن الإشارة)",
+                "الحراس العامون (متطوعون)",
+                "المساعدون الاجتماعيون (الجمعية)",
+                "المساعدون الاجتماعيون (وضع رهن الإشارة)",
+                "المساعدون الاجتماعيون (متطوعون)",
+                "الأطباء (الجمعية)",
+                "الأطباء (وضع رهن الإشارة)",
+                "الأطباء (متطوعون)",
+                "الممرضون (الجمعية)",
+                "الممرضون (وضع رهن الإشارة)",
+                "الممرضون (متطوعون)",
+                "الأخصائيون النفسانيون (الجمعية)",
+                "الأخصائيون النفسانيون (وضع رهن الإشارة)",
+                "الأخصائيون النفسانيون (متطوعون)",
+                "المربون (الجمعية)",
+                "المربون (وضع رهن الإشارة)",
+                "المربون (متطوعون)",
+                "مسؤولو المطبخ (الجمعية)",
+                "مسؤولو المطبخ (وضع رهن الإشارة)",
+                "مسؤولو المطبخ (متطوعون)",
+                "عمال المطبخ (الجمعية)",
+                "عمال المطبخ (وضع رهن الإشارة)",
+                "عمال المطبخ (متطوعون)",
+                "مسؤولو المخزن (الجمعية)",
+                "مسؤولو المخزن (وضع رهن الإشارة)",
+                "مسؤولو المخزن (متطوعون)",
+                "الأمن (الجمعية)",
+                "الأمن (وضع رهن الإشارة)",
+                "الأمن (متطوعون)",
+                "عمال الخدمة (الجمعية)",
+                "عمال الخدمة (وضع رهن الإشارة)",
+                "عمال الخدمة (متطوعون)",
+                "آخرون (الجمعية)",
+                "آخرون (وضع رهن الإشارة)",
+                "آخرون (متطوعون)",
+                "إجمالي الموارد البشرية",
+                "الكلفة الشهرية للموارد البشرية",
+                "الكلفة السنوية للموارد البشرية",
                 // تاريخ
                 "تاريخ الإنشاء",
                 "تاريخ التحديث"
@@ -284,6 +330,17 @@ public class ExcelExportService {
         BuildingDTO bld = inst.getBuilding();
         TargetingDTO tgt = inst.getTargeting();
         FinancingDTO fin = inst.getFinancing();
+        List<StaffMemberDTO> staff = inst.getStaffMembers();
+        
+        // Build staff lookup map by type
+        Map<String, StaffMemberDTO> staffMap = new HashMap<>();
+        if (staff != null) {
+            for (StaffMemberDTO s : staff) {
+                if (s.getStaffType() != null) {
+                    staffMap.put(s.getStaffType().name(), s);
+                }
+            }
+        }
 
         return new String[] {
                 // Section I
@@ -376,10 +433,97 @@ public class ExcelExportService {
                 getDisplayValue(fin != null ? fin.getAssociationShare() : null),
                 getDisplayValue(fin != null ? fin.getEducationShare() : null),
                 getDisplayValue(fin != null ? fin.getOtherShare() : null),
+                // Section VI: الموارد البشرية
+                getStaffCount(staffMap, "DIRECTOR", "association"),
+                getStaffCount(staffMap, "DIRECTOR", "deployed"),
+                getStaffCount(staffMap, "DIRECTOR", "volunteers"),
+                getStaffCount(staffMap, "FINANCIAL_MANAGER", "association"),
+                getStaffCount(staffMap, "FINANCIAL_MANAGER", "deployed"),
+                getStaffCount(staffMap, "FINANCIAL_MANAGER", "volunteers"),
+                getStaffCount(staffMap, "GENERAL_GUARD", "association"),
+                getStaffCount(staffMap, "GENERAL_GUARD", "deployed"),
+                getStaffCount(staffMap, "GENERAL_GUARD", "volunteers"),
+                getStaffCount(staffMap, "SOCIAL_WORKER", "association"),
+                getStaffCount(staffMap, "SOCIAL_WORKER", "deployed"),
+                getStaffCount(staffMap, "SOCIAL_WORKER", "volunteers"),
+                getStaffCount(staffMap, "DOCTOR", "association"),
+                getStaffCount(staffMap, "DOCTOR", "deployed"),
+                getStaffCount(staffMap, "DOCTOR", "volunteers"),
+                getStaffCount(staffMap, "NURSE", "association"),
+                getStaffCount(staffMap, "NURSE", "deployed"),
+                getStaffCount(staffMap, "NURSE", "volunteers"),
+                getStaffCount(staffMap, "PSYCHOLOGIST", "association"),
+                getStaffCount(staffMap, "PSYCHOLOGIST", "deployed"),
+                getStaffCount(staffMap, "PSYCHOLOGIST", "volunteers"),
+                getStaffCount(staffMap, "EDUCATOR", "association"),
+                getStaffCount(staffMap, "EDUCATOR", "deployed"),
+                getStaffCount(staffMap, "EDUCATOR", "volunteers"),
+                getStaffCount(staffMap, "KITCHEN_MANAGER", "association"),
+                getStaffCount(staffMap, "KITCHEN_MANAGER", "deployed"),
+                getStaffCount(staffMap, "KITCHEN_MANAGER", "volunteers"),
+                getStaffCount(staffMap, "KITCHEN_AGENT", "association"),
+                getStaffCount(staffMap, "KITCHEN_AGENT", "deployed"),
+                getStaffCount(staffMap, "KITCHEN_AGENT", "volunteers"),
+                getStaffCount(staffMap, "STORAGE_MANAGER", "association"),
+                getStaffCount(staffMap, "STORAGE_MANAGER", "deployed"),
+                getStaffCount(staffMap, "STORAGE_MANAGER", "volunteers"),
+                getStaffCount(staffMap, "SECURITY", "association"),
+                getStaffCount(staffMap, "SECURITY", "deployed"),
+                getStaffCount(staffMap, "SECURITY", "volunteers"),
+                getStaffCount(staffMap, "SERVICE_AGENT", "association"),
+                getStaffCount(staffMap, "SERVICE_AGENT", "deployed"),
+                getStaffCount(staffMap, "SERVICE_AGENT", "volunteers"),
+                getStaffCount(staffMap, "OTHER", "association"),
+                getStaffCount(staffMap, "OTHER", "deployed"),
+                getStaffCount(staffMap, "OTHER", "volunteers"),
+                getTotalStaffCount(staff),
+                getTotalStaffMonthlyCost(staff),
+                getTotalStaffAnnualCost(staff),
                 // تاريخ
                 formatDateTime(inst.getCreatedAt()),
                 formatDateTime(inst.getUpdatedAt())
         };
+    }
+    
+    private String getStaffCount(Map<String, StaffMemberDTO> staffMap, String type, String category) {
+        StaffMemberDTO s = staffMap.get(type);
+        if (s == null) return "0";
+        Integer count = switch (category) {
+            case "association" -> s.getNbAssociation();
+            case "deployed" -> s.getNbDeployed();
+            case "volunteers" -> s.getNbVolunteers();
+            default -> 0;
+        };
+        return count != null ? String.valueOf(count) : "0";
+    }
+    
+    private String getTotalStaffCount(List<StaffMemberDTO> staff) {
+        if (staff == null || staff.isEmpty()) return "0";
+        int total = 0;
+        for (StaffMemberDTO s : staff) {
+            if (s.getNbAssociation() != null) total += s.getNbAssociation();
+            if (s.getNbDeployed() != null) total += s.getNbDeployed();
+            if (s.getNbVolunteers() != null) total += s.getNbVolunteers();
+        }
+        return String.valueOf(total);
+    }
+    
+    private String getTotalStaffMonthlyCost(List<StaffMemberDTO> staff) {
+        if (staff == null || staff.isEmpty()) return "—";
+        BigDecimal total = BigDecimal.ZERO;
+        for (StaffMemberDTO s : staff) {
+            if (s.getMonthlyCost() != null) total = total.add(s.getMonthlyCost());
+        }
+        return formatCurrency(total);
+    }
+    
+    private String getTotalStaffAnnualCost(List<StaffMemberDTO> staff) {
+        if (staff == null || staff.isEmpty()) return "—";
+        BigDecimal total = BigDecimal.ZERO;
+        for (StaffMemberDTO s : staff) {
+            if (s.getAnnualCost() != null) total = total.add(s.getAnnualCost());
+        }
+        return formatCurrency(total);
     }
 
     private String getDisplayValue(Object value) {
