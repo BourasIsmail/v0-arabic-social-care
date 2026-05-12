@@ -374,6 +374,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
             </View>
             <View style={[styles.cbRow, { marginTop: 4 }]}>
               <Checkbox checked={data.psychologicalSupport || false} label="الدعم والمواكبة الطبية والنفسية" />
+              <Checkbox checked={data.insurance || false} label="التأمين" />
             </View>
           </FormRow>
           <DataRow label="الطاقة الاستيعابية الإجمالية المرخصة" value={data.totalCapacity} />
@@ -434,7 +435,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Checkbox checked={data.building?.renovationCapacity === "NEEDS_RECONSTRUCTION"} label="تتطلب إعادة البناء" />
             </View>
           </FormRow>
-          <FormRow label="تحد������د مالك الوعاء العقاري">
+          <FormRow label="تحد�������د مالك الوعاء العقاري">
             <View style={styles.cbRow}>
               <Checkbox checked={data.building?.ownerType === "STATE_DOMAIN"} label="أملاك الدولة" />
               <Checkbox checked={data.building?.ownerType === "COMMUNAL"} label="ملك جماعي" />
@@ -503,6 +504,9 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Checkbox checked={data.financing?.operatingByOther || false} label={data.financing?.operatingByOther && data.financing?.operatingOtherDetail ? `آخر: ${data.financing.operatingOtherDetail}` : "آخر"} />
             </View>
           </FormRow>
+          {data.financing?.operatingByParents && (
+            <DataRow label="مبلغ مساهمة الآباء" value={data.financing?.parentContributionAmount ? `${data.financing.parentContributionAmount} درهم` : "-"} />
+          )}
           <DataRow label="الكلفة السنوية المخصصة للموارد البشرية" value={data.financing?.annualHRCost ? `${data.financing.annualHRCost} درهم` : "-"} />
           <FormRow label="الكلفة السنوية المخصصة للإطعام">
             <View>
@@ -586,8 +590,18 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
           <FormRow label="من يحدد مبلغ الاشتراك الشهري لكل مستفيد">
             <View style={styles.cbRow}>
               <Checkbox checked={data.targeting?.tariffDecisionBody === "ASSOCIATION_ALONE"} label="-1 الجمعية بمفردها" />
-              <Checkbox checked={data.targeting?.tariffDecisionBody === "MIXED_COMMITTEE"} label="-2 لجنة مختلطة" />
+              <Checkbox checked={data.targeting?.tariffDecisionBody === "MIXED_COMMITTEE"} label="-2 لجنة مختلطة تضم:" />
             </View>
+            {data.targeting?.tariffDecisionBody === "MIXED_COMMITTEE" && (
+              <View style={[styles.cbRow, { marginTop: 4, paddingRight: 20 }]}>
+                <Checkbox checked={data.targeting?.tariffCommitteeAssociation || false} label="الجمعية" />
+                <Checkbox checked={data.targeting?.tariffCommitteeNationalEntraide || false} label="التعاون الوطني" />
+                <Checkbox checked={data.targeting?.tariffCommitteeNationalEducation || false} label="التربية الوطنية" />
+                <Checkbox checked={data.targeting?.tariffCommitteeCommune || false} label="الجماعة" />
+                <Checkbox checked={data.targeting?.tariffCommitteeLocalAuthorities || false} label="السلطات المحلية" />
+                <Checkbox checked={data.targeting?.tariffOtherMember || false} label={data.targeting?.tariffOtherMember && data.targeting?.tariffOtherMemberDetail ? `آخر: ${data.targeting.tariffOtherMemberDetail}` : "آخر"} />
+              </View>
+            )}
           </FormRow>
         </View>
         <View style={styles.pageNum}><Text>3 sur 5</Text></View>

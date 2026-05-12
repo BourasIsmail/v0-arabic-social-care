@@ -553,11 +553,12 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.educationalSupport)}</span> التتبع التربوي والمواكبة الاجتماعية</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.culturalActivities)}</span> التنشيط الثقافي والرياضي والترفيهي</span>
                 </div>
-                <div class="checkbox-row" style="margin-top: 5px;">
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.healthCare)}</span> العلاجات الصحية الأولية</span>
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.psychologicalSupport)}</span> الدعم والمواكبة الطبية والنفسية</span>
-                </div>
-              </div>
+  <div class="checkbox-row" style="margin-top: 5px;">
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.healthCare)}</span> العلاجات الصحية الأولية</span>
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.psychologicalSupport)}</span> الدعم والمواكبة الطبية والنفسية</span>
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.insurance)}</span> التأمين</span>
+  </div>
+  </div>
               <div class="field-row">
                 <div class="field-label">الطاقة الاستيعابية الإجمالية المرخصة</div>
                 <div class="field-value">${getDisplayValue(data.totalCapacity)}</div>
@@ -691,13 +692,19 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingNationalEntraide)}</span> التعاون الوطني</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingNationalEducation)}</span> التربية الوطنية</span>
                   <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingCommune)}</span> الجماعة</span>
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingParentContributions)}</span> مساهمات أولياء الأمور</span>
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingDonors)}</span> المحسنون</span>
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingAssociationOwnSources)}</span> موارد الجمعية الذاتية</span>
-                  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingOther)}</span> أخرى</span>
-                </div>
-              </div>
-              <div class="sub-section">التكاليف</div>
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingParentContributions)}</span> مساهمات أولياء الأمور</span>
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingDonors)}</span> المحسنون</span>
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingAssociationOwnSources)}</span> موارد الجمعية الذاتية</span>
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.financing?.operatingOther)}</span> أخرى</span>
+  </div>
+  </div>
+  ${data.financing?.operatingParentContributions ? `
+  <div class="field-row">
+  <div class="field-label">مبلغ مساهمة الآباء</div>
+  <div class="field-value">${getDisplayValue(data.financing?.parentContributionAmount)} درهم</div>
+  </div>
+  ` : ''}
+  <div class="sub-section">التكاليف</div>
               <div class="field-row">
                 <div class="field-label">التكلفة السنوية للتسيير</div>
                 <div class="field-value">${getDisplayValue(data.financing?.annualManagementCost)} درهم</div>
@@ -806,19 +813,47 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                   </div>
                 </div>
               </div>
-              ${data.targeting?.tariffType === 'UNIFORM' ? `
-              <div class="field-row">
-                <div class="field-label">المبلغ الموحد</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.uniformAmount)} درهم</div>
-              </div>
-              ` : ''}
-              ` : ''}
-              <div class="field-row">
-                <div class="field-label">عدد الطلبات غير الملباة</div>
-                <div class="field-value">${getDisplayValue(data.targeting?.unsatisfiedRequestsCount)}</div>
-              </div>
-            </div>
-          </div>
+  ${data.targeting?.tariffType === 'UNIFORM' ? `
+  <div class="field-row">
+  <div class="field-label">المبلغ الموحد</div>
+  <div class="field-value">${getDisplayValue(data.targeting?.uniformAmount)} درهم</div>
+  </div>
+  ` : ''}
+  ${data.targeting?.tariffType === 'NON_UNIFORM' || data.targeting?.tariffType === 'BRACKETED' ? `
+  <div class="field-row">
+  <div class="field-label">شريحة التعريفة</div>
+  <div class="field-value">${getDisplayValue(data.targeting?.tariffBracket)}</div>
+  </div>
+  ` : ''}
+  <div class="field-row">
+  <div class="field-label">الجهة المحددة للتعريفة</div>
+  <div class="field-value">
+  <div class="checkbox-row">
+  <span class="checkbox-item"><span class="check">${data.targeting?.tariffDeterminationBody === 'ASSOCIATION' ? '☑' : '☐'}</span> الجمعية</span>
+  <span class="checkbox-item"><span class="check">${data.targeting?.tariffDeterminationBody === 'MIXED_COMMITTEE' ? '☑' : '☐'}</span> لجنة مختلطة</span>
+  </div>
+  </div>
+  </div>
+  ${data.targeting?.tariffDeterminationBody === 'MIXED_COMMITTEE' ? `
+  <div class="sub-section">أعضاء لجنة التعريفة</div>
+  <div class="checkbox-group">
+  <div class="checkbox-row">
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.tariffCommitteeAssociation)}</span> الجمعية</span>
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.tariffCommitteeNationalEntraide)}</span> التعاون الوطني</span>
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.tariffCommitteeNationalEducation)}</span> التربية الوطنية</span>
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.tariffCommitteeCommune)}</span> الجماعة</span>
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.tariffCommitteeLocalAuthorities)}</span> السلطات المحلية</span>
+  <span class="checkbox-item"><span class="check">${getCheckbox(data.targeting?.tariffOtherMember)}</span> أخرى ${data.targeting?.tariffOtherMemberDetail ? `(${data.targeting.tariffOtherMemberDetail})` : ''}</span>
+  </div>
+  </div>
+  ` : ''}
+  ` : ''}
+  <div class="field-row">
+  <div class="field-label">عدد الطلبات غير الملباة</div>
+  <div class="field-value">${getDisplayValue(data.targeting?.unsatisfiedRequestsCount)}</div>
+  </div>
+  </div>
+  </div>
 
           <!-- Section V: الإيواء والإطعام -->
           <div class="section">
@@ -935,7 +970,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
               <thead>
                 <tr>
                   <th>نوع التأطير</th>
-                  <th>عدد ال��ستخ��مين بالجمعية</th>
+                  <th>عدد ال��س��خ��مين بالجمعية</th>
                   <th>عدد الأطر الموضوعة رهن الإشارة</th>
                   <th>عدد الأطر المتطوعة</th>
                   <th>المستفيدون من CNSS</th>
