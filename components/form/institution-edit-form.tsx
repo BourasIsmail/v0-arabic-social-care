@@ -475,6 +475,7 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
               { name: "culturalActivities", label: "التنشيط الثقافي والرياضي والترفيهي" },
               { name: "healthCare", label: "العلاجات الصحية الأولية" },
               { name: "psychologicalSupport", label: "الدعم والمواكبة الطبية والنفسية" },
+              { name: "insurance", label: "التأمين" },
             ].map((service) => (
               <div key={service.name} className="flex items-center gap-2">
                 <Checkbox
@@ -844,6 +845,18 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
             </div>
           )}
 
+          {watch("financing.operatingParentContributions") && (
+            <div className="space-y-2">
+              <Label>مبلغ مساهمة الآباء (درهم)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                {...register("financing.parentContributionAmount", { valueAsNumber: true })}
+                placeholder="0.00"
+              />
+            </div>
+          )}
+          
           <div className="space-y-2">
             <Label>التكلفة السنوية للتسيير (درهم)</Label>
             <Input
@@ -871,17 +884,26 @@ export function InstitutionEditForm({ institution }: InstitutionEditFormProps) {
               placeholder="0.00"
             />
           </div>
-          <div className="space-y-2">
-            <Label>الكلفة السنوية المخصصة للإطعام (درهم)</Label>
-            <Input
-              type="number"
-              step="0.01"
-              {...register("financing.annualMealsCost", { valueAsNumber: true })}
-              placeholder="0.00"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>الكلفة السنوية المخصصة لباقي النفقات (درهم)</Label>
+            <div className="space-y-2">
+              <Label>الكلفة السنوية المخصصة للإطعام (درهم)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                {...register("financing.annualMealsCost", { valueAsNumber: true })}
+                placeholder="0.00"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>المبلغ الإجمالي للوجبات (درهم)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                {...register("financing.totalMealsAmount", { valueAsNumber: true })}
+                placeholder="0.00"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>الكلفة السنوية المخصصة لباقي النفقات (درهم)</Label>
             <Input
               type="number"
               step="0.01"
