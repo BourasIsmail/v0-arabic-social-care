@@ -718,6 +718,10 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                 <div class="field-value">${getDisplayValue(data.financing?.annualMealsCost)} درهم</div>
               </div>
               <div class="field-row">
+                <div class="field-label">الكلفة السنوية المخصصة لباقي النفقات (ماء، كهرباء، غاز، مواد النظافة)</div>
+                <div class="field-value">${getDisplayValue(data.financing?.annualOtherExpenses)} درهم</div>
+              </div>
+              <div class="field-row">
                 <div class="field-label">التكلفة السنوية للفرد</div>
                 <div class="field-value">${getDisplayValue(data.financing?.individualAnnualCost)} درهم</div>
               </div>
@@ -927,7 +931,7 @@ export function generatePrintableHTML(data: InstitutionResponse, logoBase64?: st
                 <div class="field-value">${getDisplayValue(data.housingMeals?.associationMealBeneficiaries)}</div>
               </div>
               <div class="field-row">
-                <div class="field-label">المستفيدون من التربية الوطنية</div>
+                <div class="field-label">المستفيدون من ال��ربية الوطنية</div>
                 <div class="field-value">${getDisplayValue(data.housingMeals?.educationMealBeneficiaries)}</div>
               </div>
               <div class="field-row">
