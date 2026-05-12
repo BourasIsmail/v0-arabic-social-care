@@ -114,6 +114,21 @@ public class ExcelExportService {
             "OTHER", "آخر"
     );
 
+    private static final Map<String, String> TARIFF_BRACKET_LABELS = Map.of(
+            "LT_50", "أقل من 50 درهم",
+            "BETWEEN_50_100", "بين 50 و 100 درهم",
+            "BETWEEN_100_200", "بين 100 و 200 درهم",
+            "GT_200", "أكثر من 200 درهم"
+    );
+
+    private static final Map<String, String> PRIORITY_LABELS = Map.ofEntries(
+            Map.entry("SOCIAL_SITUATION", "الوضعية الاجتماعية"),
+            Map.entry("DISTANCE", "البعد الجغرافي"),
+            Map.entry("SCHOOL_RESULTS", "النتائج الدراسية"),
+            Map.entry("SCHOLARSHIP", "الحصول على منحة"),
+            Map.entry("OTHER", "أخرى")
+    );
+
     public byte[] exportInstitutionsToExcel() {
         log.info("Generating Excel export of all institutions");
 
@@ -490,11 +505,11 @@ public class ExcelExportService {
                 tgt != null && Boolean.TRUE.equals(tgt.getOtherCriteria()) ? getDisplayValue(tgt.getOtherCriteriaDetail(), "☑") : "☐",
                 getDisplayValue(tgt != null ? tgt.getOtherCriteriaDetail() : null),
                 // الأولويات
-                getDisplayValue(tgt != null ? tgt.getPriority1() : null),
-                getDisplayValue(tgt != null ? tgt.getPriority2() : null),
-                getDisplayValue(tgt != null ? tgt.getPriority3() : null),
-                getDisplayValue(tgt != null ? tgt.getPriority4() : null),
-                getDisplayValue(tgt != null ? tgt.getPriority5() : null),
+                getLabel(PRIORITY_LABELS, tgt != null ? enumName(tgt.getPriority1()) : null),
+                getLabel(PRIORITY_LABELS, tgt != null ? enumName(tgt.getPriority2()) : null),
+                getLabel(PRIORITY_LABELS, tgt != null ? enumName(tgt.getPriority3()) : null),
+                getLabel(PRIORITY_LABELS, tgt != null ? enumName(tgt.getPriority4()) : null),
+                getLabel(PRIORITY_LABELS, tgt != null ? enumName(tgt.getPriority5()) : null),
                 // أعضاء لجنة الانتقاء
                 getCheckbox(tgt != null ? tgt.getCommitteeAssociation() : null),
                 getCheckbox(tgt != null ? tgt.getCommitteeNationalEntraide() : null),
@@ -509,7 +524,7 @@ public class ExcelExportService {
                 // التعريفة
                 getLabel(TARIFF_TYPE_LABELS, tgt != null ? enumName(tgt.getTariffType()) : null),
                 formatCurrency(tgt != null ? tgt.getUniformAmount() : null),
-                getDisplayValue(tgt != null ? tgt.getTariffBracket() : null),
+                getLabel(TARIFF_BRACKET_LABELS, tgt != null ? enumName(tgt.getTariffBracket()) : null),
                 getLabel(TARIFF_BODY_LABELS, tgt != null ? enumName(tgt.getTariffDeterminationBody()) : null),
                 getCheckbox(tgt != null ? tgt.getTariffCommitteeAssociation() : null),
                 getCheckbox(tgt != null ? tgt.getTariffCommitteeNationalEntraide() : null),
@@ -671,7 +686,7 @@ public class ExcelExportService {
 
     private String getLabel(Map<String, String> labelMap, String val) {
         if (val == null || val.isEmpty()) return "—";
-        return labelMap.getOrDefault(val, val);
+        return labelMap.getOrDefault(val, "—"); // Return "—" instead of English enum value
     }
 
     private String enumName(Object enumVal) {
