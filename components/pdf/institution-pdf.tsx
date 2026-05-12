@@ -516,7 +516,7 @@ export function InstitutionPDF({ data }: InstitutionPDFProps) {
               <Text style={{ fontSize: 9 }}>▪ نسبة مساهمة أخرى: {data.financing?.mealsOtherShare || "-"}%</Text>
             </View>
           </FormRow>
-          <DataRow label="الكلفة السنوية لباقي النفقات" value={data.financing?.annualOtherCost ? `${data.financing.annualOtherCost} درهم` : "-"} />
+          <DataRow label="الكلفة السنوية المخصصة لباقي النفقات (ماء، كهرباء، غاز، مواد النظافة)" value={data.financing?.annualOtherExpenses ? `${data.financing.annualOtherExpenses} درهم` : "-"} />
           <DataRow label="الكلفة السنوية للتكفل بكل مستفيد (الكلفة الفردية)" value={data.financing?.costPerBeneficiary ? `${data.financing.costPerBeneficiary} درهم` : "-"} />
         </View>
         <View style={styles.pageNum}><Text>2 sur 5</Text></View>
