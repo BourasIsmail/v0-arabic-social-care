@@ -122,11 +122,12 @@ public class ExcelExportService {
     );
 
     private static final Map<String, String> PRIORITY_LABELS = Map.ofEntries(
-            Map.entry("SOCIAL_SITUATION", "الوضعية الاجتماعية"),
-            Map.entry("DISTANCE", "البعد الجغرافي"),
-            Map.entry("SCHOOL_RESULTS", "النتائج الدراسية"),
-            Map.entry("SCHOLARSHIP", "الحصول على منحة"),
-            Map.entry("OTHER", "أخرى")
+            Map.entry("socialSituation", "الوضعية الاجتماعية"),
+            Map.entry("distance", "البعد الجغرافي"),
+            Map.entry("schoolResults", "النتائج الدراسية"),
+            Map.entry("scholarship", "الحصول على منحة"),
+            Map.entry("other", "آخر"),
+            Map.entry("otherCriteria", "آخر")
     );
 
     public byte[] exportInstitutionsToExcel() {
@@ -323,7 +324,7 @@ public class ExcelExportService {
                 "مصدر آخر (البناء)",
                 "تفاصيل مصدر آخر (البناء)",
                 "��لتكلفة الإجمالية للبناء",
-                // مصادر التج��يز
+                // مصادر ال��ج��يز
                 "وزارة التضامن (التجهيز)",
                 "التعاون الوطني (التجهيز)",
                 "المبادرة الوطنية (التجهيز)",
